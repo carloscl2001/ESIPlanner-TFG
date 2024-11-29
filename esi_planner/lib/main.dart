@@ -20,7 +20,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
+      theme: ThemeData(
+        useMaterial3: true, // Habilita Material 3
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.grey[900] // Personaliza el color del AppBar si es necesario
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true, // Permite establecer un fondo
+          fillColor: Colors.white, // Color de fondo blanco
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0), // Esquinas redondeada
+          ),
+        )
+      ),
       initialRoute: '/',
       routes: {
         '/': (context) => Consumer<AuthProvider>(
