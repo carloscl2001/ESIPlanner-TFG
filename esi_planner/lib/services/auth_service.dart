@@ -50,23 +50,27 @@ class AuthService {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/login'),
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: {'username': username, 'password': password},
+        Uri.parse('$baseUrl/auth/login'),
+        body: {
+          'username': username,
+          'password': password,
+        },
       );
 
       if (response.statusCode == 200) {
-        // Login exitoso
-        final data = jsonDecode(response.body);
+        final data = json.decode(response.body);
         return {'success': true, 'data': data};
       } else {
-        // Login fallido: decodifica el mensaje de error
-        final errorMessage = jsonDecode(response.body)['detail'] ?? 'Error desconocido';
-        return {'success': false, 'message': errorMessage};
+        return {
+          'success': false,
+          'message': 'Credenciales incorrectas. Inténtelo nuevamente.'
+        };
       }
     } catch (e) {
-      // Error de conexión o excepción
-      return {'success': false, 'message': 'Error de conexión: $e'};
+      return {
+        'success': false,
+        'message': 'Error de conexión: $e',
+      };
     }
   }
 }

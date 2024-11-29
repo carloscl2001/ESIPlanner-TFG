@@ -17,8 +17,9 @@ class _LoginScreenState extends State<LoginScreen> {
   String errorMessage = "";
 
   Future<void> login() async {
+    // Validar los campos antes de enviar la solicitud
     if (!_formKey.currentState!.validate()) {
-      return; // Detenemos si el formulario no es válido
+      return; // Si la validación falla, no continúa
     }
 
     final String username = usernameController.text;
@@ -28,11 +29,11 @@ class _LoginScreenState extends State<LoginScreen> {
     final result = await authService.login(username: username, password: password);
 
     if (result['success']) {
-      // Autenticación exitosa
+      // Autenticar usuario y navegar a la pantalla principal
       context.read<AuthProvider>().authenticate();
       Navigator.pushReplacementNamed(context, '/home');
     } else {
-      // Mostrar mensaje de error específico
+      // Mostrar error en la interfaz
       setState(() {
         errorMessage = result['message'];
       });
@@ -46,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey,
+          key: _formKey, // Asociamos el formulario con la clave global
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -60,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, ingrese su usuario';
                   }
-                  return null;
+                  return null; // Validación exitosa
                 },
               ),
               const SizedBox(height: 20),
@@ -75,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, ingrese su contraseña';
                   }
-                  return null;
+                  return null; // Validación exitosa
                 },
               ),
               const SizedBox(height: 20),
