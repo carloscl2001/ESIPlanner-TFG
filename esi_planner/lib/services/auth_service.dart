@@ -69,9 +69,9 @@ class AuthService {
         final errorData = jsonDecode(response.body);
         if (errorData.containsKey('detail')) {
           if (errorData['detail'] == "User not found"){
-            errorMessage = "Usuario no encontrado";
+            errorMessage = "Tu usuario no existe. Vuelve a intentarlo";
           }else{
-            errorMessage = "Contraseña incorrecta";
+            errorMessage = "Tu contraseña no es correcta. Vuelve a intentarlo";
           }
         }
 

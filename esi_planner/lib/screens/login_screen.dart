@@ -15,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   String errorMessage = "";
+  String? errorField = ""; // Añadimos un campo para saber cuál es el error
 
   Future<void> login() async {
     // Validar los campos antes de enviar la solicitud
@@ -44,7 +45,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200], // Fondo gris claro
-      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -52,9 +52,10 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              // Campo de Usuario
               TextFormField(
                 controller: usernameController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Usuario',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
@@ -68,10 +69,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
               ),
               const SizedBox(height: 20),
+              // Campo de Contraseña
               TextFormField(
                 controller: passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Contraseña',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
@@ -94,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
                   ),
                 ),
-                child: const Text('Iniciar Sesión'),
+                child: const Text('Iniciar sesión'),
               ),
               const SizedBox(height: 20),
               if (errorMessage.isNotEmpty)
