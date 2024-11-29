@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ElevatedButton(
                 onPressed: login,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[850], // Color azul para el botón
+                  backgroundColor: Colors.blue[850], // Usamos azul 850
                   minimumSize: Size(double.infinity, 50), // Ancho igual al de los campos de texto
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
