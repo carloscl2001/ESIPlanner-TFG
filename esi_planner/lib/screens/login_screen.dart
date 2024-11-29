@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       // Mostrar error en la interfaz
       setState(() {
-        errorMessage = result['message'];
+        errorMessage = result['message']; // Mostrar el mensaje de error recibido
       });
     }
   }

@@ -58,12 +58,26 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
+        // Si la autenticación es exitosa
         final data = json.decode(response.body);
         return {'success': true, 'data': data};
       } else {
+        // Si la respuesta es un error, extraemos el mensaje de detalle
+        String errorMessage = 'Credenciales incorrectas. Inténtelo nuevamente.';
+        
+        // Extraer el detalle de la respuesta
+        final errorData = jsonDecode(response.body);
+        if (errorData.containsKey('detail')) {
+          if (errorData['detail'] == "User not found"){
+            errorMessage = "Usuario no encontrado";
+          }else{
+            errorMessage = "Contraseña incorrecta";
+          }
+        }
+
         return {
           'success': false,
-          'message': 'Credenciales incorrectas. Inténtelo nuevamente.'
+          'message': errorMessage,
         };
       }
     } catch (e) {
