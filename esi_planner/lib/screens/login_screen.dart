@@ -43,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200], // Fondo gris claro
       appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -55,7 +56,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: usernameController,
                 decoration: const InputDecoration(
                   labelText: 'Usuario',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -70,7 +73,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
                 decoration: const InputDecoration(
                   labelText: 'Contraseña',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -82,6 +87,13 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[850], // Color azul para el botón
+                  minimumSize: Size(double.infinity, 50), // Ancho igual al de los campos de texto
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                  ),
+                ),
                 child: const Text('Iniciar Sesión'),
               ),
               const SizedBox(height: 20),
