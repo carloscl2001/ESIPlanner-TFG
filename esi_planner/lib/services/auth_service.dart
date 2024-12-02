@@ -7,7 +7,7 @@ class AuthService {
   //final String baseUrl = 'http://localhost:8000'; // URL base de la API para el resto
 
 
-  // Método para registrar un usuario
+  // Método para registrar un usuario -> register_screen
   Future<Map<String, dynamic>> register({
   required String email,
   required String username,
@@ -59,7 +59,7 @@ class AuthService {
     }
   }
 
-
+  //Metodo para hacer login -> login_screen
   Future<Map<String, dynamic>> login({
     required String username,
     required String password,
@@ -104,7 +104,8 @@ class AuthService {
     }
   }
 
-  Future<List<String>> fetchDegrees() async {
+  //Metodo para obtener los grados de la esi y mostrarlos en el despegable -> login_screen
+  Future<List<String>> getDegrees() async {
     final url = Uri.parse('$baseUrl/degrees/');
     final response = await http.get(url);
 

@@ -33,7 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _loadDegrees() async {
     try {
       final authService = AuthService();
-      final degreeList = await authService.fetchDegrees();
+      final degreeList = await authService.getDegrees();
       setState(() {
         degrees = degreeList;
         selectedDegree = degrees.isNotEmpty ? degrees[0] : null; // Establece el primer grado como seleccionado si hay alguno
