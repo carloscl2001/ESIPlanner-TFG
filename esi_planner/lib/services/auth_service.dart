@@ -7,23 +7,6 @@ class AuthService {
   //final String baseUrl = 'http://localhost:8000'; // URL base de la API para el resto
 
 
- // Método para obtener los grados
-  Future<List<String>> getDegrees() async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/degrees/'));
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((degree) => degree['name'].toString()).toList();
-      } else {
-        throw Exception('Error al obtener los grados');
-      }
-    } catch (e) {
-      throw Exception('Error de conexión: $e');
-    }
-  }
-
-
   // Método para registrar un usuario
   Future<Map<String, dynamic>> register({
   required String email,

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../auth_provider.dart';
 import '../services/auth_service.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -22,36 +20,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController degreeController = TextEditingController();
 
   String errorMessage = "";
-  List<String> degrees = []; // Lista para almacenar los grados
-  String selectedDegree = ''; // Variable para almacenar el grado seleccionado
-
-  @override
-  void initState() {
-    super.initState();
-    fetchDegrees(); // Llamar a la API para obtener los grados al iniciar
-  }
-
-  // Método para hacer la petición HTTP a la API y obtener los grados
-  Future<void> fetchDegrees() async {
-    try {
-      final response = await http.get(Uri.parse('http://127.0.0.1:8000/degrees/'));
-      
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        setState(() {
-          degrees = data.map((degree) => degree['name'].toString()).toList(); // Guardar los grados en la lista
-        });
-      } else {
-        setState(() {
-          errorMessage = 'Error al obtener los grados.';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        errorMessage = 'Error de conexión: $e';
-      });
-    }
-  }
 
   Future<void> register() async {
     if (!_formKey.currentState!.validate()) {
@@ -65,7 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       password: passwordController.text,
       name: nameController.text,
       surname: surnameController.text,
-      degree: selectedDegree, // Enviar el grado seleccionado
+      degree: degreeController.text,
     );
 
     if (result['success']) {
@@ -169,11 +137,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Por favor, ingrese una contraseña';
                             } else if (value.length < 8) {
-                              return 'La contraseña debe tener al menos 8 caracteres';
+                              return 'La contraseña debe tener al menos  8 \ncaracteres';
                             }
                             String pattern = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&_\-=+])[A-Za-z\d@$!%*?&_\-=+]{8,}$';
                             if (!RegExp(pattern).hasMatch(value)) {
-                              return 'La contraseña debe incluir letras, números y al menos un carácter especial';
+                              return 'La contraseña debe incluir letras, números y \nal menos un carácter especial';
                             }
                             return null;
                           },
@@ -223,39 +191,63 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                         ),
                         const SizedBox(height: 20),
-                        // Reemplazar las tarjetas por un DropdownButton
-                        degrees.isNotEmpty
-                            ? Column(
-                                children: degrees.map((degree) {
-                                  return Card(
-                                    child: ListTile(
-                                      leading: const Icon(Icons.school),
-                                      title: Text(degree),
-                                      onTap: () {
-                                        setState(() {
-                                          selectedDegree = degree; // Guarda el grado seleccionado
-                                        });
-                                      },
-                                    ),
-                                  );
-                                }).toList(),
-                              )
-                            : const CircularProgressIndicator(),
+                        DropdownButtonFormField<String>(
+                            value: degreeController.text.isNotEmpty ? degreeController.text : null,
+                            onChanged: (String? newValue) {
+                                setState(() {
+                                degreeController.text = newValue ?? '';
+                                });
+                            },
+                            decoration: const InputDecoration(
+                                labelText: 'Grado',
+                                border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                ),
+                            ),  
+                            items: <String>['Ingeniería Aeroespacial',
+                                            'Ingeniería Informática', 
+                                            'Ingeniería en Diseñó industrial y desarrollo del producto',
+                                            'Ingeniería Eléctrica'
+                                            ]
+                                .map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                                );
+                            }).toList(),
+                        ),
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: register,
                           child: const Text('Registrarse'),
                         ),
-                        if (errorMessage.isNotEmpty)
+                        if (errorMessage.isNotEmpty) ...[
+                          const SizedBox(height: 20),
                           Text(
                             errorMessage,
-                            style: TextStyle(color: Colors.red),
+                            style: const TextStyle(color: Colors.red, fontSize: 14),
+                            textAlign: TextAlign.center,
+                            softWrap: true,
                           ),
+                        ],
                       ],
                     ),
                   ),
                 ),
               ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                child: const Text(
+                  "¿Ya tienes una cuenta? Inicia sesión aquí",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
             ],
           ),
         ),
