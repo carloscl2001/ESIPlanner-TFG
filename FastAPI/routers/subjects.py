@@ -99,7 +99,7 @@ async def delete_subject(code: str):
     existing_subject = search_subject("code", code)
     if existing_subject:
         # Eliminamos la asignatura
-        return Response(content="All subjects deleted successfully", status_code=status.HTTP_204_NO_CONTENT)
+        return Response(content="The subject deleted successfully", status_code=status.HTTP_204_NO_CONTENT)
     # Si la asignatura no se encontró, lanzamos la excepción
     raise HTTPException(status_code=404, detail="Subject not found")
 

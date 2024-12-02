@@ -53,6 +53,57 @@ async def create_degree(degree: Degree):
     
     return Degree(**new_degree)
 
+
+#Actualizar una asignatura
+@router.put("/{code}", response_model=Degree, status_code=status.HTTP_200_OK)
+async def update_subject(code: str, updated_degree: Degree):
+    # Verificamos si la asignatura ya existe
+    existing_degree = search_degree("code", code)
+
+    if not existing_degree:
+        raise HTTPException(status_code=404, detail="Degree not found")
+
+    # Convertimos el objeto de Pydantic a un diccionario
+    updated_degree_dict = updated_degree.model_dump()
+
+    # Actualizamos la asignatura en la base de datos
+    db_client.degrees.update_one({"code": code}, {"$set": updated_degree_dict})
+
+    # Recuperamos el subject actualizado
+    updated_degree_data = db_client.degrees.find_one({"code": code})
+    
+    return Degree(**updated_degree_dict)
+                                                    
+
+
+#Eliminar todas los degrees
+@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_all_degrees():
+    degree_count = db_client.degrees.count_documents({})
+
+    if degree_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No degree to delete" 
+        )
+    
+    # Si hay asignaturas, las eliminamos
+    db_client.degrees.delete_many({})
+
+    return Response(content="All degrees deleted successfully", status_code=status.HTTP_204_NO_CONTENT)
+
+
+# Eliminar un degree por su code
+@router.delete("/{code}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_degree(code: str):
+    # Verificamos si la asignatura ya existe
+    existing_degreee = search_degree("code", code)
+    if existing_degreee:
+        # Eliminamos la asignatura
+        return Response(content="The degree deleted successfully", status_code=status.HTTP_204_NO_CONTENT)
+    # Si la asignatura no se encontró, lanzamos la excepción
+    raise HTTPException(status_code=404, detail="Degree not found")
+
 #Función para buscar un degree por un campo específico
 def search_degree(field: str, key):
     degree = db_client.degrees.find_one({field: key})
