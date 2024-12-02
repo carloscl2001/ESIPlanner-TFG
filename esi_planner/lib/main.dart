@@ -52,16 +52,16 @@ class MyApp extends StatelessWidget {
           elevation: 8, // Sombra para darle relieve
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16), // Esquinas redondeadas
-            side: BorderSide(color: Colors.white, width: 2), // Borde blanco
+            side: const BorderSide(color: Colors.white, width: 2), // Borde blanco
           ),
         ),
-        buttonTheme: ButtonThemeData(
+        buttonTheme: const ButtonThemeData(
           buttonColor: Color.fromRGBO(0, 89, 255, 1.0), // Color de fondo del botón
           textTheme: ButtonTextTheme.primary, // Color del texto en blanco
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromRGBO(0, 89, 255, 1.0), // Color de fondo azul
+            backgroundColor: const Color.fromRGBO(0, 89, 255, 1.0), // Color de fondo azul
             foregroundColor: Colors.white, // Color del texto blanco
             minimumSize: const Size(double.infinity, 50), // Ancho del botón
             shape: const RoundedRectangleBorder(
