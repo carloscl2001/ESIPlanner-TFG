@@ -20,6 +20,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController degreeController = TextEditingController();
 
   String errorMessage = "";
+  List<String> degrees = []; // Lista para almacenar los grados
+  String? selectedDegree; // Variable para el grado seleccionado
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDegrees(); // Cargar grados al iniciar la pantalla
+  }
+
+  // Método para cargar los grados desde la API
+  Future<void> _loadDegrees() async {
+    try {
+      final authService = AuthService();
+      final degreeList = await authService.fetchDegrees();
+      setState(() {
+        degrees = degreeList;
+        selectedDegree = degrees.isNotEmpty ? degrees[0] : null; // Establece el primer grado como seleccionado si hay alguno
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error al cargar los grados';
+      });
+    }
+  }
 
   Future<void> register() async {
     if (!_formKey.currentState!.validate()) {
@@ -33,7 +57,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       password: passwordController.text,
       name: nameController.text,
       surname: surnameController.text,
-      degree: degreeController.text,
+      degree: selectedDegree ?? '', // Usar el grado seleccionado
     );
 
     if (result['success']) {
@@ -49,14 +73,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200], // Fondo gris claro
-      body: SingleChildScrollView( // Permite scroll en caso de desbordamiento
+      backgroundColor: Colors.grey[200],
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(height: 80), // Espaciado inicial
+              const SizedBox(height: 80),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -74,6 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
+                        // Campo email
                         TextFormField(
                           controller: emailController,
                           decoration: const InputDecoration(
@@ -81,45 +106,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(12)),
                             ),
-                            errorStyle: TextStyle(
-                              fontSize: 14,
-                              overflow: TextOverflow.clip, // Permite saltos de línea
-                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Por favor, ingrese un correo electrónico';
-                            }
-                            String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
-                            if (!RegExp(pattern).hasMatch(value)) {
-                              return 'Por favor, ingrese un correo electrónico válido';
+                              return 'Por favor ingrese un email';
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: 20),
+                        // Campo nombre de usuario
                         TextFormField(
                           controller: usernameController,
                           decoration: const InputDecoration(
-                            labelText: 'Usuario',
+                            labelText: 'Nombre de usuario',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(12)),
-                            ),
-                            errorStyle: TextStyle(
-                              fontSize: 14,
-                              overflow: TextOverflow.clip,
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Por favor, ingrese un usuario';
-                            } else if (value.length < 4) {
-                              return 'El usuario debe tener al menos 4 dígitos';
+                              return 'Por favor ingrese un nombre de usuario';
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: 20),
+                        // Campo contraseña
                         TextFormField(
                           controller: passwordController,
                           obscureText: true,
@@ -128,25 +141,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(12)),
                             ),
-                            errorStyle: TextStyle(
-                              fontSize: 14,
-                              overflow: TextOverflow.clip,
-                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Por favor, ingrese una contraseña';
-                            } else if (value.length < 8) {
-                              return 'La contraseña debe tener al menos  8 \ncaracteres';
-                            }
-                            String pattern = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&_\-=+])[A-Za-z\d@$!%*?&_\-=+]{8,}$';
-                            if (!RegExp(pattern).hasMatch(value)) {
-                              return 'La contraseña debe incluir letras, números y \nal menos un carácter especial';
+                              return 'Por favor ingrese una contraseña';
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: 20),
+                        // Campo nombre
                         TextFormField(
                           controller: nameController,
                           decoration: const InputDecoration(
@@ -154,68 +158,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(12)),
                             ),
-                            errorStyle: TextStyle(
-                              fontSize: 14,
-                              overflow: TextOverflow.clip,
-                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Por favor, ingrese su nombre';
-                            } else if (value.length < 3) {
-                              return 'El nombre debe tener al menos 3 caracteres';
+                              return 'Por favor ingrese su nombre';
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: 20),
+                        // Campo apellido
                         TextFormField(
                           controller: surnameController,
                           decoration: const InputDecoration(
-                            labelText: 'Apellidos',
+                            labelText: 'Apellido',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(12)),
-                            ),
-                            errorStyle: TextStyle(
-                              fontSize: 14,
-                              overflow: TextOverflow.clip,
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Por favor, ingrese sus apellidos';
-                            } else if (value.length < 3) {
-                              return 'Los apellidos deben tener al menos 3 caracteres';
+                              return 'Por favor ingrese su apellido';
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: 20),
-                        DropdownButtonFormField<String>(
-                            value: degreeController.text.isNotEmpty ? degreeController.text : null,
+                        // DropdownButtonFormField para seleccionar el grado
+                        const SizedBox(height: 20),
+                        if (degrees.isNotEmpty) ...[
+                          DropdownButtonFormField<String>(
+                            value: selectedDegree,
                             onChanged: (String? newValue) {
-                                setState(() {
-                                degreeController.text = newValue ?? '';
-                                });
+                              setState(() {
+                                selectedDegree = newValue;
+                              });
                             },
                             decoration: const InputDecoration(
-                                labelText: 'Grado',
-                                border: OutlineInputBorder(
+                              labelText: 'Grado',
+                              border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(12)),
-                                ),
-                            ),  
-                            items: <String>['Ingeniería Aeroespacial',
-                                            'Ingeniería Informática', 
-                                            'Ingeniería en Diseñó industrial y desarrollo del producto',
-                                            'Ingeniería Eléctrica'
-                                            ]
+                              ),
+                            ),
+                            items: degrees
                                 .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
+                              return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
-                                );
+                              );
                             }).toList(),
-                        ),
+                          ),
+                        ] else ...[
+                          const CircularProgressIndicator(), // Cargando si los grados están siendo obtenidos
+                        ],
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: register,

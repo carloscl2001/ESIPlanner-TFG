@@ -103,4 +103,21 @@ class AuthService {
       };
     }
   }
+
+  Future<List<String>> fetchDegrees() async {
+    final url = Uri.parse('$baseUrl/degrees/');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      // Decodifica los bytes del cuerpo usando UTF-8
+      final utf8DecodedBody = utf8.decode(response.bodyBytes);
+      final List<dynamic> data = json.decode(utf8DecodedBody);
+
+      // Mapea los grados a una lista de nombres (si tiene un campo 'name')
+      return data.map<String>((degree) => degree['name'].toString()).toList();
+    } else {
+      throw Exception('Failed to load degrees');
+    }
+  }
+
 }
