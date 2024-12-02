@@ -15,12 +15,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   String errorMessage = "";
-  String? errorField = ""; // Añadimos un campo para saber cuál es el error
 
   Future<void> login() async {
-    // Validar los campos antes de enviar la solicitud
     if (!_formKey.currentState!.validate()) {
-      return; // Si la validación falla, no continúa
+      return;
     }
 
     final String username = usernameController.text;
@@ -30,13 +28,11 @@ class _LoginScreenState extends State<LoginScreen> {
     final result = await authService.login(username: username, password: password);
 
     if (result['success']) {
-      // Autenticar usuario y navegar a la pantalla principal
       context.read<AuthProvider>().authenticate();
       Navigator.pushReplacementNamed(context, '/home');
     } else {
-      // Mostrar error en la interfaz
       setState(() {
-        errorMessage = result['message']; // Mostrar el mensaje de error recibido
+        errorMessage = result['message'];
       });
     }
   }
@@ -44,74 +40,75 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200], // Fondo gris claro
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey, // Asociamos el formulario con la clave global
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // Campo de Usuario
-              TextFormField(
-                controller: usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Usuario',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+      backgroundColor: Colors.grey[200],
+      body: SingleChildScrollView( // Habilitamos el scroll
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 50), // Espaciado inicial
+                TextFormField(
+                  controller: usernameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Usuario',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, ingrese su usuario';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, ingrese su usuario';
-                  }
-                  return null; // Validación exitosa
-                },
-              ),
-              const SizedBox(height: 20),
-              // Campo de Contraseña
-              TextFormField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Contraseña',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Contraseña',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, ingrese su contraseña';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, ingrese su contraseña';
-                  }
-                  return null; // Validación exitosa
-                },
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: login,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[850], // Usamos azul 850
-                  minimumSize: Size(double.infinity, 50), // Ancho igual al de los campos de texto
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: login,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[850],
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
                   ),
+                  child: const Text('Iniciar sesión'),
                 ),
-                child: const Text('Iniciar sesión'),
-              ),
-              const SizedBox(height: 20),
-              if (errorMessage.isNotEmpty)
-                Text(
-                  errorMessage,
-                  style: const TextStyle(color: Colors.red),
+                const SizedBox(height: 20),
+                if (errorMessage.isNotEmpty)
+                  Text(
+                    errorMessage,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/register');
+                  },
+                  child: const Text("¿No tienes una cuenta? Regístrate aquí"),
                 ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/register');
-                },
-                child: const Text("¿No tienes una cuenta? Regístrate aquí"),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

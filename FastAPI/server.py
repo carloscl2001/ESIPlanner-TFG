@@ -6,17 +6,20 @@
 # Documentación con Redocly: http://127.0.0.1:8000/redoc
 
 from fastapi import FastAPI
-from routers import users
-from routers import subjects
 from routers import auth
+from routers import users
+from routers import degrees
+from routers import subjects
 
 # Instanciamos la aplicación
 app = FastAPI()
 
 # Incluimos los routers
-app.include_router(users.router)
-app.include_router(subjects.router)
 app.include_router(auth.router)
+app.include_router(users.router)
+app.include_router(degrees.router)
+app.include_router(subjects.router)
+
 
 
 # Definimos una peticion básica
