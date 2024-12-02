@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.pushReplacementNamed(context, '/register');
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: Color.fromRGBO(0, 89, 255, 1.0), // Establece el color del texto a azul
+                  foregroundColor: const Color.fromRGBO(0, 89, 255, 1.0), // Establece el color del texto a azul
                 ),
                 child: const Text("¿No tienes una cuenta? Regístrate aquí",
                   style: TextStyle(

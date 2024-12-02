@@ -4,20 +4,22 @@ import 'dart:convert';
 class AuthService {
   final String baseUrl = 'http://10.0.2.2:8000'; // URL base de la API usando el emulador de Android
   //final String baseUrl = 'http://127.0.0.1:8000'; // URL base de la API para el resto
+  //final String baseUrl = 'http://localhost:8000'; // URL base de la API para el resto
 
-  // Método para obtener los grados
+
+ // Método para obtener los grados
   Future<List<String>> getDegrees() async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/degrees/'));
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return List<String>.from(data.map((degree) => degree['name']));
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((degree) => degree['name'].toString()).toList();
       } else {
-        return [];
+        throw Exception('Error al obtener los grados');
       }
     } catch (e) {
-      return [];
+      throw Exception('Error de conexión: $e');
     }
   }
 
