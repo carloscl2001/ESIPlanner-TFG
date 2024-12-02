@@ -37,7 +37,6 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             color: Colors.white,
           ),
         ],
-        backgroundColor: Colors.grey[850],
       ),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
@@ -46,23 +45,27 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
           });
         },
         indicatorColor: Colors.white,
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Colors.grey[850],
         selectedIndex: currentPageIndex,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: const <Widget>[
           NavigationDestination(
             selectedIcon: Icon(Icons.home_outlined),
             icon: Icon(Icons.home_outlined, color: Colors.white),
-            label: 'Home',
+            label: 'Home', 
           ),
           NavigationDestination(
+            selectedIcon: Icon(Icons.calendar_month_outlined),
             icon: Icon(Icons.calendar_month_outlined, color: Colors.white),
             label: 'Notifications',
           ),
           NavigationDestination(
+            selectedIcon: Icon(Icons.calendar_view_week_rounded),
             icon: Icon(Icons.calendar_view_week_rounded, color: Colors.white),
             label: 'Messages',
           ),
           NavigationDestination(
+            selectedIcon: Icon(Icons.person),
             icon: Icon(Icons.person, color: Colors.white),
             label: 'Profile',
           ),

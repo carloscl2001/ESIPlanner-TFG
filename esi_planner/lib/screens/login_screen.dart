@@ -40,75 +40,96 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: SingleChildScrollView( // Habilitamos el scroll
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const SizedBox(height: 50), // Espaciado inicial
-                TextFormField(
-                  controller: usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Usuario',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const SizedBox(height: 80), // Espaciado inicial
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Iniciar Sesión',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          controller: usernameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Usuario',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor, ingrese su usuario';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          controller: passwordController,
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Contraseña',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor, ingrese su contraseña';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: login,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue[850],
+                            minimumSize: const Size(double.infinity, 50),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                          ),
+                          child: const Text('Iniciar sesión'),
+                        ),
+                        if (errorMessage.isNotEmpty) ...[
+                          const SizedBox(height: 20),
+                          Text(
+                            errorMessage,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, ingrese su usuario';
-                    }
-                    return null;
-                  },
                 ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Contraseña',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, ingrese su contraseña';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: login,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[850],
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                  ),
-                  child: const Text('Iniciar sesión'),
-                ),
-                const SizedBox(height: 20),
-                if (errorMessage.isNotEmpty)
-                  Text(
-                    errorMessage,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/register');
-                  },
-                  child: const Text("¿No tienes una cuenta? Regístrate aquí"),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/register');
+                },
+                child: const Text("¿No tienes una cuenta? Regístrate aquí"),
+              ),
+            ],
           ),
         ),
       ),
