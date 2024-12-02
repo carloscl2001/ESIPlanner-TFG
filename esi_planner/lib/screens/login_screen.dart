@@ -98,17 +98,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         const SizedBox(height: 20),
-                        const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: login,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue[850],
-                            minimumSize: const Size(double.infinity, 50),
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                            ),
+                          child: const Text(
+                            'Iniciar sesión',
                           ),
-                          child: const Text('Iniciar sesión'),
                         ),
                         if (errorMessage.isNotEmpty) ...[
                           const SizedBox(height: 20),
@@ -127,7 +121,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/register');
                 },
-                child: const Text("¿No tienes una cuenta? Regístrate aquí"),
+                style: TextButton.styleFrom(
+                  foregroundColor: Color.fromRGBO(0, 89, 255, 1.0), // Establece el color del texto a azul
+                ),
+                child: const Text("¿No tienes una cuenta? Regístrate aquí",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),

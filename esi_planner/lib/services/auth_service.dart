@@ -7,12 +7,12 @@ class AuthService {
 
   // Método para registrar un usuario
   Future<Map<String, dynamic>> register({
-    required String email,
-    required String username,
-    required String password,
-    required String name,
-    required String surname,
-    required String degree,
+  required String email,
+  required String username,
+  required String password,
+  required String name,
+  required String surname,
+  required String degree,
   }) async {
     try {
       final response = await http.post(
@@ -30,10 +30,23 @@ class AuthService {
 
       if (response.statusCode == 201) {
         return {'success': true};
-      } else {
+      } else {  
+        String errorMessage = 'Error';
+
+        final errorData = jsonDecode(response.body);
+        if (errorData.containsKey('detail')) {
+          if(errorData['detail'] == "Email already registered"){
+            errorMessage = "Email ya registrado. Introduzca otro";
+          }else if (errorData['detail'] == "Username already exists"){
+            errorMessage = "Usuario ya registrado. Introduzca otro";
+          }else {
+            errorMessage = "Email y usuario ya registrados. Introduzca otros";
+          }
+        }
+
         return {
           'success': false,
-          'message': jsonDecode(response.body)['detail'] ?? 'Error desconocido',
+          'message': errorMessage,
         };
       }
     } catch (e) {
@@ -43,6 +56,7 @@ class AuthService {
       };
     }
   }
+
 
   Future<Map<String, dynamic>> login({
     required String username,

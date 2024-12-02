@@ -50,10 +50,22 @@ async def get_user_subjects(username: str):
 @router.post("/", response_model=User, status_code=status.HTTP_201_CREATED)
 async def create_user(user: User):
     # Verificamos si el usuario ya existe por email o username
-    if search_user("email", user.email) or search_user("username", user.username):
+    if search_user("email", user.email):
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User already exists"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Email already registered"
         )
+    
+    if search_user("username", user.username):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Username already exists"
+        )
+    
+    if  search_user("email", user.email) and search_user("username", user.username):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Username and email already registered"
+        )
+    
+  
 
     # Creamos un diccionario con los datos del usuario
     user_dict = user.model_dump()
