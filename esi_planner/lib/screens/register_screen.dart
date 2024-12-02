@@ -22,7 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String errorMessage = "";
 
   Future<void> register() async {
-    if(!_formKey.currentState!.validate()){
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
@@ -50,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200], // Fondo gris claro
-      body: SingleChildScrollView( // Activa el scroll
+      body: SingleChildScrollView( // Permite scroll en caso de desbordamiento
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -73,27 +73,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             color: Colors.black,
                           ),
                         ),
-                        const SizedBox(height: 20), // Añade un poco de espacio arriba
+                        const SizedBox(height: 20),
                         TextFormField(
                           controller: emailController,
                           decoration: const InputDecoration(
                             labelText: 'Email',
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                            errorStyle: TextStyle(
+                              fontSize: 14,
+                              overflow: TextOverflow.clip, // Permite saltos de línea
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor, ingrese un correo electrónico';
-                            } else {
-                              // Expresión regular para validar un correo electrónico
-                              String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
-                              RegExp regex = RegExp(pattern);
-                              if (!regex.hasMatch(value)) {
-                                return 'Por favor, ingrese un correo electrónico válido';
-                              }
                             }
-                            return null; // Validación exitosa
+                            String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+                            if (!RegExp(pattern).hasMatch(value)) {
+                              return 'Por favor, ingrese un correo electrónico válido';
+                            }
+                            return null;
                           },
                         ),
                         const SizedBox(height: 20),
@@ -102,16 +103,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           decoration: const InputDecoration(
                             labelText: 'Usuario',
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                            errorStyle: TextStyle(
+                              fontSize: 14,
+                              overflow: TextOverflow.clip,
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor, ingrese un usuario';
-                            }else if(value.length < 4 ){
+                            } else if (value.length < 4) {
                               return 'El usuario debe tener al menos 4 dígitos';
                             }
-                            return null; // Validación exitosa
+                            return null;
                           },
                         ),
                         const SizedBox(height: 20),
@@ -121,23 +126,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           decoration: const InputDecoration(
                             labelText: 'Contraseña',
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                            errorStyle: TextStyle(
+                              fontSize: 14,
+                              overflow: TextOverflow.clip,
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor, ingrese una contraseña';
                             } else if (value.length < 8) {
-                              return 'La contraseña debe tener al menos 8 caracteres';
-                            } else {
-                              // Expresión regular para validar la contraseña
-                              String pattern = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&_\-=+])[A-Za-z\d@$!%*?&_\-=+]{8,}$';
-                              RegExp regex = RegExp(pattern);
-                              if (!regex.hasMatch(value)) {
-                                return 'La contraseña debe incluir letras, números y al menos un carácter especial';
-                              }
+                              return 'La contraseña debe tener al menos  8 \ncaracteres';
                             }
-                            return null; // Validación exitosa
+                            String pattern = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&_\-=+])[A-Za-z\d@$!%*?&_\-=+]{8,}$';
+                            if (!RegExp(pattern).hasMatch(value)) {
+                              return 'La contraseña debe incluir letras, números y \nal menos un carácter especial';
+                            }
+                            return null;
                           },
                         ),
                         const SizedBox(height: 20),
@@ -146,16 +152,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           decoration: const InputDecoration(
                             labelText: 'Nombre',
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                            errorStyle: TextStyle(
+                              fontSize: 14,
+                              overflow: TextOverflow.clip,
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor, ingrese su nombre';
-                            }else if(value.length < 3 ){
-                              return 'El nombre debe tener al menos 3 dígitos';
+                            } else if (value.length < 3) {
+                              return 'El nombre debe tener al menos 3 caracteres';
                             }
-                            return null; // Validación exitosa
+                            return null;
                           },
                         ),
                         const SizedBox(height: 20),
@@ -164,41 +174,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           decoration: const InputDecoration(
                             labelText: 'Apellidos',
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                            errorStyle: TextStyle(
+                              fontSize: 14,
+                              overflow: TextOverflow.clip,
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor, ingrese sus apellidos';
-                            }else if(value.length < 3 ){
-                              return 'Los apellidos deben tener al menos 3 dígitos';
+                            } else if (value.length < 3) {
+                              return 'Los apellidos deben tener al menos 3 caracteres';
                             }
-                            return null; // Validación exitosa
+                            return null;
                           },
                         ),
                         const SizedBox(height: 20),
-                        TextField(
+                        TextFormField(
                           controller: degreeController,
                           decoration: const InputDecoration(
                             labelText: 'Grado',
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes más redondeados
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
                             ),
                           ),
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: register,
-                          child: const Text(
-                            'Registrarse',
-                          ),
+                          child: const Text('Registrarse'),
                         ),
-                        if (errorMessage.isNotEmpty)
+                        if (errorMessage.isNotEmpty) ...[
                           const SizedBox(height: 20),
                           Text(
                             errorMessage,
-                            style: const TextStyle(color: Colors.red),
+                            style: const TextStyle(color: Colors.red, fontSize: 14),
+                            textAlign: TextAlign.center,
+                            softWrap: true,
                           ),
+                        ],
                       ],
                     ),
                   ),
@@ -209,14 +224,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
-                style: TextButton.styleFrom(
-                  foregroundColor: Color.fromRGBO(0, 89, 255, 1.0), // Establece el color del texto a azul
-                ),
                 child: const Text(
                   "¿Ya tienes una cuenta? Inicia sesión aquí",
                   style: TextStyle(
-                    fontSize: 16, // Tamaño de fuente más grande
-                    fontWeight: FontWeight.bold, // Poner el texto en negrita si lo deseas
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               )
