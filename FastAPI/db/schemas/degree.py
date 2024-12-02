@@ -2,10 +2,10 @@ def degree_schema(degree)-> dict:
     return {
         "code": degree["code"],
         "name": degree["name"],
-        "subjects": degrees_schema(degree.get("subjects", [])),
+        "subjects": subjects_schemas(degree.get("subjects", [])),
     }
 
-def degrees_schema(degrees) -> dict:
+def degrees_schema(degrees) -> list:
     return [degree_schema(degree) for degree in degrees]
 
 
@@ -15,4 +15,4 @@ def subject_schema(subject) -> dict:
     }
 
 def subjects_schemas(subjects) -> list:
-    return [degree_schema(subject) for subject in subjects]
+    return [subject_schema(subject) for subject in subjects]
