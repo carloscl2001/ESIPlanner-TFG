@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'auth_provider.dart';
 import 'screens/home_screen.dart';
-import 'screens/notifications_screen.dart';
-import 'screens/messages_screen.dart';
+import 'screens/timetable_screen.dart';
+import 'screens/agenda_screen.dart';
 import 'screens/profile_screen.dart';
 
 class NavigationMenuBar extends StatefulWidget {
@@ -29,7 +29,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Navigation Example'),
+        title: const Text(''),
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
@@ -57,12 +57,12 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
           NavigationDestination(
             selectedIcon: Icon(Icons.calendar_month_outlined),
             icon: Icon(Icons.calendar_month_outlined, color: Colors.white),
-            label: 'Notifications',
+            label: 'Horario',
           ),
           NavigationDestination(
             selectedIcon: Icon(Icons.calendar_view_week_rounded),
             icon: Icon(Icons.calendar_view_week_rounded, color: Colors.white),
-            label: 'Messages',
+            label: 'Agenda',
           ),
           NavigationDestination(
             selectedIcon: Icon(Icons.person),
@@ -73,8 +73,8 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
       ),
       body: <Widget>[
         const HomeScreen(),
-        const NotificationsScreen(),
-        const MessagesScreen(),
+        const TimetableScreen(),
+        const AgendaScreen(),
         const ProfileScreen(),
       ][currentPageIndex],
     );

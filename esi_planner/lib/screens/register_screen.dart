@@ -73,7 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -185,7 +185,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         const SizedBox(height: 20),
                         // DropdownButtonFormField para seleccionar el grado
-                        const SizedBox(height: 20),
                         if (degrees.isNotEmpty) ...[
                           DropdownButtonFormField<String>(
                             value: selectedDegree,
@@ -235,6 +234,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color.fromRGBO(0, 89, 255, 1.0), // Establece el color del texto a azul
+                ),
                 child: const Text(
                   "¿Ya tienes una cuenta? Inicia sesión aquí",
                   style: TextStyle(
