@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../auth_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
+    final username = Provider.of<AuthProvider>(context).username ?? 'Usuario';
+    
+    return  Padding(
       padding: EdgeInsets.all(8.0),
       child: Column(
         children: <Widget>[
+          Text(
+            'Aquí está tu perfil, $username.',
+            style: const TextStyle(fontSize: 18),
+          ),
           Card(
             child: ListTile(
               leading: Icon(Icons.notifications_sharp),

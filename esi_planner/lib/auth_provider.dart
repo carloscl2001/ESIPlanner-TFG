@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
+  String? _username;
 
   bool get isAuthenticated => _isAuthenticated;
+  String? get username => _username;
 
-  // Método para autenticar al usuario
-  void authenticate() {
+  void login(String username) {
     _isAuthenticated = true;
+    _username = username;
     notifyListeners();
   }
 
-  // Método para hacer logout
   void logout() {
     _isAuthenticated = false;
+    _username = null;
     notifyListeners();
   }
 }

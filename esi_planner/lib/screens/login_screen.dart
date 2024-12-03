@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final result = await authService.login(username: username, password: password);
 
     if (result['success']) {
-      context.read<AuthProvider>().authenticate();
+      context.read<AuthProvider>().login(username);
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       setState(() {

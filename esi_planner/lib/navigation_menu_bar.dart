@@ -27,9 +27,18 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
 
   @override
   Widget build(BuildContext context) {
+
+    final username = Provider.of<AuthProvider>(context).username ?? 'Usuario';
+
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(''),
+        title: Text(
+          '$username',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
