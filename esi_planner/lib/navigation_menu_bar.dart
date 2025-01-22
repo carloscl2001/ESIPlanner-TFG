@@ -34,8 +34,8 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '$username',
-          style: TextStyle(
+          username,
+          style: const TextStyle(
             color: Colors.white,
           ),
         ),

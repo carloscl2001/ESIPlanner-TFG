@@ -10,8 +10,11 @@ class ProfileService {
       );
 
       if (response.statusCode == 200) {
-        // Si la llamada a la API fue exitosa, devuelve los datos
-        return json.decode(response.body);
+        // Asegúrate de que el cuerpo de la respuesta se decodifique en UTF-8
+        String responseBody = utf8.decode(response.bodyBytes);
+        
+        // Decodifica el JSON de la respuesta
+        return json.decode(responseBody);
       } else {
         // Si la respuesta es diferente a 200, devuelve un mensaje de error
         return {

@@ -35,7 +35,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
       print('Resultado de la API: $profileData');
 
       setState(() {
-        if (profileData == null || profileData.isEmpty) {
+        if (profileData.isEmpty) {
           errorMessage = 'No se pudo obtener la información del perfil';
         } else {
           userProfile = profileData ?? {};  // Asegúrate de obtener los datos correctamente

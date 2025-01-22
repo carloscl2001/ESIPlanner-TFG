@@ -1,4 +1,3 @@
-// view_profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/profile_service.dart';
@@ -8,14 +7,14 @@ class ViewProfileScreen extends StatefulWidget {
   const ViewProfileScreen({super.key});
 
   @override
-   State<ViewProfileScreen> createState() => _ViewProfileScreenState();
+  State<ViewProfileScreen> createState() => _ViewProfileScreenState();
 }
 
 class _ViewProfileScreenState extends State<ViewProfileScreen> {
   late ProfileService profileService;
 
   bool isLoading = true;
-  Map<String, dynamic> userProfile = {};  // Cambiar profileData a userProfile
+  Map<String, dynamic> userProfile = {};  
   String errorMessage = '';
 
   @override
@@ -25,7 +24,6 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
     _loadUserProfile();
   }
 
-  
   Future<void> _loadUserProfile() async {
     final String? username = Provider.of<AuthProvider>(context, listen: false).username;
 
@@ -35,18 +33,18 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
       print('Resultado de la API: $profileData');
 
       setState(() {
-        if (profileData == null || profileData.isEmpty) {
+        if (profileData.isEmpty) {
           errorMessage = 'No se pudo obtener la información del perfil';
         } else {
-          userProfile = profileData ?? {};  // Asegúrate de obtener los datos correctamente
+          userProfile = profileData ?? {};  
           print('DATOS DE USERPROFILE: $userProfile');
         }
-        isLoading = false;  // Detén el círculo de carga
+        isLoading = false;  
       });
     } else {
       setState(() {
         errorMessage = "El nombre de usuario no está disponible";
-        isLoading = false;  // Detén el círculo de carga
+        isLoading = false;  
       });
     }
   }
@@ -55,52 +53,63 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tu perfil',  style: TextStyle(color: Colors.white), ),
+        title: const Text('Tu perfil', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())  // Muestra el círculo de carga mientras se espera
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: <Widget>[
-                  if (errorMessage.isNotEmpty) ...[
-                    Text(
-                      errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                      textAlign: TextAlign.center,
+          ? const Center(child: CircularProgressIndicator())  
+          : Center(  // Centra todo el contenido
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(  // Permite desplazar el contenido si es necesario
+                  child: Card(
+                    elevation: 5,  // Sombra para dar un efecto de profundidad
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),  // Bordes redondeados
                     ),
-                    const SizedBox(height: 20),
-                  ],
-                  // Muestra los datos del usuario
-                  Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('Nombre: ${userProfile['name'] ?? 'Cargando...'}'),
-                          const SizedBox(height: 10),
-                          Text('Apellido: ${userProfile['surname'] ?? 'Cargando...'}'),
-                          const SizedBox(height: 10),
-                          Text('Email: ${userProfile['email'] ?? 'Cargando...'}'),
-                          const SizedBox(height: 10),
-                          Text('Grado: ${userProfile['degree'] ?? 'Cargando...'}'),
-                          const SizedBox(height: 10),
-                          Text('Username: ${userProfile['username'] ?? 'Cargando...'}'),
-                          const SizedBox(height: 10),
-                          if (userProfile['subjects'] != null && userProfile['subjects'].isNotEmpty) ...[
-                            const SizedBox(height: 10),
-                            const Text('Asignaturas:'),
-                            ...userProfile['subjects'].map<Widget>((subject) {
-                              return Text('- ${subject['code'] ?? 'Sin código'}');
-                            }).toList(),
+                          if (errorMessage.isNotEmpty) ...[
+                            Text(
+                              errorMessage,
+                              style: const TextStyle(color: Colors.red, fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 20),
                           ],
+                          // Muestra los datos del usuario
+                          Text(
+                            'Username: ${userProfile['username'] ?? 'Cargando...'}',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Email: ${userProfile['email'] ?? 'Cargando...'}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Nombre: ${userProfile['name'] ?? 'Cargando...'}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Apellido: ${userProfile['surname'] ?? 'Cargando...'}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Grado: ${userProfile['degree'] ?? 'Cargando...'}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
                         ],
                       ),
                     ),
-                  )
-                ],
+                  ),
+                ),
               ),
             ),
     );
