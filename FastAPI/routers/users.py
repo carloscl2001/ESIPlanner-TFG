@@ -106,6 +106,10 @@ async def update_user(username: str, updated_user: User):
     if "id" in updated_user_dict:
         del updated_user_dict["id"]
 
+    # Si no se pasó un nuevo password, lo eliminamos del diccionario de actualización
+    if "password" in updated_user_dict and updated_user_dict["password"] is None:
+        del updated_user_dict["password"]
+
     # Actualizamos el usuario en la base de datos
     db_client.users.update_one({"username": username}, {"$set": updated_user_dict})
 
