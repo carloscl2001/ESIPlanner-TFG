@@ -6,7 +6,7 @@ class ProfileService {
   Future<Map<String, dynamic>> getProfileData({required String username}) async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/users/$username'), // Asegúrate de usar la URL correcta
+        Uri.parse('http://10.0.2.2:8000/users/$username'),
       );
 
       if (response.statusCode == 200) {
@@ -16,10 +16,41 @@ class ProfileService {
         // Decodifica el JSON de la respuesta
         return json.decode(responseBody);
       } else {
-        // Si la respuesta es diferente a 200, devuelve un mensaje de error
         return {
           'success': false,
           'message': 'Error al obtener los datos del perfil'
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error al realizar la solicitud: $e'
+      };
+    }
+  }
+
+  // Función para actualizar los datos del perfil de usuario
+  Future<Map<String, dynamic>> updateProfileData({
+    required String username,
+    required Map<String, dynamic> updatedData,
+  }) async {
+    try {
+      final response = await http.put(
+        Uri.parse('http://10.0.2.2:8000/users/$username'),
+        headers: {
+          'Content-Type': 'application/json', // Indica que el cuerpo está en JSON
+        },
+        body: json.encode(updatedData), // Convierte el mapa a JSON
+      );
+
+      if (response.statusCode == 200) {
+        // Si la respuesta es exitosa, devuelve los datos actualizados
+        return json.decode(response.body);
+      } else {
+        // Si la respuesta es diferente a 200, devuelve un mensaje de error
+        return {
+          'success': false,
+          'message': 'Error al actualizar los datos del perfil'
         };
       }
     } catch (e) {

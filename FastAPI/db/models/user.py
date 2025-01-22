@@ -9,8 +9,8 @@ class UserSubject(BaseModel):
 # Modelo para el usuario que usa el esquema UserSubject en lugar de modificar Subject
 class User(BaseModel):
     id: str | None = Field(default=None)
-    email: str
-    username: str
+    email: Optional[str] = None
+    username: Optional[str] = None
     password: Optional[str] = None
     name: str
     surname: str
