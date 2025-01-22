@@ -1,7 +1,12 @@
+import 'package:esi_planner/screens/edit_subjects_profile_screen.dart';
+import 'package:esi_planner/screens/view_subjects_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/profile_screen.dart'; // Asegúrate de tener ProfileScreen importado
+import 'screens/edit_profile_screen.dart'; // Asegúrate de tener EditProfileScreen importado
+import 'screens/view_profile_screen.dart'; // Importa ViewProfileScreen
 import 'auth_provider.dart';
 import 'navigation_menu_bar.dart';
 
@@ -24,6 +29,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true, // Habilita Material 3
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.grey[850], // Personaliza el color del AppBar
+          iconTheme: const IconThemeData(color: Colors.white), // Cambia el color de los íconos a blanco
+          actionsIconTheme: const IconThemeData(color: Colors.white), // Cambia el color de los íconos de las acciones a blanco
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true, // Permite establecer un fondo
@@ -86,6 +93,11 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const NavigationMenuBar(),
+        '/profile': (context) => const ProfileScreen(),  // Ruta para mostrar botones
+        '/viewProfile': (context) => const ViewProfileScreen(),  // Ruta para ver perfil
+        '/editProfile': (context) => const EditProfileScreen(),  // Ruta para editar perfil
+        '/viewSubjectsProfile': (context) => const ViewSubjectsProfileScreen(),  // Ruta para editar perfil
+        '/editSubjectsProfile': (context) => const EditSubjectsProfileScreen(), // Ruta para editar perfil
       },
     );
   }
