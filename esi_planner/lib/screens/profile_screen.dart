@@ -1,38 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../services/profile_service.dart';
 import '../auth_provider.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+  class _ProfileScreenState extends State<ProfileScreen> {
+  late ProfileService profileService;
+  bool isLoading = true;
+  Map<String, dynamic> userProfile = {};  // Cambiar profileData a userProfile
+  String errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    profileService = ProfileService();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    final String? username = Provider.of<AuthProvider>(context, listen: false).username;
+
+    if (username != null) {
+      print('Haciendo llamada a la API con el username: $username');
+      final profileData = await profileService.getProfileData(username: username);
+      print('Resultado de la API: $profileData');
+
+      setState(() {
+        if (profileData == null || profileData.isEmpty) {
+          errorMessage = 'No se pudo obtener la información del perfil';
+        } else {
+          userProfile = profileData ?? {};  // Asegúrate de obtener los datos correctamente
+          print('DATOS DE USERPROFILE: $userProfile');
+        }
+        isLoading = false;  // Detén el círculo de carga
+      });
+    } else {
+      setState(() {
+        errorMessage = "El nombre de usuario no está disponible";
+        isLoading = false;  // Detén el círculo de carga
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final username = Provider.of<AuthProvider>(context).username ?? 'Usuario';
-    
-    return  Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Aquí está tu perfil, $username.',
-            style: const TextStyle(fontSize: 18),
-          ),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.notifications_sharp),
-              title: Text('Notification 1'),
-              subtitle: Text('This is a notification'),
-            ),
-          ),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.notifications_sharp),
-              title: Text('aqui puedes ver una notificacion'),
-              subtitle: Text('Aqui sus detalles'),
-            ),
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Perfil'),
+        centerTitle: true,
       ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())  // Muestra el círculo de carga mientras se espera
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: <Widget>[
+                  if (errorMessage.isNotEmpty) ...[
+                    Text(
+                      errorMessage,
+                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                  // Muestra los datos del usuario
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text('Nombre: ${userProfile['name'] ?? 'Cargando...'}'),
+                          const SizedBox(height: 10),
+                          Text('Apellido: ${userProfile['surname'] ?? 'Cargando...'}'),
+                          const SizedBox(height: 10),
+                          Text('Email: ${userProfile['email'] ?? 'Cargando...'}'),
+                          const SizedBox(height: 10),
+                          Text('Grado: ${userProfile['degree'] ?? 'Cargando...'}'),
+                          const SizedBox(height: 10),
+                          Text('Username: ${userProfile['username'] ?? 'Cargando...'}'),
+                          const SizedBox(height: 10),
+                          if (userProfile['subjects'] != null && userProfile['subjects'].isNotEmpty) ...[
+                            const SizedBox(height: 10),
+                            const Text('Asignaturas:'),
+                            ...userProfile['subjects'].map<Widget>((subject) {
+                              return Text('- ${subject['code'] ?? 'Sin código'}');
+                            }).toList(),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Redirige a la pantalla de edición de perfil
+                      Navigator.pushNamed(context, '/editProfile');
+                    },
+                    child: const Text('Editar Perfil'),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 }
