@@ -70,6 +70,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+
+  bool isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
+  bool isValidPassword(String password) {
+    final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
+    return passwordRegex.hasMatch(password);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,6 +121,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor ingrese un email';
+                            }else if (!isValidEmail(value)) {
+                              return 'Ingrese un email válido';
                             }
                             return null;
                           },
@@ -127,6 +140,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor ingrese un nombre de usuario';
+                            }else if (value.length < 4) {
+                              return 'Debe tener al menos 4 caracteres';
                             }
                             return null;
                           },
@@ -145,6 +160,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor ingrese una contraseña';
+                            }else if (value.length < 6) {
+                              return 'Debe tener al menos 6 caracteres';
+                            }else if (!isValidPassword(value)) {
+                              return 'Debe contener letras y números';
                             }
                             return null;
                           },
@@ -162,6 +181,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor ingrese su nombre';
+                            }else if (value.length < 4) {
+                              return 'Debe tener al menos 4 caracteres';
                             }
                             return null;
                           },
@@ -179,6 +200,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor ingrese su apellido';
+                            }else if (value.length < 4) {
+                              return 'Debe tener al menos 4 caracteres';
                             }
                             return null;
                           },
