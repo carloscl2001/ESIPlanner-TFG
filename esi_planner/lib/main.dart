@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
           elevation: 8,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Colors.white, width: 2),
+            side: const BorderSide(color: Color.fromRGBO(0, 89, 255, 1.0), width: 2),
           ),
         ),
         buttonTheme: const ButtonThemeData(

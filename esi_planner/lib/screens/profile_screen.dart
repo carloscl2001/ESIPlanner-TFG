@@ -15,7 +15,7 @@ class ProfileScreen extends StatelessWidget {
           shrinkWrap: true, // Ajustar al contenido
           children: [
             _buildCard(context, 'Ver tu perfil', '/viewProfile'),
-            _buildCard(context, 'Modificar tu perfil', '/editPassWordProfile'),
+            _buildCard(context, 'Cambiar la contraseña', '/editPassWordProfile'),
             _buildCard(context, 'Tus asignaturas', '/viewSubjectsProfile'),
             _buildCard(context, 'Modificar tus asignaturas', '/editSubjectsProfile'),
           ],

@@ -57,11 +57,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      body: Center(  // Centra el Column en el espacio disponible
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               const SizedBox(height: 80),
               Card(
@@ -152,4 +153,5 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
 }

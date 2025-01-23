@@ -70,7 +70,7 @@ class ProfileService {
         // Si la contraseña nueva es la misma que la anterior
         return {
           'success': false,
-          'message': 'Contraseña nueva tiene que ser distinta a la anterior'
+          'message': 'La nueva contraseña tiene que ser distinta a la actual'
         };
       } else {
         // Si la respuesta es diferente a 200, devuelve un mensaje de error

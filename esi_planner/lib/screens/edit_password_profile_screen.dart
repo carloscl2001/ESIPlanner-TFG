@@ -48,7 +48,7 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
       final response = await profileService.updatePassword(
         username: username,
         newPassword: newPassword,
-        context: context
+        context: context,
       );
 
       setState(() {
@@ -74,25 +74,26 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
         title: const Text('Cambiar contraseña', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  if (errorMessage.isNotEmpty)
-                    Text(
-                      errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                      textAlign: TextAlign.center,
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Introduzca su nueva contraseña',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black,
                     ),
-                  if (successMessage.isNotEmpty)
-                    Text(
-                      successMessage,
-                      style: const TextStyle(color: Colors.green, fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _newPasswordController,
@@ -102,13 +103,38 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  ElevatedButton(
-                    onPressed: _updatePassword,
-                    child: const Text('Actualizar Contraseña'),
-                  ),
+                  const SizedBox(height: 20),
+                  if (isLoading) 
+                    const Center(child: CircularProgressIndicator()),  // Aquí solo aparece el CircularProgressIndicator cuando isLoading es true
+                  if (!isLoading) 
+                    ElevatedButton(
+                      onPressed: _updatePassword,
+                      child: const Text('Actualizar contraseña'),
+                    ),
+                  // Los mensajes de error y éxito aparecerán aquí debajo
+                  if (errorMessage.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        errorMessage,
+                        style: const TextStyle(color: Colors.red, fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  if (successMessage.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        successMessage,
+                        style: const TextStyle(color: Color.fromRGBO(0, 89, 255, 1.0), fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                 ],
               ),
+            ),
+          ),
+        ),
       ),
     );
   }
