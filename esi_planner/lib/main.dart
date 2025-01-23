@@ -8,6 +8,7 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/view_profile_screen.dart';
+import 'screens/edit_password_profile_screen.dart';
 import 'screens/edit_subjects_profile_screen.dart';
 import 'screens/view_subjects_profile_screen.dart';
 
@@ -96,6 +97,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const NavigationMenuBar(),
         '/profile': (context) => const ProfileScreen(),
         '/viewProfile': (context) => const ViewProfileScreen(),
+        '/editPassWordProfile': (context) => const EditPasswordProfileScreen(),
         '/viewSubjectsProfile': (context) => const ViewSubjectsProfileScreen(),
         '/editSubjectsProfile': (context) => const EditSubjectsProfileScreen(),
       },

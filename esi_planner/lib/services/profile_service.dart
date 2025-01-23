@@ -29,28 +29,38 @@ class ProfileService {
     }
   }
 
-  // Función para actualizar los datos del perfil de usuario
-  Future<Map<String, dynamic>> updateProfileData({
-    required String username,
-    required Map<String, dynamic> updatedData,
+  Future<Map<String, dynamic>> updatePassword({
+  required String username,
+  required String newPassword,
   }) async {
     try {
       final response = await http.put(
-        Uri.parse('http://10.0.2.2:8000/users/$username'),
+        Uri.parse('http://10.0.2.2:8000/auth/$username/changePassword'),
         headers: {
-          'Content-Type': 'application/json', // Indica que el cuerpo está en JSON
+          'Content-Type': 'application/json',
         },
-        body: json.encode(updatedData), // Convierte el mapa a JSON
+        body: json.encode({
+          'new_password': newPassword, // Usar 'new_password' como en la API
+        }),
       );
 
       if (response.statusCode == 200) {
-        // Si la respuesta es exitosa, devuelve los datos actualizados
-        return json.decode(response.body);
-      } else {
+        // Si la respuesta es exitosa, devuelve un mensaje de éxito
+        return {
+          'success': true,
+          'message': 'Contraseña actualizada correctamente'
+        };
+      } else if (response.statusCode == 400){
+          //si la contraseña nueva es la misma que la anterior
+         return {
+          'success': false,
+          'message': 'Contraseña nueva tiene que ser distinta a la anterior'
+        };
+      }else{
         // Si la respuesta es diferente a 200, devuelve un mensaje de error
         return {
           'success': false,
-          'message': 'Error al actualizar los datos del perfil'
+          'message': 'Error al actualizar la contraseña: ${response.body}'
         };
       }
     } catch (e) {
@@ -60,4 +70,5 @@ class ProfileService {
       };
     }
   }
+
 }
