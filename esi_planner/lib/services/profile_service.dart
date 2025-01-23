@@ -5,8 +5,9 @@ import 'package:provider/provider.dart';
 import '../auth_provider.dart';  // Importa el AuthProvider para acceder al token
 
 class ProfileService {
-  // Función que hace la solicitud HTTP para obtener el perfil
-  Future<Map<String, dynamic>> getProfileData({required String username}) async {
+  // Función que hace la solicitud HTTP para obtener los datos del Perfil
+  Future<Map<String, dynamic>> getProfileData({
+    required String username}) async {
     try {
       final response = await http.get(
         Uri.parse('http://10.0.2.2:8000/users/$username'),
@@ -32,7 +33,7 @@ class ProfileService {
     }
   }
 
-  // Función para actualizar la contraseña
+  // Función que hace la solicitud HTTP para actualizar la contraseña
   Future<Map<String, dynamic>> updatePassword({
     required String username,
     required String newPassword,
@@ -86,4 +87,46 @@ class ProfileService {
       };
     }
   }
+
+  // Método que hace la solicitud HTTP para obtener para obtener las asignaturas y grupos del usuario
+  Future<Map<String, dynamic>> getUserSubjects({
+    required String username,
+  }) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/users/$username/subjects'),
+      );
+
+      if (response.statusCode == 200) {
+        // Asegúrate de que el cuerpo de la respuesta se decodifique en UTF-8
+        String responseBody = utf8.decode(response.bodyBytes);
+
+        // Decodifica el JSON de la respuesta y retorna las asignaturas
+        return {
+          'success': true,
+          'data': json.decode(responseBody),
+        };
+      } else if (response.statusCode == 404) {
+        // Usuario no encontrado
+        return {
+          'success': false,
+          'message': 'Usuario no encontrado',
+        };
+      } else {
+        // Otro tipo de error en la respuesta
+        return {
+          'success': false,
+          'message': 'Error al obtener las asignaturas: ${response.body}',
+        };
+      }
+    } catch (e) {
+      // Manejo de excepciones en caso de error
+      return {
+        'success': false,
+        'message': 'Error al realizar la solicitud: $e',
+      };
+    }
+  }
+
+  
 }

@@ -13,7 +13,6 @@ class EditPasswordProfileScreen extends StatefulWidget {
 
 class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
   late ProfileService profileService;
-  bool isLoading = false;
   String errorMessage = '';
   String successMessage = '';
   final TextEditingController _newPasswordController = TextEditingController();
@@ -25,18 +24,35 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
   }
 
   Future<void> _updatePassword() async {
+
+    bool isValidPassword(String password) {
+      final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
+      return passwordRegex.hasMatch(password);
+    }
+
     final String newPassword = _newPasswordController.text;
 
     if (newPassword.isEmpty) {
       setState(() {
-        errorMessage = 'La contraseña no puede estar vacía';
+        errorMessage = 'Por favor, ingrese una nueva contraseña';
+        successMessage = '';
+      });
+      return;
+    }else if(newPassword.length < 8){
+      setState(() {
+        errorMessage = 'La contraseña debe tener al menos 8 caracteres';
+        successMessage = '';
+      });
+      return;
+    }else if(!isValidPassword(newPassword)){
+      setState(() {
+        errorMessage = 'La contraseña debe contner letras y números';
         successMessage = '';
       });
       return;
     }
 
     setState(() {
-      isLoading = true;
       errorMessage = '';
       successMessage = '';
     });
@@ -52,16 +68,16 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
       );
 
       setState(() {
-        isLoading = false;
         if (response['success']) {
           successMessage = response['message'];
+          // Vaciar el input de la nueva contraseña al recibir el éxito
+          _newPasswordController.clear();
         } else {
           errorMessage = response['message'];
         }
       });
     } else {
       setState(() {
-        isLoading = false;
         errorMessage = 'El nombre de usuario no está disponible';
       });
     }
@@ -71,7 +87,7 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cambiar contraseña', style: TextStyle(color: Colors.white)),
+        title: const Text('Cambiar tu contraseña', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
@@ -88,13 +104,13 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
                   const Text(
                     'Introduzca su nueva contraseña',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 25,
                       fontWeight: FontWeight.w800,
                       color: Colors.black,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   TextFormField(
                     controller: _newPasswordController,
                     obscureText: true,
@@ -104,13 +120,10 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  if (isLoading) 
-                    const Center(child: CircularProgressIndicator()),  // Aquí solo aparece el CircularProgressIndicator cuando isLoading es true
-                  if (!isLoading) 
-                    ElevatedButton(
-                      onPressed: _updatePassword,
-                      child: const Text('Actualizar contraseña'),
-                    ),
+                  ElevatedButton(
+                    onPressed: _updatePassword,
+                    child: const Text('Actualizar contraseña'),
+                  ),
                   // Los mensajes de error y éxito aparecerán aquí debajo
                   if (errorMessage.isNotEmpty)
                     Padding(
