@@ -76,6 +76,7 @@ class AuthService {
       if (response.statusCode == 200) {
         // Si la autenticación es exitosa
         final data = json.decode(response.body);
+        print(data);
         return {'success': true, 'data': data};
       } else {
         // Si la respuesta es un error, extraemos el mensaje de detalle

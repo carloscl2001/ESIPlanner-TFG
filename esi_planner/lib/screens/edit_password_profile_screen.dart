@@ -48,6 +48,7 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
       final response = await profileService.updatePassword(
         username: username,
         newPassword: newPassword,
+        context: context
       );
 
       setState(() {

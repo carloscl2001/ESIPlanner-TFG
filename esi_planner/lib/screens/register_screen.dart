@@ -61,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
 
     if (result['success']) {
-      context.read<AuthProvider>().login(usernameController.text);
+      context.read<AuthProvider>().register(usernameController.text);
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       setState(() {

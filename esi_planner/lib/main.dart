@@ -28,57 +28,57 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        useMaterial3: true, // Habilita Material 3
+        useMaterial3: true, 
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.grey[850], // Personaliza el color del AppBar
-          iconTheme: const IconThemeData(color: Colors.white), // Cambia el color de los íconos a blanco
-          actionsIconTheme: const IconThemeData(color: Colors.white), // Cambia el color de los íconos de las acciones a blanco
+          backgroundColor: Colors.grey[850],
+          iconTheme: const IconThemeData(color: Colors.white),
+          actionsIconTheme: const IconThemeData(color: Colors.white),
         ),
         inputDecorationTheme: InputDecorationTheme(
-          filled: true, // Permite establecer un fondo
-          fillColor: Colors.white, // Color de fondo blanco
+          filled: true,
+          fillColor: Colors.white,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0), // Esquinas redondeadas
+            borderRadius: BorderRadius.circular(12.0),
           ),
-          labelStyle: const TextStyle(color: Color.fromRGBO(0, 89, 255, 1.0)), // Labels en azul
-          hintStyle: TextStyle(color: Colors.grey[400]), // Estilo del texto de ayuda
+          labelStyle: const TextStyle(color: Color.fromRGBO(0, 89, 255, 1.0)),
+          hintStyle: TextStyle(color: Colors.grey[400]),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Color.fromRGBO(0, 89, 255, 1.0), width: 1.5), // Borde en azul
+            borderSide: const BorderSide(color: Color.fromRGBO(0, 89, 255, 1.0), width: 1.5),
             borderRadius: BorderRadius.circular(12.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Color.fromRGBO(0, 89, 255, 1.0), width: 3), // Borde más grueso
+            borderSide: const BorderSide(color: Color.fromRGBO(0, 89, 255, 1.0), width: 3),
             borderRadius: BorderRadius.circular(12.0),
           ),
         ),
         navigationBarTheme: NavigationBarThemeData(
           labelTextStyle: WidgetStateProperty.all(
-            const TextStyle(color: Colors.white), // Labels del NavigationBar en blanco
+            const TextStyle(color: Colors.white),
           ),
         ),
         cardTheme: CardTheme(
-          color: const Color.fromRGBO(227, 233, 255, 1), // Color del Card
-          elevation: 8, // Sombra para darle relieve
+          color: const Color.fromRGBO(227, 233, 255, 1),
+          elevation: 8,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16), // Esquinas redondeadas
-            side: const BorderSide(color: Colors.white, width: 2), // Borde blanco
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Colors.white, width: 2),
           ),
         ),
         buttonTheme: const ButtonThemeData(
-          buttonColor: Color.fromRGBO(0, 89, 255, 1.0), // Color de fondo del botón
-          textTheme: ButtonTextTheme.primary, // Color del texto en blanco
+          buttonColor: Color.fromRGBO(0, 89, 255, 1.0),
+          textTheme: ButtonTextTheme.primary,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromRGBO(0, 89, 255, 1.0), // Color de fondo azul
-            foregroundColor: Colors.white, // Color del texto blanco
-            minimumSize: const Size(double.infinity, 50), // Ancho del botón
+            backgroundColor: const Color.fromRGBO(0, 89, 255, 1.0),
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 50),
             shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)), // Bordes redondeados
+              borderRadius: BorderRadius.all(Radius.circular(12)),
             ),
             textStyle: const TextStyle(
-              fontSize: 20, // Tamaño de la fuente más grande
-              fontWeight: FontWeight.bold, // Texto en negrita
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),

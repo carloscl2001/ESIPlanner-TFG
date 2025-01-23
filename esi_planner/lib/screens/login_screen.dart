@@ -15,11 +15,16 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   String errorMessage = "";
+  bool isLoading = false;
 
   Future<void> login() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
+    setState(() {
+      isLoading = true;
+    });
 
     final String username = usernameController.text;
     final String password = passwordController.text;
@@ -27,12 +32,23 @@ class _LoginScreenState extends State<LoginScreen> {
     final authService = AuthService();
     final result = await authService.login(username: username, password: password);
 
+    setState(() {
+      isLoading = false;
+    });
+
     if (result['success']) {
-      context.read<AuthProvider>().login(username);
-      Navigator.pushReplacementNamed(context, '/home');
+      final String? token = result['data']['access_token'];  // Accediendo al token correctamente
+      if (token != null) {
+        context.read<AuthProvider>().login(username, token);
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        setState(() {
+          errorMessage = 'No se recibió un token válido.';
+        });
+      }
     } else {
       setState(() {
-        errorMessage = result['message'];
+        errorMessage = result['message'];  // Mostrar el mensaje de error si el login falla
       });
     }
   }
@@ -47,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(height: 80), // Espaciado inicial
+              const SizedBox(height: 80),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -99,10 +115,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: login,
-                          child: const Text(
-                            'Iniciar sesión',
-                          ),
+                          onPressed: isLoading ? null : login,  // Deshabilita el botón si está cargando
+                          child: const Text('Iniciar sesión'),
                         ),
                         if (errorMessage.isNotEmpty) ...[
                           const SizedBox(height: 20),
@@ -122,9 +136,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.pushReplacementNamed(context, '/register');
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color.fromRGBO(0, 89, 255, 1.0), // Establece el color del texto a azul
+                  foregroundColor: const Color.fromRGBO(0, 89, 255, 1.0), // Color del texto en azul
                 ),
-                child: const Text("¿No tienes una cuenta? Regístrate aquí",
+                child: const Text(
+                  "¿No tienes una cuenta? Regístrate aquí",
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
