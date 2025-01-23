@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from db.models.auth import PasswordChangeRequest
 from db.models.user import User
 from db.schemas.user import user_schema, users_schema
 from db.client import db_client
@@ -36,6 +37,7 @@ def search_user(field: str, key):
 
 #Función para autenticar al usuario
 async def auth_user(token: str = Depends(oauth2)):
+
     exception = HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, 
                 detail="Invalid token",
@@ -87,3 +89,26 @@ async def login(form: OAuth2PasswordRequestForm = Depends()):
 
     
     return {"access_token": jwt.encode(access_token, SECRET, algorithm=ALGORITHM), "token_type": "bearer"}
+
+
+
+# Operación para cambiar la contraseña
+@router.put("/{username}/changePassword")
+async def change_password(username: str, body: PasswordChangeRequest, user: User = Depends(get_current_user)):
+
+    if user.username != username:
+        raise HTTPException(status_code=403, detail="You can only change your own password")
+
+    existing_user = search_user("username", username)
+    if not existing_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    #comprobar que la nueva contraseña sea distinta a la ya existente
+    if crypt.verify(body.new_password, user.password):
+        raise HTTPException(status_code=400, detail="The new password cannot be the same as the current password")
+
+
+    hashed_password = crypt.hash(body.new_password)
+    db_client.users.update_one({"username": username}, {"$set": {"password": hashed_password}})
+    
+    return {"message": "Password updated successfully"}

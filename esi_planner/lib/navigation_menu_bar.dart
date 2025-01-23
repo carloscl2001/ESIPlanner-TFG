@@ -56,7 +56,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
         indicatorColor: Colors.white,
         backgroundColor: Colors.grey[850],
         selectedIndex: currentPageIndex,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         destinations: const <Widget>[
           NavigationDestination(
             selectedIcon: Icon(Icons.home_outlined),
@@ -76,7 +76,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
           NavigationDestination(
             selectedIcon: Icon(Icons.person),
             icon: Icon(Icons.person, color: Colors.white),
-            label: 'Profile',
+            label: 'Perfil',
           ),
         ],
       ),
