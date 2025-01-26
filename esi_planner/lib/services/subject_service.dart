@@ -30,4 +30,32 @@ class SubjectService {
       };
     }
   }
+
+  Future<Map<String, dynamic>> getDegreeData({
+    required String degreeName}) async {
+      try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/degrees/$degreeName'),
+      );
+
+      if (response.statusCode == 200) {
+        // Asegúrate de que el cuerpo de la respuesta se decodifique en UTF-8
+        String responseBody = utf8.decode(response.bodyBytes);
+        
+        // Decodifica el JSON de la respuesta
+        return json.decode(responseBody);
+      } else {
+        return {
+          'success': false,
+          'message': 'Degree no encontrado'
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error al realizar la solicitud: $e'
+      };
+    }
+  }
+
 }

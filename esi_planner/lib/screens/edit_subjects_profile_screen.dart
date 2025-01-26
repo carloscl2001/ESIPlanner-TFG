@@ -6,10 +6,11 @@ import '../services/auth_service.dart';
 import '../auth_provider.dart';
 
 class EditSubjectsProfileScreen extends StatefulWidget {
-  const EditSubjectsProfileScreen({super.key});
+  const EditSubjectsProfileScreen({Key? key}) : super(key: key);
 
   @override
-  State<EditSubjectsProfileScreen> createState() => _EditSubjectsProfileScreenState();
+  State<EditSubjectsProfileScreen> createState() =>
+      _EditSubjectsProfileScreenState();
 }
 
 class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
@@ -20,6 +21,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
   bool isLoading = true;
   List<Map<String, dynamic>> subjects = [];
   String errorMessage = '';
+  Map<String, String?> selectedGroupTypes = {}; // Mapa para almacenar la selección de grupos por asignatura
 
   @override
   void initState() {
@@ -31,55 +33,59 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
   }
 
   Future<void> _loadSubjects() async {
-  final String? username = Provider.of<AuthProvider>(context, listen: false).username;
+    final String? username =
+        Provider.of<AuthProvider>(context, listen: false).username;
 
-  if (username != null) {
-    // 1. Obtener los datos del perfil del usuario
-    final profileData = await profileService.getProfileData(username: username);
-    final degree = profileData["degree"]?.toString().trim();  // Convertir y limpiar el grado
+    if (username != null) {
+      // 1. Obtener los datos del perfil del usuario
+      final profileData = await profileService.getProfileData(username: username);
+      final degree = profileData["degree"]; // Convertir y limpiar el grado
 
-    print("Degree desde el perfil: $degree"); // Imprimir degree
+      if (degree != null) {
+        // 2. Llamar a getDegreeData para obtener todos los grados disponibles
+        final degreeData = await subjectService.getDegreeData(degreeName: degree);
 
-   if (degree != null) {
-      // 2. Llamar a getDegrees para obtener todos los grados disponibles
-      final degrees = await authService.getDegrees();
 
-      print("Grados disponibles: $degrees"); // Imprimir los grados disponibles
 
-      // 3. Filtrar el grado que coincida con el grado del usuario
-      final matchingDegree = degrees.firstWhere(
-        (d) {
-          final degreeName = d["name"]?.toString().trim().toLowerCase() ?? '';
-          final userDegree = degree.trim().toLowerCase();
-          print("Comparando: $degreeName == $userDegree");  // Ver los valores comparados
-          return degreeName == userDegree;
-        },
-        orElse: () => {} // Retorna un mapa vacío en caso de no encontrar el grado
-      );
+        // Verificar si se obtuvieron las asignaturas
+        if (degreeData['subjects'] != null) {
+          List<Map<String, dynamic>> updatedSubjects = [];
 
-      if (matchingDegree.isNotEmpty) {
-        print("Grado encontrado: $matchingDegree");  // Imprimir el grado encontrado
-        // Continuar con el siguiente paso
+          // 3. Llamar a getSubjectData para obtener detalles adicionales por cada código de asignatura
+          for (var subject in degreeData['subjects']) {
+            final subjectData = await subjectService.getSubjectData(codeSubject: subject['code']);
+            if (subjectData != null) {
+              updatedSubjects.add({
+                'name': subjectData['name'] ?? subject['name'], // Si no hay nombre, usar el de la asignatura
+                'code': subject['code'],
+                'classes': subjectData['classes'] ?? [],  // Aquí guardamos las clases con su "type"
+              });
+            }
+          }
+
+          setState(() {
+            subjects = updatedSubjects;
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            errorMessage = 'No se encontraron asignaturas para este grado';
+            isLoading = false;
+          });
+        }
       } else {
         setState(() {
-          errorMessage = 'Grado no encontrado en la lista de grados';
+          errorMessage = 'No se encontró el grado en los datos del perfil';
           isLoading = false;
         });
       }
     } else {
       setState(() {
-        errorMessage = 'No se encontró el grado en los datos del perfil';
+        errorMessage = 'Usuario no autenticado';
         isLoading = false;
       });
     }
-  } else {
-    setState(() {
-      errorMessage = 'Usuario no autenticado';
-      isLoading = false;
-    });
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +126,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    subject['name'],
+                                    subject['name'] ?? 'No Name',
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -151,16 +157,23 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  // Mostrar los grupos con un Checkbox
-                                  ...subject['groups'].map<Widget>((group) {
-                                    return CheckboxListTile(
-                                      title: Text(group),
-                                      value: false, // Aquí deberías manejar el estado de selección
-                                      onChanged: (bool? value) {
-                                        // Actualiza el estado de selección
-                                      },
-                                    );
-                                  }).toList(),
+                                  // Mostrar los grupos con un DropdownButton
+                                  DropdownButton<String>(
+                                    value: selectedGroupTypes[subject['code']] ?? null,
+                                    hint: const Text('Selecciona un grupo'),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedGroupTypes[subject['code']] = newValue;
+                                      });
+                                    },
+                                    items: subject['classes']?.map<DropdownMenuItem<String>>((group) {
+                                      return DropdownMenuItem<String>(
+                                        value: group['type'],
+                                        child: Text('${group['type']}'), // Mostrar el "type" como grupo
+                                      );
+                                    }).toList() ?? [],
+                                  ),
+                                  const SizedBox(height: 10),
                                 ],
                               ),
                             ),
