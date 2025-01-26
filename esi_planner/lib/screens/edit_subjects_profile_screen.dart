@@ -57,14 +57,13 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
           // 3. Llamar a getSubjectData para obtener detalles adicionales por cada código de asignatura
           for (var subject in degreeData['subjects']) {
             final subjectData = await subjectService.getSubjectData(codeSubject: subject['code']);
-            if (subjectData != null) {
-              print(subject['name']);
-              updatedSubjects.add({
-                'name': subjectData['name'] ?? subject['name'], // Si no hay nombre, usar el de la asignatura
-                'code': subject['code'],
-                'classes': subjectData['classes'] ?? [],  // Aquí guardamos las clases con su "type"
-              });
-            }
+            
+            print(subject['name']);
+            updatedSubjects.add({
+              'name': subjectData['name'] ?? subject['name'], // Si no hay nombre, usar el de la asignatura
+              'code': subject['code'],
+              'classes': subjectData['classes'] ?? [],  // Aquí guardamos las clases con su "type"
+            });
           }
 
           setState(() {
