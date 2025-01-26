@@ -23,12 +23,13 @@ async def get_degree():
     
 
 #Obtener un degree su code
-@router.get("/{code}", response_model=Degree)
-async def get_all_degrees(code: str):
-    degree = search_degree("code", code)
+@router.get("/{name}", response_model=Degree)
+async def get_degree_by_name(name: str):
+    degree = search_degree("name", name)  # Buscamos por name en vez de code
     if degree:
         return degree
     raise HTTPException(status_code=404, detail="Degree not found")
+
 
 #Crear un grado
 @router.post("/", response_model=Degree, status_code=status.HTTP_201_CREATED)
@@ -106,7 +107,7 @@ async def delete_degree(code: str):
 
 #Función para buscar un degree por un campo específico
 def search_degree(field: str, key):
-    degree = db_client.degrees.find_one({field: key})
+    degree = db_client.degrees.find_one({field: key})  # Buscamos por el campo dado
     if degree:
-        return Degree(**degree_schema(degree))
+        return Degree(**degree_schema(degree))  # Retornamos el resultado usando el schema
     return None
