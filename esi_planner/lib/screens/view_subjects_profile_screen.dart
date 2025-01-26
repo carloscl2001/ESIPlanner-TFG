@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/profile_service.dart';
+import '../services/subject_service.dart';
 import '../auth_provider.dart';
 
 class ViewSubjectsProfileScreen extends StatefulWidget {
   const ViewSubjectsProfileScreen({super.key});
 
   @override
-   State<ViewSubjectsProfileScreen> createState() => _ViewSubjectsProfileScreenState();
+  State<ViewSubjectsProfileScreen> createState() => _ViewSubjectsProfileScreenState();
 }
 
 class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
   late ProfileService profileService;
+  late SubjectService subjectService;
 
   bool isLoading = true;
-  List<dynamic> userSubjects = []; // Cambiado para almacenar las asignaturas
+  List<dynamic> userSubjects = [];
   String errorMessage = '';
 
   @override
   void initState() {
     super.initState();
     profileService = ProfileService();
+    subjectService = SubjectService();
     _loadUserSubjects();
   }
 
@@ -32,18 +35,47 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
       final response = await profileService.getUserSubjects(username: username);
       print('Resultado de la API: $response');
 
-      setState(() {
-        if (response['success'] == true) {
-          userSubjects = response['data']; // Almacena las asignaturas
-        } else {
+      if (response['success'] == true) {
+        // Procesar las asignaturas obtenidas
+        List<dynamic> subjects = response['data'];
+
+        // Para cada asignatura, obtener su información detallada
+        List<dynamic> detailedSubjects = await Future.wait(subjects.map((subject) async {
+          final subjectDetails = await subjectService.getSubjectData(codeSubject: subject['code']);
+
+          // Depuración adicional para asegurar que los datos son correctos
+          print('Detalles obtenidos para la asignatura con código ${subject['code']}: $subjectDetails');
+
+          // Validar correctamente los datos obtenidos
+          if (subjectDetails.isNotEmpty && subjectDetails.containsKey('name')) {
+            return {
+              'code': subject['code'],
+              'name': subjectDetails['name'],
+              'types': subject['types'],
+            };
+          } else {
+            return {
+              'code': subject['code'],
+              'name': 'Información no disponible',
+              'types': subject['types'],
+            };
+          }
+        }).toList());
+
+        setState(() {
+          userSubjects = detailedSubjects;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
           errorMessage = response['message'] ?? 'No se pudo obtener la información de las asignaturas';
-        }
-        isLoading = false; // Detén el círculo de carga
-      });
+          isLoading = false;
+        });
+      }
     } else {
       setState(() {
         errorMessage = "El nombre de usuario no está disponible";
-        isLoading = false; // Detén el círculo de carga
+        isLoading = false;
       });
     }
   }
@@ -56,7 +88,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
         centerTitle: true,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator()) // Muestra el círculo de carga mientras se espera
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -69,7 +101,6 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                     ),
                     const SizedBox(height: 20),
                   ],
-                  // Muestra las asignaturas del usuario
                   if (userSubjects.isNotEmpty) ...[
                     Expanded(
                       child: ListView.builder(
@@ -83,6 +114,8 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text('Código: ${subject['code']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 10),
+                                  Text('Nombre: ${subject['name']}', style: const TextStyle(fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 10),
                                   const Text('Grupos:'),
                                   ...subject['types'].map<Widget>((type) {

@@ -1,8 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../auth_provider.dart';  // Importa el AuthProvider para acceder al token
+// Importa el AuthProvider para acceder al token
 
 class SubjectService {
   //Funcion que hace la solictud HTTP para obtner los datos de una asignatura
