@@ -128,8 +128,8 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                children: <Widget>[ 
-                  if (errorMessage.isNotEmpty) ...[ 
+                children: <Widget>[
+                  if (errorMessage.isNotEmpty) ...[
                     Text(
                       errorMessage,
                       style: const TextStyle(color: Colors.red, fontSize: 14),
@@ -188,7 +188,8 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                   ),
                                 ],),
                                 const SizedBox(height: 10),
-                                CheckboxListTile(
+                                // Usamos SwitchListTile en lugar de CheckboxListTile
+                                SwitchListTile(
                                   title: const Text(
                                     'Seleccionar asignatura',
                                     style: TextStyle(
@@ -198,23 +199,18 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                     ),
                                   ),
                                   value: selectedGroupTypes.containsKey(subject['code']),
-                                  onChanged: (bool? selected) {
+                                  onChanged: (bool selected) {
                                     setState(() {
-                                      if (selected == true) {
+                                      if (selected) {
                                         selectedGroupTypes[subject['code']] = {};
                                       } else {
                                         selectedGroupTypes.remove(subject['code']);
                                       }
                                     });
                                   },
-                                  controlAffinity: ListTileControlAffinity.leading,  // Coloca el checkbox a la izquierda
-                                  activeColor: Colors.indigo,  // Color del check cuando está seleccionado
-                                  checkColor: Colors.white,  // Color del check (el icono) cuando está seleccionado
-                                  //tileColor: Colors.white, // Color de fondo de la celda del checkbox
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),  // Bordes redondeados
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),  // Padding más bonito
+                                  activeColor: Colors.indigo,  // Color del Switch cuando está activado
+                                  inactiveThumbColor: Colors.grey,  // Color del "thumb" cuando está desactivado
+                                  inactiveTrackColor: Colors.grey.withOpacity(0.5),  // Color de la pista cuando está desactivado
                                 ),
                                 
                                 // Aquí mover el texto de getGroupLabel a la izquierda
