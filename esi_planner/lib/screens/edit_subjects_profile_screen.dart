@@ -224,7 +224,14 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                             runSpacing: 8,  // Espaciado vertical entre chips
                                             children: groupedTypes[letter]!.map<Widget>((type) {
                                               return ChoiceChip(
-                                                label: Text(type),
+                                                label: Text(
+                                                  type,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.indigo,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
                                                 selected: selectedGroupTypes[subject['code']]?.contains(type) ?? false,
                                                 onSelected: (bool selected) {
                                                   setState(() {
@@ -234,6 +241,12 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                                     }
                                                   });
                                                 },
+                                                selectedColor: Colors.indigo.shade100, // Color de fondo cuando está seleccionado
+                                                backgroundColor: Colors.white, // Color de fondo cuando no está seleccionado
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(12), // Bordes redondeados
+                                                  side: BorderSide(color: Colors.indigo.shade300), // Borde con color
+                                                ),
                                               );
                                             }).toList(),
                                           ),
