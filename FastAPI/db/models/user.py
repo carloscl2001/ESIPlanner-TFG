@@ -12,7 +12,7 @@ class User(BaseModel):
     email: Optional[str] = None
     username: Optional[str] = None
     password: Optional[str] = None
-    name: str
-    surname: str
-    degree: str
+    name: Optional[str] = None
+    surname: Optional[str] = None
+    degree: Optional[str] = None
     subjects: Optional[List[UserSubject]] = None  # Lista de asignaturas con tipos de clase

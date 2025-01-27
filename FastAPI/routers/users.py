@@ -118,6 +118,29 @@ async def update_user(username: str, updated_user: User):
 
     return User(**updated_user_data)
 
+#Actualiza las asignaturas de un usario
+@router.patch("/{username}/subjects", status_code=status.HTTP_200_OK)
+async def update_user_subjects(username: str, subjects_data: dict):
+    # Verificamos si el usuario existe
+    existing_user = db_client.users.find_one({"username": username})
+    
+    if not existing_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Extraemos subjects del diccionario recibido
+    subjects = subjects_data.get("subjects", [])
+
+    # Convertimos a la estructura esperada
+    subjects_dict = [UserSubject(**subject).model_dump() for subject in subjects]
+
+    # Actualizamos solo el campo "subjects" sin afectar los demás datos del usuario
+    db_client.users.update_one(
+        {"username": username}, 
+        {"$set": {"subjects": subjects_dict}}
+    )
+
+    return {"message": "Subjects updated successfully"}
+
 
 #Eliminar todos los usuarios
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
