@@ -128,8 +128,8 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                children: <Widget>[
-                  if (errorMessage.isNotEmpty) ...[
+                children: <Widget>[ 
+                  if (errorMessage.isNotEmpty) ...[ 
                     Text(
                       errorMessage,
                       style: const TextStyle(color: Colors.red, fontSize: 14),
@@ -164,9 +164,35 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
+                                // Nombre de la asignatura con el estilo solicitado
+                                Text(
+                                  subject['name'] ?? 'No Name',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.indigo,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                const SizedBox(height: 10),
+                                Row(children: [
+                                  const Icon(Icons.code, color: Colors.indigo),
+                                  const SizedBox(width: 8),
+                                   Text(
+                                  subject['code'],
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                ],),
+
+                                // Código de la asignatura
+
+                                const SizedBox(height: 10),
+
                                 CheckboxListTile(
-                                  title: Text(subject['name'] ?? 'No Name'),
-                                  subtitle: Text(subject['code']),
+                                  title: const Text('Seleccionar asignatura'),
                                   value: selectedGroupTypes.containsKey(subject['code']),
                                   onChanged: (bool? selected) {
                                     setState(() {
@@ -178,18 +204,24 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                     });
                                   },
                                 ),
+                                
+                                // Aquí mover el texto de getGroupLabel a la izquierda
                                 if (selectedGroupTypes.containsKey(subject['code'])) ...[
                                   const SizedBox(height: 10),
                                   Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: groupedTypes.keys.map<Widget>((letter) {
                                       return Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: <Widget>[
+                                          // Etiqueta del grupo a la izquierda
                                           Text(
                                             getGroupLabel(letter),
                                             style: const TextStyle(fontWeight: FontWeight.bold),
                                           ),
                                           Wrap(
+                                            spacing: 8,  // Espaciado horizontal entre chips
+                                            runSpacing: 8,  // Espaciado vertical entre chips
                                             children: groupedTypes[letter]!.map<Widget>((type) {
                                               return ChoiceChip(
                                                 label: Text(type),

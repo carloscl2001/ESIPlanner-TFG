@@ -127,7 +127,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                                       Text(
                                         '${subject['code']}',
                                         style: const TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 16,
                                           color: Colors.black87,
                                         ),
                                       ),
