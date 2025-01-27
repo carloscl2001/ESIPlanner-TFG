@@ -178,21 +178,25 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                 Row(children: [
                                   const Icon(Icons.code, color: Colors.indigo),
                                   const SizedBox(width: 8),
-                                   Text(
-                                  subject['code'],
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black87,
+                                  Text(
+                                    subject['code'],
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
-                                ),
                                 ],),
-
-                                // Código de la asignatura
-
                                 const SizedBox(height: 10),
-
                                 CheckboxListTile(
-                                  title: const Text('Seleccionar asignatura'),
+                                  title: const Text(
+                                    'Seleccionar asignatura',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black87,  // El mismo color que el nombre de la asignatura
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                   value: selectedGroupTypes.containsKey(subject['code']),
                                   onChanged: (bool? selected) {
                                     setState(() {
@@ -203,6 +207,14 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                       }
                                     });
                                   },
+                                  controlAffinity: ListTileControlAffinity.leading,  // Coloca el checkbox a la izquierda
+                                  activeColor: Colors.indigo,  // Color del check cuando está seleccionado
+                                  checkColor: Colors.white,  // Color del check (el icono) cuando está seleccionado
+                                  //tileColor: Colors.white, // Color de fondo de la celda del checkbox
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),  // Bordes redondeados
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),  // Padding más bonito
                                 ),
                                 
                                 // Aquí mover el texto de getGroupLabel a la izquierda
