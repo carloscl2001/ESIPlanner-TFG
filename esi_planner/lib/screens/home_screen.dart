@@ -220,41 +220,90 @@ Widget _buildEventList() {
 
             return Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(16.0), // Bordes más redondeados
               ),
               elevation: 4,
               margin: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Nombre de la asignatura dentro de la tarjeta
-                    Text(
-                      subjectName,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.indigo,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16.0), // Coincide con el radio de la tarjeta
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Nombre de la asignatura dentro de la tarjeta
+                      Text(
+                        subjectName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.indigo.shade700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Tipo de clase
-                    Text(
-                      'Tipo de clase: $classType',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 12),
+                      // Tipo de clase con icono
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.school, // Icono para el tipo de clase
+                            size: 16,
+                            color: Colors.indigo.shade700,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Tipo de clase: $classType',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.indigo.shade700,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Información del evento
-                    Text(
-                      'Hora: ${event['start_hour']} - ${event['end_hour']}',
-                    ),
-                    Text(
-                      'Ubicación: ${event['location']}',
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      // Hora del evento con icono
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.access_time, // Icono para la hora
+                            size: 16,
+                            color: Colors.indigo.shade700,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${event['start_hour']} - ${event['end_hour']}',
+                            style: TextStyle(
+                              color: Colors.indigo.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      // Ubicación del evento con icono
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on, // Icono para la ubicación
+                            size: 16,
+                            color: Colors.indigo.shade700,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${event['location']}',
+                            style: TextStyle(
+                              color: Colors.indigo.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -264,5 +313,4 @@ Widget _buildEventList() {
     },
   );
 }
-
 }
