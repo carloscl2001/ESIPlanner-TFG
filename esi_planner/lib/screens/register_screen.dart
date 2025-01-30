@@ -70,7 +70,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-
   bool isValidEmail(String email) {
     final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
     return emailRegex.hasMatch(email);
@@ -91,163 +90,268 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(height: 80),
+              const SizedBox(height: 40),
               Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Registrarse',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // Campo email
-                        TextFormField(
-                          controller: emailController,
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor ingrese un email';
-                            }else if (!isValidEmail(value)) {
-                              return 'Ingrese un email válido';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        // Campo nombre de usuario
-                        TextFormField(
-                          controller: usernameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Nombre de usuario',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor ingrese un nombre de usuario';
-                            }else if (value.length < 4) {
-                              return 'Debe tener al menos 4 caracteres';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        // Campo contraseña
-                        TextFormField(
-                          controller: passwordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            labelText: 'Contraseña',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor ingrese una contraseña';
-                            }else if (value.length < 8) {
-                              return 'Debe tener al menos 8 caracteres';
-                            }else if (!isValidPassword(value)) {
-                              return 'Debe contener letras y números';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        // Campo nombre
-                        TextFormField(
-                          controller: nameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Nombre',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor ingrese su nombre';
-                            }else if (value.length < 4) {
-                              return 'Debe tener al menos 4 caracteres';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        // Campo apellido
-                        TextFormField(
-                          controller: surnameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Apellido',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor ingrese su apellido';
-                            }else if (value.length < 4) {
-                              return 'Debe tener al menos 4 caracteres';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        // DropdownButtonFormField para seleccionar el grado
-                        if (degrees.isNotEmpty) ...[
-                          DropdownButtonFormField<String>(
-                            value: selectedDegree,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedDegree = newValue;
-                              });
-                            },
-                            decoration: const InputDecoration(
-                              labelText: 'Grado',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                              ),
-                            ),
-                            items: degrees
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
-                        ] else ...[
-                          const CircularProgressIndicator(), // Cargando si los grados están siendo obtenidos
-                        ],
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: register,
-                          child: const Text('Registrarse'),
-                        ),
-                        if (errorMessage.isNotEmpty) ...[
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0), // Bordes más redondeados
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
                           const SizedBox(height: 20),
                           Text(
-                            errorMessage,
-                            style: const TextStyle(color: Colors.red, fontSize: 14),
-                            textAlign: TextAlign.center,
-                            softWrap: true,
+                            'Registrarse',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.indigo.shade900,
+                            ),
                           ),
+                          const SizedBox(height: 24),
+                          // Campo email
+                          TextFormField(
+                            controller: emailController,
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              labelStyle: TextStyle(
+                                color: Colors.indigo.shade700,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
+                                borderSide: BorderSide(color: Colors.indigo.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.email, // Icono para el campo de email
+                                color: Colors.indigo.shade700,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor ingrese un email';
+                              } else if (!isValidEmail(value)) {
+                                return 'Ingrese un email válido';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          // Campo nombre de usuario
+                          TextFormField(
+                            controller: usernameController,
+                            decoration: InputDecoration(
+                              labelText: 'Nombre de usuario',
+                              labelStyle: TextStyle(
+                                color: Colors.indigo.shade700,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.person, // Icono para el campo de nombre de usuario
+                                color: Colors.indigo.shade700,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor ingrese un nombre de usuario';
+                              } else if (value.length < 4) {
+                                return 'Debe tener al menos 4 caracteres';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          // Campo contraseña
+                          TextFormField(
+                            controller: passwordController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              labelText: 'Contraseña',
+                              labelStyle: TextStyle(
+                                color: Colors.indigo.shade700,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.lock, // Icono para el campo de contraseña
+                                color: Colors.indigo.shade700,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor ingrese una contraseña';
+                              } else if (value.length < 8) {
+                                return 'Debe tener al menos 8 caracteres';
+                              } else if (!isValidPassword(value)) {
+                                return 'Debe contener letras y números';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          // Campo nombre
+                          TextFormField(
+                            controller: nameController,
+                            decoration: InputDecoration(
+                              labelText: 'Nombre',
+                              labelStyle: TextStyle(
+                                color: Colors.indigo.shade700,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.badge, // Icono para el campo de nombre
+                                color: Colors.indigo.shade700,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor ingrese su nombre';
+                              } else if (value.length < 4) {
+                                return 'Debe tener al menos 4 caracteres';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          // Campo apellido
+                          TextFormField(
+                            controller: surnameController,
+                            decoration: InputDecoration(
+                              labelText: 'Apellido',
+                              labelStyle: TextStyle(
+                                color: Colors.indigo.shade700,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.family_restroom, // Icono para el campo de apellido
+                                color: Colors.indigo.shade700,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor ingrese su apellido';
+                              } else if (value.length < 4) {
+                                return 'Debe tener al menos 4 caracteres';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          // DropdownButtonFormField para seleccionar el grado
+                          if (degrees.isNotEmpty) ...[
+                            DropdownButtonFormField<String>(
+                              value: selectedDegree,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedDegree = newValue;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Grado',
+                                labelStyle: TextStyle(
+                                  color: Colors.indigo.shade700,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: BorderSide(color: Colors.indigo.shade300),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.school, // Icono para el campo de grado
+                                  color: Colors.indigo.shade700,
+                                ),
+                              ),
+                              items: degrees
+                                  .map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      color: Colors.indigo.shade900,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ] else ...[
+                            const CircularProgressIndicator(), // Cargando si los grados están siendo obtenidos
+                          ],
+                          const SizedBox(height: 24),
+                          ElevatedButton(
+                            onPressed: register,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.indigo.shade700, // Color de fondo del botón
+                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
+                              ),
+                            ),
+                            child: const Text(
+                              'Registrarse',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          if (errorMessage.isNotEmpty) ...[
+                            const SizedBox(height: 16),
+                            Text(
+                              errorMessage,
+                              style: const TextStyle(color: Colors.red, fontSize: 14),
+                              textAlign: TextAlign.center,
+                              softWrap: true,
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -258,7 +362,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color.fromRGBO(0, 89, 255, 1.0), // Establece el color del texto a azul
+                  foregroundColor: Colors.indigo.shade700, // Color del texto
                 ),
                 child: const Text(
                   "¿Ya tienes una cuenta? Inicia sesión aquí",
@@ -267,7 +371,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

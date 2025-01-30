@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if (result['success']) {
-      final String? token = result['data']['access_token'];  // Accediendo al token correctamente
+      final String? token = result['data']['access_token']; // Accediendo al token correctamente
       if (token != null) {
         context.read<AuthProvider>().login(username, token);
         Navigator.pushReplacementNamed(context, '/home');
@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } else {
       setState(() {
-        errorMessage = result['message'];  // Mostrar el mensaje de error si el login falla
+        errorMessage = result['message']; // Mostrar el mensaje de error si el login falla
       });
     }
   }
@@ -57,76 +57,141 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(  // Centra el Column en el espacio disponible
+      body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(height: 80),
+              const SizedBox(height: 40),
               Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Iniciar Sesión',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          controller: usernameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Usuario',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor, ingrese su usuario';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          controller: passwordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            labelText: 'Contraseña',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor, ingrese su contraseña';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: isLoading ? null : login,  // Deshabilita el botón si está cargando
-                          child: const Text('Iniciar sesión'),
-                        ),
-                        if (errorMessage.isNotEmpty) ...[
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0), // Bordes más redondeados
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
                           const SizedBox(height: 20),
                           Text(
-                            errorMessage,
-                            style: const TextStyle(color: Colors.red),
+                            'Iniciar Sesión',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.indigo.shade900,
+                            ),
                           ),
+                          const SizedBox(height: 24),
+                          // Campo de usuario
+                          TextFormField(
+                            controller: usernameController,
+                            decoration: InputDecoration(
+                              labelText: 'Usuario',
+                              labelStyle: TextStyle(
+                                color: Colors.indigo.shade700,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
+                                borderSide: BorderSide(color: Colors.indigo.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.person, // Icono para el campo de usuario
+                                color: Colors.indigo.shade700,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor, ingrese su usuario';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          // Campo de contraseña
+                          TextFormField(
+                            controller: passwordController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              labelText: 'Contraseña',
+                              labelStyle: TextStyle(
+                                color: Colors.indigo.shade700,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.lock, // Icono para el campo de contraseña
+                                color: Colors.indigo.shade700,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor, ingrese su contraseña';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                          // Botón de inicio de sesión
+                          ElevatedButton(
+                            onPressed: isLoading ? null : login, // Deshabilita el botón si está cargando
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.indigo.shade700, // Color de fondo del botón
+                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
+                              ),
+                            ),
+                            child: isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Iniciar sesión',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          ),
+                          if (errorMessage.isNotEmpty) ...[
+                            const SizedBox(height: 16),
+                            Text(
+                              errorMessage,
+                              style: const TextStyle(color: Colors.red, fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -137,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.pushReplacementNamed(context, '/register');
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color.fromRGBO(0, 89, 255, 1.0), // Color del texto en azul
+                  foregroundColor: Colors.indigo.shade700, // Color del texto
                 ),
                 child: const Text(
                   "¿No tienes una cuenta? Regístrate aquí",
@@ -153,5 +218,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
 }
