@@ -126,9 +126,13 @@ class HomeScreenState extends State<HomeScreen> {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: const Text('Tus clases', style: TextStyle(color: Colors.white)),
-      centerTitle: true,
-    ),
+        title: const Text(
+          'Tus clases esta semana',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.indigo, // Color de la barra de navegación
+      ),
     body: isLoading
         ? const Center(child: CircularProgressIndicator())
         : Padding(

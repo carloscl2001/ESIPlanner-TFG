@@ -53,8 +53,12 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tu perfil', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Tu perfil',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.indigo, // Color de la barra de navegación
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -79,29 +83,6 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Colors.indigo.shade700, Colors.indigo.shade900], // Degradado azul
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(20.0),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: const Text(
-                              'Tu perfil',
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
                           Padding(
                             padding: const EdgeInsets.all(20.0),
                             child: Column(

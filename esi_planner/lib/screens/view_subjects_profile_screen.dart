@@ -76,8 +76,10 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tus asignaturas', style: TextStyle(color: Colors.white)),
+        title: const Text('Tus asignaturas', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+        ),
         centerTitle: true,
+        backgroundColor: Colors.indigo, // Color de la barra de navegación
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
