@@ -122,120 +122,102 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Asignaturas disponibles', style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: <Widget>[
-                  if (errorMessage.isNotEmpty) ...[
-                    Text(
-                      errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: subjects.length,
-                      itemBuilder: (context, index) {
-                        final subject = subjects[index];
+ @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Asignaturas disponibles', style: TextStyle(color: Colors.white)),
+      centerTitle: true,
+    ),
+    body: isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                if (errorMessage.isNotEmpty) ...[
+                  Text(
+                    errorMessage,
+                    style: const TextStyle(color: Colors.red, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                ],
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: subjects.length,
+                    itemBuilder: (context, index) {
+                      final subject = subjects[index];
 
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          elevation: 4,
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          // Mostrar solo las clases filtradas
+                          ...subject['classes'].map<Widget>((classData) {
+                            return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(
-                                  subject['name'] ?? 'No Name',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.indigo,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.code, color: Colors.indigo),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      subject['code'],
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w400,
+                                // Card para cada evento
+                                ...classData['events'].map<Widget>((event) {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                    ),
+                                    elevation: 4,
+                                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // Nombre de la asignatura dentro de la tarjeta
+                                          Text(
+                                            subject['name'] ?? 'No Name',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                              color: Colors.indigo,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          // Tipo de clase
+                                          Text(
+                                            'Tipo de clase: ${classData['type']}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          // Información del evento
+                                          Text(
+                                            'Fecha: ${event['date']}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Hora: ${event['start_hour']} - ${event['end_hour']}',
+                                          ),
+                                          Text(
+                                            'Ubicación: ${event['location']}',
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                // Mostrar solo las clases filtradas
-                                ...subject['classes'].map<Widget>((classData) {
-                                  return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        'Tipo de clase: ${classData['type']}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      // Mostrar los eventos de esta clase
-                                      ...classData['events'].map<Widget>((event) {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(bottom: 8.0),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Fecha: ${event['date']}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              Text(
-                                                'Hora: ${event['start_hour']} - ${event['end_hour']}',
-                                              ),
-                                              Text(
-                                                'Lugar: ${event['location']}',
-                                              ),
-                                              const Divider(), // Separador entre eventos
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ],
                                   );
                                 }).toList(),
                               ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                            );
+                          }).toList(),
+                        ],
+                      );
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-    );
-  }
+          ),
+  );
+}
+
 }
