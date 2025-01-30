@@ -20,23 +20,32 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
   void logout() {
     // Actualiza el estado de autenticación en el AuthProvider
     context.read<AuthProvider>().logout();
-    
+
     // Redirige al LoginScreen
     Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override
   Widget build(BuildContext context) {
-
     final username = Provider.of<AuthProvider>(context).username ?? 'Usuario';
-
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          username,
+          'Hola, $username',
           style: const TextStyle(
             color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.indigo.shade700, Colors.indigo.shade900], // Degradado azul
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
         ),
         actions: [
@@ -44,48 +53,63 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             icon: const Icon(Icons.exit_to_app),
             onPressed: logout, // Llamada al método de logout
             color: Colors.white,
+            tooltip: 'Cerrar sesión',
           ),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        indicatorColor: Colors.white,
-        backgroundColor: Colors.grey[850],
-        selectedIndex: currentPageIndex,
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-        destinations: const <Widget>[
-          NavigationDestination(
-            selectedIcon: Icon(Icons.home_outlined),
-            icon: Icon(Icons.home_outlined, color: Colors.white),
-            label: 'Home', 
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.calendar_month_outlined),
-            icon: Icon(Icons.calendar_month_outlined, color: Colors.white),
-            label: 'Horario',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.calendar_view_week_rounded),
-            icon: Icon(Icons.calendar_view_week_rounded, color: Colors.white),
-            label: 'Agenda',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.person),
-            icon: Icon(Icons.person, color: Colors.white),
-            label: 'Perfil',
-          ),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: NavigationBar(
+          onDestinationSelected: (int index) {
+            setState(() {
+              currentPageIndex = index;
+            });
+          },
+          indicatorColor: Colors.indigo.shade100, // Color del indicador seleccionado
+          backgroundColor: Colors.white, // Fondo de la barra de navegación
+          selectedIndex: currentPageIndex,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow, // Mostrar siempre las etiquetas
+          destinations: const <Widget>[
+            NavigationDestination(
+              selectedIcon: Icon(Icons.home, color: Colors.indigo),
+              icon: Icon(Icons.home_outlined, color: Colors.grey),
+              label: 'Inicio',
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.calendar_today, color: Colors.indigo),
+              icon: Icon(Icons.calendar_today_outlined, color: Colors.grey),
+              label: 'Horario',
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.calendar_view_week, color: Colors.indigo),
+              icon: Icon(Icons.calendar_view_week_outlined, color: Colors.grey),
+              label: 'Agenda',
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.person, color: Colors.indigo),
+              icon: Icon(Icons.person_outline, color: Colors.grey),
+              label: 'Perfil',
+            ),
+          ],
+        ),
       ),
-      body: <Widget>[
-        const HomeScreen(),
-        const TimetableScreen(),
-        const AgendaScreen(),
-        const ProfileScreen(),
-      ][currentPageIndex],
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300), // Duración de la animación
+        child: <Widget>[
+          const HomeScreen(),
+          const TimetableScreen(),
+          const AgendaScreen(),
+          const ProfileScreen(),
+        ][currentPageIndex],
+      ),
     );
   }
 }
