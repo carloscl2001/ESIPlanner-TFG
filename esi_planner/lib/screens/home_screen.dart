@@ -122,7 +122,7 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
- @override
+@override
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
@@ -149,16 +149,62 @@ Widget build(BuildContext context) {
                     itemBuilder: (context, index) {
                       final subject = subjects[index];
 
+                      // Agrupar los eventos por fecha
+                      Map<String, List<Map<String, dynamic>>> groupedByDate = {};
+
+                      for (var classData in subject['classes']) {
+                        for (var event in classData['events']) {
+                          final eventDate = event['date'];
+
+                          if (!groupedByDate.containsKey(eventDate)) {
+                            groupedByDate[eventDate] = [];
+                          }
+
+                          // Agregar el evento a la fecha correspondiente
+                          groupedByDate[eventDate]!.add({
+                            'classType': classData['type'], // Guardar el tipo de clase directamente
+                            'event': event, // Guardar el evento completo
+                          });
+                        }
+                      }
+
+                      // Ordenar los eventos por hora dentro de cada fecha
+                      groupedByDate.forEach((date, events) {
+                        events.sort((a, b) {
+                          DateTime timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
+                          DateTime timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
+                          return timeA.compareTo(timeB);
+                        });
+                      });
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          // Mostrar solo las clases filtradas
-                          ...subject['classes'].map<Widget>((classData) {
+                          // Mostrar las clases agrupadas por fecha
+                          ...groupedByDate.entries.map<Widget>((entry) {
+                            final date = entry.key;
+                            final events = entry.value;
+
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                // Card para cada evento
-                                ...classData['events'].map<Widget>((event) {
+                                // Título con la fecha
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(
+                                    'Fecha: $date',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.indigo,
+                                    ),
+                                  ),
+                                ),
+                                // Cards para cada evento
+                                ...events.map<Widget>((eventData) {
+                                  final event = eventData['event'];
+                                  final classType = eventData['classType'];
+
                                   return Card(
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12.0),
@@ -182,19 +228,13 @@ Widget build(BuildContext context) {
                                           const SizedBox(height: 8),
                                           // Tipo de clase
                                           Text(
-                                            'Tipo de clase: ${classData['type']}',
+                                            'Tipo de clase: ${classType ?? 'No disponible'}',
                                             style: const TextStyle(
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                           const SizedBox(height: 8),
                                           // Información del evento
-                                          Text(
-                                            'Fecha: ${event['date']}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
                                           Text(
                                             'Hora: ${event['start_hour']} - ${event['end_hour']}',
                                           ),
