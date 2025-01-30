@@ -101,85 +101,117 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                           final subject = userSubjects[index];
                           return Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0),
+                              borderRadius: BorderRadius.circular(20.0), // Bordes más redondeados
                             ),
                             elevation: 4,
                             margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    subject['name'],
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.indigo,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.code, color: Colors.indigo),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '${subject['code']}',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black87,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    // Nombre de la asignatura
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.book, // Icono para el nombre de la asignatura
+                                          size: 24,
+                                          color: Colors.indigo.shade700,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    'Tus grupos:',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    children: subject['types']
-                                        .map<Widget>(
-                                          (type) => Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 6,
-                                              horizontal: 12,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.indigo.shade100,
-                                              borderRadius: BorderRadius.circular(12),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                const Icon(
-                                                  Icons.group,
-                                                  color: Colors.indigo,
-                                                  size: 16,
-                                                ),
-                                                const SizedBox(width: 6),
-                                                Text(
-                                                  type,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.indigo,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
+                                        const SizedBox(width: 8),
+                                        Flexible( // Permite que el texto fluya a la siguiente línea
+                                          child: Text(
+                                            subject['name'],
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.indigo.shade900,
                                             ),
                                           ),
-                                        )
-                                        .toList(),
-                                  ),
-                                ],
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    // Código de la asignatura
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.code, // Icono para el código
+                                          size: 20,
+                                          color: Colors.indigo.shade700,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Flexible( // Permite que el texto fluya a la siguiente línea
+                                          child: Text(
+                                            'Código: ${subject['code']}',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.indigo.shade700,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    // Tus grupos
+                                    Text(
+                                      'Tus grupos:',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Colors.indigo.shade900,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    // Lista de tipos de grupos
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      children: subject['types']
+                                          .map<Widget>(
+                                            (type) => Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                vertical: 6,
+                                                horizontal: 12,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.indigo.shade100,
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    Icons.group, // Icono para el tipo de grupo
+                                                    color: Colors.indigo.shade700,
+                                                    size: 16,
+                                                  ),
+                                                  const SizedBox(width: 6),
+                                                  Text(
+                                                    type,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.indigo.shade700,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -187,7 +219,13 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                       ),
                     ),
                   ] else ...[
-                    const Text('No hay asignaturas disponibles'),
+                    Text(
+                      'No hay asignaturas disponibles',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.indigo.shade700,
+                      ),
+                    ),
                   ]
                 ],
               ),

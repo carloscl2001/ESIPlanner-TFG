@@ -14,7 +14,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
   late ProfileService profileService;
 
   bool isLoading = true;
-  Map<String, dynamic> userProfile = {};  
+  Map<String, dynamic> userProfile = {};
   String errorMessage = '';
 
   @override
@@ -36,15 +36,15 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         if (profileData.isEmpty) {
           errorMessage = 'No se pudo obtener la información del perfil';
         } else {
-          userProfile = profileData ?? {};  
+          userProfile = profileData ?? {};
           print('DATOS DE USERPROFILE: $userProfile');
         }
-        isLoading = false;  
+        isLoading = false;
       });
     } else {
       setState(() {
         errorMessage = "El nombre de usuario no está disponible";
-        isLoading = false;  
+        isLoading = false;
       });
     }
   }
@@ -57,7 +57,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         centerTitle: true,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())  
+          ? const Center(child: CircularProgressIndicator())
           : Center(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -65,26 +65,33 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                   child: Card(
                     elevation: 5,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(20.0), // Bordes más redondeados
                     ),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(227, 233, 255, 1),
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: Colors.black, width: 2),
+                        gradient: LinearGradient(
+                          colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           Container(
-                            decoration: const BoxDecoration(
-                              color: Color.fromRGBO(0, 89, 255, 1.0), // Fondo azul del encabezado
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(11.0),
-                                topRight: Radius.circular(11.0),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.indigo.shade700, Colors.indigo.shade900], // Degradado azul
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(20.0),
+                                topRight: Radius.circular(20.0),
                               ),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            padding: const EdgeInsets.symmetric(vertical: 20),
                             child: const Text(
                               'Tu perfil',
                               style: TextStyle(
@@ -108,20 +115,25 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                                   ),
                                   const SizedBox(height: 20),
                                 ],
-                                // Campos de perfil
+                                // Campos de perfil con iconos
                                 ProfileField(
+                                  icon: Icons.person,
                                   label: userProfile['username'] ?? 'Cargando...',
                                 ),
                                 ProfileField(
+                                  icon: Icons.email,
                                   label: userProfile['email'] ?? 'Cargando...',
                                 ),
                                 ProfileField(
+                                  icon: Icons.badge,
                                   label: userProfile['name'] ?? 'Cargando...',
                                 ),
                                 ProfileField(
+                                  icon: Icons.family_restroom,
                                   label: userProfile['surname'] ?? 'Cargando...',
                                 ),
                                 ProfileField(
+                                  icon: Icons.school,
                                   label: userProfile['degree'] ?? 'Cargando...',
                                 ),
                               ],
@@ -139,28 +151,44 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
 }
 
 class ProfileField extends StatelessWidget {
+  final IconData icon;
   final String label;
 
-  const ProfileField({required this.label, super.key});
+  const ProfileField({required this.icon, required this.label, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
-        //border: Border.all(color: Colors.black, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-        textAlign: TextAlign.center,
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 24,
+            color: Colors.indigo.shade700,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.indigo.shade900,
+            ),
+          ),
+        ],
       ),
     );
   }

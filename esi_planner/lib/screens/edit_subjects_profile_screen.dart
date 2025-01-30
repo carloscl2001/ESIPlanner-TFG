@@ -155,116 +155,151 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
 
                         return Card(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
+                            borderRadius: BorderRadius.circular(20.0), // Bordes más redondeados
                           ),
                           elevation: 4,
                           margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                // Nombre de la asignatura con el estilo solicitado
-                                Text(
-                                  subject['name'] ?? 'No Name',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.indigo,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                const SizedBox(height: 10),
-                                Row(children: [
-                                  const Icon(Icons.code, color: Colors.indigo),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    subject['code'],
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],),
-                                const SizedBox(height: 10),
-                                // Usamos SwitchListTile en lugar de CheckboxListTile
-                                SwitchListTile(
-                                  title: const Text(
-                                    'Seleccionar asignatura',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black87,  // El mismo color que el nombre de la asignatura
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  value: selectedGroupTypes.containsKey(subject['code']),
-                                  onChanged: (bool selected) {
-                                    setState(() {
-                                      if (selected) {
-                                        selectedGroupTypes[subject['code']] = {};
-                                      } else {
-                                        selectedGroupTypes.remove(subject['code']);
-                                      }
-                                    });
-                                  },
-                                  activeColor: Colors.indigo,  // Color del Switch cuando está activado
-                                  inactiveThumbColor: Colors.grey,  // Color del "thumb" cuando está desactivado
-                                  inactiveTrackColor: Colors.grey.withOpacity(0.5),  // Color de la pista cuando está desactivado
-                                ),
-                                
-                                // Aquí mover el texto de getGroupLabel a la izquierda
-                                if (selectedGroupTypes.containsKey(subject['code'])) ...[
-                                  const SizedBox(height: 10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: groupedTypes.keys.map<Widget>((letter) {
-                                      return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // Etiqueta del grupo a la izquierda
-                                          Text(
-                                            getGroupLabel(letter),
-                                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  // Nombre de la asignatura con icono
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.book, // Icono para el nombre de la asignatura
+                                        size: 24,
+                                        color: Colors.indigo.shade700,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Flexible( // Permite que el texto fluya a la siguiente línea
+                                        child: Text(
+                                          subject['name'] ?? 'No Name',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.indigo.shade900,
                                           ),
-                                          Wrap(
-                                            spacing: 8,  // Espaciado horizontal entre chips
-                                            runSpacing: 8,  // Espaciado vertical entre chips
-                                            children: groupedTypes[letter]!.map<Widget>((type) {
-                                              return ChoiceChip(
-                                                label: Text(
-                                                  type,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.indigo,
-                                                    fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  // Código de la asignatura con icono
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.code, // Icono para el código
+                                        size: 20,
+                                        color: Colors.indigo.shade700,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Flexible( // Permite que el texto fluya a la siguiente línea
+                                        child: Text(
+                                          subject['code'],
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.indigo.shade700,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  // Switch para seleccionar la asignatura
+                                  SwitchListTile(
+                                    title: const Text(
+                                      'Seleccionar asignatura',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black87,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    value: selectedGroupTypes.containsKey(subject['code']),
+                                    onChanged: (bool selected) {
+                                      setState(() {
+                                        if (selected) {
+                                          selectedGroupTypes[subject['code']] = {};
+                                        } else {
+                                          selectedGroupTypes.remove(subject['code']);
+                                        }
+                                      });
+                                    },
+                                    activeColor: Colors.indigo, // Color del Switch cuando está activado
+                                    inactiveThumbColor: Colors.grey, // Color del "thumb" cuando está desactivado
+                                    inactiveTrackColor: Colors.grey.withOpacity(0.5), // Color de la pista cuando está desactivado
+                                  ),
+                                  // Grupos seleccionables
+                                  if (selectedGroupTypes.containsKey(subject['code'])) ...[
+                                    const SizedBox(height: 10),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: groupedTypes.keys.map<Widget>((letter) {
+                                        return Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            // Etiqueta del grupo
+                                            Text(
+                                              getGroupLabel(letter),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: Colors.indigo.shade900,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            // Chips para seleccionar los grupos
+                                            Wrap(
+                                              spacing: 8, // Espaciado horizontal entre chips
+                                              runSpacing: 8, // Espaciado vertical entre chips
+                                              children: groupedTypes[letter]!.map<Widget>((type) {
+                                                return ChoiceChip(
+                                                  label: Text(
+                                                    type,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.indigo,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
                                                   ),
-                                                ),
-                                                selected: selectedGroupTypes[subject['code']]?.contains(type) ?? false,
-                                                onSelected: (bool selected) {
-                                                  setState(() {
-                                                    if (selected) {
-                                                      selectedGroupTypes[subject['code']]!.removeWhere((t) => t.startsWith(letter));
-                                                      selectedGroupTypes[subject['code']]!.add(type);
-                                                    }
-                                                  });
-                                                },
-                                                selectedColor: Colors.indigo.shade100, // Color de fondo cuando está seleccionado
-                                                backgroundColor: Colors.white, // Color de fondo cuando no está seleccionado
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(12), // Bordes redondeados
-                                                  side: BorderSide(color: Colors.indigo.shade300), // Borde con color
-                                                ),
-                                              );
-                                            }).toList(),
-                                          ),
-                                          const SizedBox(height: 10),
-                                        ],
-                                      );
-                                    }).toList(),
-                                  ),
-                                ]
-                              ],
+                                                  selected: selectedGroupTypes[subject['code']]?.contains(type) ?? false,
+                                                  onSelected: (bool selected) {
+                                                    setState(() {
+                                                      if (selected) {
+                                                        selectedGroupTypes[subject['code']]!.removeWhere((t) => t.startsWith(letter));
+                                                        selectedGroupTypes[subject['code']]!.add(type);
+                                                      }
+                                                    });
+                                                  },
+                                                  selectedColor: Colors.indigo.shade100, // Color de fondo cuando está seleccionado
+                                                  backgroundColor: Colors.white, // Color de fondo cuando no está seleccionado
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(12), // Bordes redondeados
+                                                    side: BorderSide(color: Colors.indigo.shade300), // Borde con color
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ),
+                                            const SizedBox(height: 10),
+                                          ],
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ]
+                                ],
+                              ),
                             ),
                           ),
                         );
