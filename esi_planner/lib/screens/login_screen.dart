@@ -100,17 +100,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             controller: usernameController,
                             decoration: InputDecoration(
                               labelText: 'Usuario',
-                              labelStyle: TextStyle(
-                                color: Colors.indigo.shade700,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
-                                borderSide: BorderSide(color: Colors.indigo.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
-                              ),
                               prefixIcon: Icon(
                                 Icons.person, // Icono para el campo de usuario
                                 color: Colors.indigo.shade700,

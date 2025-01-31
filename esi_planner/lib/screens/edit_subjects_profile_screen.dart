@@ -6,7 +6,7 @@ import '../services/auth_service.dart';
 import '../auth_provider.dart';
 
 class EditSubjectsProfileScreen extends StatefulWidget {
-  const EditSubjectsProfileScreen({Key? key}) : super(key: key);
+  const EditSubjectsProfileScreen({super.key});
 
   @override
   State<EditSubjectsProfileScreen> createState() =>

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'auth_provider.dart';
+import 'theme_provider.dart'; // Importa el ThemeProvider
 import 'navigation_menu_bar.dart';
 
 // Screens
@@ -14,25 +15,44 @@ import 'screens/view_subjects_profile_screen.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()), // Añade el ThemeProvider
+      ],
       child: const MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Cargar el tema guardado al iniciar la aplicación
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    themeProvider.loadTheme();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true, 
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.grey[850],
-          iconTheme: const IconThemeData(color: Colors.white),
-          actionsIconTheme: const IconThemeData(color: Colors.white),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.light().copyWith(
+        // Tema claro
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.indigo,
+          brightness: Brightness.light,
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -40,49 +60,148 @@ class MyApp extends StatelessWidget {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
           ),
-          labelStyle: const TextStyle(color: Color.fromRGBO(0, 89, 255, 1.0)),
+          labelStyle: const TextStyle(color: Colors.indigo),
           hintStyle: TextStyle(color: Colors.grey[400]),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Color.fromRGBO(0, 89, 255, 1.0), width: 1.5),
+            borderSide: const BorderSide(color: Colors.indigo, width: 1.5),
             borderRadius: BorderRadius.circular(12.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Color.fromRGBO(0, 89, 255, 1.0), width: 3),
+            borderSide: const BorderSide(color: Colors.indigo, width: 2.0),
             borderRadius: BorderRadius.circular(12.0),
           ),
         ),
         navigationBarTheme: NavigationBarThemeData(
-          labelTextStyle: WidgetStateProperty.all(
-            const TextStyle(color: Colors.white),
+          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+            (states) {
+              if (states.contains(WidgetState.selected)) {
+                return const TextStyle(
+                  color: Colors.indigo,
+                  fontWeight: FontWeight.bold,
+                );
+              }
+              return const TextStyle(
+                color: Colors.grey,
+              );
+            },
           ),
+          indicatorColor: Colors.indigo.shade100,
+          backgroundColor: Colors.white,
         ),
         cardTheme: CardTheme(
-          color: const Color.fromRGBO(227, 233, 255, 1),
-          elevation: 8,
+          color: Colors.white,
+          elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Color.fromRGBO(0, 89, 255, 1.0), width: 2),
+            side: const BorderSide(color: Colors.indigo, width: 1.5),
           ),
-        ),
-        buttonTheme: const ButtonThemeData(
-          buttonColor: Color.fromRGBO(0, 89, 255, 1.0),
-          textTheme: ButtonTextTheme.primary,
+          margin: const EdgeInsets.all(8),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromRGBO(0, 89, 255, 1.0),
+            backgroundColor: Colors.indigo,
             foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 50),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
             textStyle: const TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          ),
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.indigo.shade700,
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          iconTheme: const IconThemeData(
+            color: Colors.white,
           ),
         ),
       ),
+      darkTheme: ThemeData.dark().copyWith(
+        // Tema oscuro
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.indigo,
+          brightness: Brightness.dark,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.grey[800],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          labelStyle: const TextStyle(color: Colors.indigo),
+          hintStyle: TextStyle(color: Colors.grey[400]),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.indigo, width: 1.5),
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.indigo, width: 2.0),
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+            (states) {
+              if (states.contains(WidgetState.selected)) {
+                return const TextStyle(
+                  color: Colors.indigo,
+                  fontWeight: FontWeight.bold,
+                );
+              }
+              return const TextStyle(
+                color: Colors.grey,
+              );
+            },
+          ),
+          indicatorColor: Colors.indigo.shade100,
+          backgroundColor: Colors.grey[900],
+        ),
+        cardTheme: CardTheme(
+          color: Colors.grey[800],
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Colors.indigo, width: 1.5),
+          ),
+          margin: const EdgeInsets.all(8),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.indigo,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          ),
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.grey[900],
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
+        ),
+      ),
+      themeMode: themeProvider.themeMode, // Usa el tema actual del ThemeProvider
       initialRoute: '/',
       routes: {
         '/': (context) => Consumer<AuthProvider>(

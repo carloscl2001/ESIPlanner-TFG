@@ -5,7 +5,7 @@ import '../services/subject_service.dart';
 import '../auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => HomeScreenState();
@@ -74,13 +74,13 @@ class HomeScreenState extends State<HomeScreen> {
               .toList();
 
           // Ordenar los eventos de cada clase por fecha
-          filteredClasses.forEach((classData) {
+          for (var classData in filteredClasses) {
             classData['events'].sort((a, b) {
               DateTime dateA = DateTime.parse(a['date']);
               DateTime dateB = DateTime.parse(b['date']);
               return dateA.compareTo(dateB);
             });
-          });
+          }
 
           // Ordenar las clases dentro de la asignatura por el primer evento de cada clase
           filteredClasses.sort((a, b) {
@@ -311,7 +311,7 @@ Widget _buildEventList() {
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       );
     },
