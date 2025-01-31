@@ -49,7 +49,6 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(
         // Tema claro
-        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.indigo,
           brightness: Brightness.light,
@@ -126,7 +125,6 @@ class _MyAppState extends State<MyApp> {
       ),
       darkTheme: ThemeData.dark().copyWith(
         // Tema oscuro
-        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.indigo,
           brightness: Brightness.dark,
