@@ -36,7 +36,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         if (profileData.isEmpty) {
           errorMessage = 'No se pudo obtener la información del perfil';
         } else {
-          userProfile = profileData ?? {};
+          userProfile = profileData;
         }
         isLoading = false;
       });
