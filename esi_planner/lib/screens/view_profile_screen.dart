@@ -28,16 +28,15 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
     final String? username = Provider.of<AuthProvider>(context, listen: false).username;
 
     if (username != null) {
-      print('Haciendo llamada a la API con el username: $username');
+
       final profileData = await profileService.getProfileData(username: username);
-      print('Resultado de la API: $profileData');
+
 
       setState(() {
         if (profileData.isEmpty) {
           errorMessage = 'No se pudo obtener la información del perfil';
         } else {
           userProfile = profileData ?? {};
-          print('DATOS DE USERPROFILE: $userProfile');
         }
         isLoading = false;
       });
