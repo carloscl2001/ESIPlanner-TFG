@@ -155,7 +155,6 @@ Widget build(BuildContext context) {
           ),
   );
 }
-
 Widget _buildEventList() {
   // Recopilar todos los eventos de todas las asignaturas
   List<Map<String, dynamic>> allEvents = [];
@@ -201,6 +200,18 @@ Widget _buildEventList() {
       final date = sortedDates[index];
       final events = groupedByDate[date]!;
 
+      // Verificar solapamientos
+      List<bool> isOverlapping = List.filled(events.length, false);
+      for (int i = 0; i < events.length - 1; i++) {
+        DateTime endTimeCurrent = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['end_hour']}');
+        DateTime startTimeNext = DateTime.parse('${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}');
+
+        if (endTimeCurrent.isAfter(startTimeNext)) {
+          isOverlapping[i] = true;
+          isOverlapping[i + 1] = true;
+        }
+      }
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -217,25 +228,31 @@ Widget _buildEventList() {
             ),
           ),
           // Cards para cada evento
-          ...events.map<Widget>((eventData) {
+          ...events.asMap().entries.map<Widget>((entry) {
+            final index = entry.key;
+            final eventData = entry.value;
             final event = eventData['event'];
             final classType = eventData['classType'];
             final subjectName = eventData['subjectName'];
+            final bool isOverlap = isOverlapping[index];
 
             return Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0), // Bordes más redondeados
+                borderRadius: BorderRadius.circular(16.0),
+                side: isOverlap
+                    ? const BorderSide(color: Colors.red, width: 2.0) // Borde rojo para solapamientos
+                    : BorderSide.none,
               ),
               elevation: 4,
               margin: const EdgeInsets.symmetric(vertical: 8.0),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                    colors: [Colors.indigo.shade50, Colors.white],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(16.0), // Coincide con el radio de la tarjeta
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -256,7 +273,7 @@ Widget _buildEventList() {
                       Row(
                         children: [
                           Icon(
-                            Icons.school, // Icono para el tipo de clase
+                            Icons.school,
                             size: 16,
                             color: Colors.indigo.shade700,
                           ),
@@ -275,7 +292,7 @@ Widget _buildEventList() {
                       Row(
                         children: [
                           Icon(
-                            Icons.access_time, // Icono para la hora
+                            Icons.access_time,
                             size: 16,
                             color: Colors.indigo.shade700,
                           ),
@@ -293,7 +310,7 @@ Widget _buildEventList() {
                       Row(
                         children: [
                           Icon(
-                            Icons.location_on, // Icono para la ubicación
+                            Icons.location_on,
                             size: 16,
                             color: Colors.indigo.shade700,
                           ),
@@ -306,6 +323,27 @@ Widget _buildEventList() {
                           ),
                         ],
                       ),
+                      if (isOverlap) // Mostrar advertencia de solapamiento
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.warning,
+                                size: 16,
+                                color: Colors.red,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Este evento se solapa con otro',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -317,4 +355,6 @@ Widget _buildEventList() {
     },
   );
 }
+
 }
+
