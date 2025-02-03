@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../services/profile_service.dart';
 import '../services/subject_service.dart';
 import '../providers/auth_provider.dart';
+import '../providers/theme_provider.dart'; // Importa el ThemeProvider
+
 
 class ViewSubjectsProfileScreen extends StatefulWidget {
   const ViewSubjectsProfileScreen({super.key});
@@ -74,12 +76,15 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tus asignaturas', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
         ),
         centerTitle: true,
-        backgroundColor: Colors.indigo, // Color de la barra de navegación
+        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -110,7 +115,9 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                             child: Container(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                                  colors: isDarkMode
+                                    ? [Colors.grey.shade800, Colors.grey.shade800] // Degradado oscuro
+                                    : [Colors.indigo.shade50, Colors.white], // Degradado clarodado claro
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
@@ -127,7 +134,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                                         Icon(
                                           Icons.book, // Icono para el nombre de la asignatura
                                           size: 24,
-                                          color: Colors.indigo.shade700,
+                                          color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                                         ),
                                         const SizedBox(width: 8),
                                         Flexible( // Permite que el texto fluya a la siguiente línea
@@ -136,7 +143,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                                             style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.indigo.shade900,
+                                              color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                                             ),
                                           ),
                                         ),
@@ -149,7 +156,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                                         Icon(
                                           Icons.code, // Icono para el código
                                           size: 20,
-                                          color: Colors.indigo.shade700,
+                                          color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                                         ),
                                         const SizedBox(width: 8),
                                         Flexible( // Permite que el texto fluya a la siguiente línea
@@ -157,7 +164,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                                             'Código: ${subject['code']}',
                                             style: TextStyle(
                                               fontSize: 16,
-                                              color: Colors.indigo.shade700,
+                                              color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                                             ),
                                           ),
                                         ),
@@ -170,7 +177,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
-                                        color: Colors.indigo.shade900,
+                                        color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                                       ),
                                     ),
                                     const SizedBox(height: 8),
@@ -186,7 +193,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                                                 horizontal: 12,
                                               ),
                                               decoration: BoxDecoration(
-                                                color: Colors.indigo.shade100,
+                                                color: isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade100,
                                                 borderRadius: BorderRadius.circular(12),
                                               ),
                                               child: Row(
@@ -194,7 +201,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                                                 children: [
                                                   Icon(
                                                     Icons.group, // Icono para el tipo de grupo
-                                                    color: Colors.indigo.shade700,
+                                                    color: isDarkMode ? Colors.grey.shade800 : Colors.indigo.shade700,
                                                     size: 16,
                                                   ),
                                                   const SizedBox(width: 6),
@@ -202,7 +209,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                                                     type,
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      color: Colors.indigo.shade700,
+                                                      color: isDarkMode ? Colors.grey.shade800 : Colors.indigo.shade700,
                                                       fontWeight: FontWeight.w500,
                                                     ),
                                                   ),
@@ -225,7 +232,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                       'No hay asignaturas disponibles',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.indigo.shade700,
+                         color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                       ),
                     ),
                   ]

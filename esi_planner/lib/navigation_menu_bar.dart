@@ -5,6 +5,7 @@ import 'screens/home_screen.dart';
 import 'screens/timetable_screen.dart';
 import 'screens/agenda_screen.dart';
 import 'screens/profile_screen.dart';
+import 'providers/theme_provider.dart'; // Importa el ThemeProvider
 
 class NavigationMenuBar extends StatefulWidget {
   const NavigationMenuBar({super.key});
@@ -28,31 +29,30 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
   @override
   Widget build(BuildContext context) {
     final username = Provider.of<AuthProvider>(context).username ?? 'Usuario';
+    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Hola, $username',
           style: const TextStyle(
-            color: Colors.white,
+            color:  Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
         ),
+        elevation: 10, // Aumenta la sombra
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.indigo.shade700, Colors.indigo.shade900], // Degradado azul
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color:  isDarkMode ? Colors.black : Colors.indigo.shade900, // Usas un color sólido en lugar de un gradiente
           ),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: logout, // Llamada al método de logout
-            color: Colors.white,
+            color:  Colors.white,
             tooltip: 'Cerrar sesión',
           ),
         ],
@@ -73,29 +73,27 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
               currentPageIndex = index;
             });
           },
-          indicatorColor: Colors.indigo.shade100, // Color del indicador seleccionado
-          backgroundColor: Colors.white, // Fondo de la barra de navegación
           selectedIndex: currentPageIndex,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow, // Mostrar siempre las etiquetas
-          destinations: const <Widget>[
+          destinations: <Widget>[
             NavigationDestination(
-              selectedIcon: Icon(Icons.home, color: Colors.indigo),
-              icon: Icon(Icons.home_outlined, color: Colors.grey),
+              selectedIcon: Icon(Icons.home, color: isDarkMode ? Colors.black : Colors.indigo),
+              icon: const Icon(Icons.home_outlined, color: Colors.grey),
               label: 'Inicio',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.calendar_today, color: Colors.indigo),
-              icon: Icon(Icons.calendar_today_outlined, color: Colors.grey),
+              selectedIcon: Icon(Icons.calendar_today, color: isDarkMode ? Colors.black : Colors.indigo),
+              icon: const Icon(Icons.calendar_today_outlined, color: Colors.grey),
               label: 'Horario',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.calendar_view_week, color: Colors.indigo),
-              icon: Icon(Icons.calendar_view_week_outlined, color: Colors.grey),
+              selectedIcon: Icon(Icons.calendar_view_week, color: isDarkMode ? Colors.black : Colors.indigo),
+              icon: const Icon(Icons.calendar_view_week_outlined, color: Colors.grey),
               label: 'Agenda',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.person, color: Colors.indigo),
-              icon: Icon(Icons.person_outline, color: Colors.grey),
+              selectedIcon: Icon(Icons.person, color: isDarkMode ? Colors.black : Colors.indigo),
+              icon: const Icon(Icons.person_outline, color: Colors.grey),
               label: 'Perfil',
             ),
           ],

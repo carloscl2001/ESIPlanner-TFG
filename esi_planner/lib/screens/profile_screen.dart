@@ -9,6 +9,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -17,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.indigo, // Color de la barra de navegación
+        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
       ),
       body: Column(
         children: [
@@ -29,17 +30,42 @@ class ProfileScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
-              child: SwitchListTile(
-                title: const Text(
-                  'Modo oscuro',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: isDarkMode
+                      ? LinearGradient(
+                          colors: [Colors.grey.shade900, Colors.grey.shade900], // Gradiente claro
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )// Sin gradiente en modo oscuro
+                      : LinearGradient(
+                          colors: [Colors.indigo.shade50, Colors.white], // Gradiente claro
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                  borderRadius: BorderRadius.circular(12), // Bordes redondeados
                 ),
-                value: themeProvider.themeMode == ThemeMode.dark,
-                onChanged: (value) {
-                  themeProvider.toggleTheme(value); // Cambia el tema
-                },
-                activeColor: Colors.white, // Color del interruptor cuando está activado
+                child: SwitchListTile(
+                  title: Text(
+                    isDarkMode ? 'Modo Oscuro' : 'Modo Claro', // Cambia el texto según el tema
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  value: themeProvider.themeMode == ThemeMode.dark,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme(value); // Cambia el tema
+                  },
+                  activeColor: Colors.white, // Color del interruptor cuando está activado
+                  secondary: Icon(
+                    isDarkMode
+                        ? Icons.nightlight_round // Luna cuando está activado
+                        : Icons.wb_sunny, // Sol cuando no está activado
+                    color: isDarkMode
+                        ? Colors.white
+                        : Colors.yellow, // Cambia el color según el modo
+                  ),
+                ),
               ),
+
             ),
           ),
           // GridView con las tarjetas reutilizando CustomCard

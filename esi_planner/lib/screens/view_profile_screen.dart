@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/profile_service.dart';
 import '../providers/auth_provider.dart';
+import '../providers/theme_provider.dart'; // Importa el ThemeProvider
 
 class ViewProfileScreen extends StatefulWidget {
   const ViewProfileScreen({super.key});
@@ -50,6 +51,9 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -57,7 +61,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.indigo, // Color de la barra de navegación
+        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -73,9 +77,11 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                          colors: isDarkMode
+                              ? [Colors.grey.shade900, Colors.grey.shade900] // Degradado oscuro
+                              : [Colors.indigo.shade50, Colors.white], // Degradado clarodado claro
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
                       ),
@@ -138,11 +144,14 @@ class ProfileField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? Colors.grey.shade800 : Colors.white,
         borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
@@ -157,7 +166,7 @@ class ProfileField extends StatelessWidget {
           Icon(
             icon,
             size: 24,
-            color: Colors.indigo.shade700,
+            color: isDarkMode ? Colors.white : Colors.indigo.shade700,
           ),
           const SizedBox(width: 12),
           Text(
@@ -165,7 +174,7 @@ class ProfileField extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.indigo.shade900,
+              color: isDarkMode ? Colors.white : Colors.indigo.shade900,
             ),
           ),
         ],

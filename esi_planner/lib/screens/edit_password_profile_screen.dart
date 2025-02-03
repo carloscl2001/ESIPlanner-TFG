@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/profile_service.dart';
 import '../providers/auth_provider.dart';
+import '../providers/theme_provider.dart'; // Importa el ThemeProvider
 
 class EditPasswordProfileScreen extends StatefulWidget {
   const EditPasswordProfileScreen({super.key});
@@ -84,6 +85,9 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -91,9 +95,8 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.indigo, // Color de la barra de navegación
+        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
       ),
-      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -104,11 +107,6 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
             ),
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
                 borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
               ),
               child: Padding(
@@ -122,7 +120,7 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Colors.indigo.shade900,
+                         color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -132,33 +130,15 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
                       obscureText: true,
                       decoration: InputDecoration(
                         labelText: 'Nueva Contraseña',
-                        labelStyle: TextStyle(
-                          color: Colors.indigo.shade700,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
-                          borderSide: BorderSide(color: Colors.indigo.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide(color: Colors.indigo.shade700),
-                        ),
                         prefixIcon: Icon(
                           Icons.lock, // Icono para el campo de contraseña
-                          color: Colors.indigo.shade700,
+                          color: isDarkMode ? Colors.white : Colors.indigo.shade700, // Color del icono
                         ),
                       ),
                     ),
                     const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: _updatePassword,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.indigo.shade700, // Color de fondo del botón
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
-                        ),
-                      ),
                       child: const Text(
                         'Actualizar contraseña',
                         style: TextStyle(

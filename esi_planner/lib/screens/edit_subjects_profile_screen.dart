@@ -4,6 +4,7 @@ import '../services/profile_service.dart';
 import '../services/subject_service.dart';
 import '../services/auth_service.dart';
 import '../providers/auth_provider.dart';
+import '../providers/theme_provider.dart'; // Importa el ThemeProvider
 
 class EditSubjectsProfileScreen extends StatefulWidget {
   const EditSubjectsProfileScreen({super.key});
@@ -112,11 +113,14 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Selecciona tus asignaturas y grupos', style: TextStyle(color: Colors.white)),
         centerTitle: true,
-        backgroundColor: Colors.indigo, // Color de la barra de navegación
+        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -163,7 +167,9 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                           child: Container(
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                                colors: isDarkMode
+                                    ? [Colors.grey.shade800, Colors.grey.shade800] // Degradado oscuro
+                                    : [Colors.indigo.shade50, Colors.white],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
@@ -180,7 +186,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                       Icon(
                                         Icons.book, // Icono para el nombre de la asignatura
                                         size: 24,
-                                        color: Colors.indigo.shade700,
+                                        color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                                       ),
                                       const SizedBox(width: 8),
                                       Flexible( // Permite que el texto fluya a la siguiente línea
@@ -189,7 +195,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.indigo.shade900,
+                                            color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                                           ),
                                         ),
                                       ),
@@ -202,7 +208,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                       Icon(
                                         Icons.code, // Icono para el código
                                         size: 20,
-                                        color: Colors.indigo.shade700,
+                                        color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                                       ),
                                       const SizedBox(width: 8),
                                       Flexible( // Permite que el texto fluya a la siguiente línea
@@ -210,7 +216,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                           subject['code'],
                                           style: TextStyle(
                                             fontSize: 16,
-                                            color: Colors.indigo.shade700,
+                                            color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -220,11 +226,11 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                   const SizedBox(height: 12),
                                   // Switch para seleccionar la asignatura
                                   SwitchListTile(
-                                    title: const Text(
+                                    title: Text(
                                       'Seleccionar asignatura',
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: Colors.black87,
+                                        color: isDarkMode ? Colors.white : Colors.black87,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -238,9 +244,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                         }
                                       });
                                     },
-                                    activeColor: Colors.indigo, // Color del Switch cuando está activado
-                                    inactiveThumbColor: Colors.grey, // Color del "thumb" cuando está desactivado
-                                    inactiveTrackColor: Colors.grey.withOpacity(0.5), // Color de la pista cuando está desactivado
+                                    activeColor: isDarkMode ? Colors.white : Colors.indigo // Color del interruptor cuando está activado
                                   ),
                                   // Grupos seleccionables
                                   if (selectedGroupTypes.containsKey(subject['code'])) ...[
@@ -257,7 +261,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16,
-                                                color: Colors.indigo.shade900,
+                                                color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                                               ),
                                             ),
                                             const SizedBox(height: 8),
@@ -269,9 +273,9 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                                 return ChoiceChip(
                                                   label: Text(
                                                     type,
-                                                    style: const TextStyle(
+                                                    style: TextStyle(
                                                       fontSize: 14,
-                                                      color: Colors.indigo,
+                                                      color: isDarkMode ? Colors.grey.shade700 : Colors.indigo,
                                                       fontWeight: FontWeight.w500,
                                                     ),
                                                   ),
@@ -284,11 +288,11 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                                       }
                                                     });
                                                   },
-                                                  selectedColor: Colors.indigo.shade100, // Color de fondo cuando está seleccionado
+                                                  selectedColor:  isDarkMode ? Colors.grey.shade900 : Colors.indigo.shade100,
                                                   backgroundColor: Colors.white, // Color de fondo cuando no está seleccionado
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius: BorderRadius.circular(12), // Bordes redondeados
-                                                    side: BorderSide(color: Colors.indigo.shade300), // Borde con color
+                                                    side: BorderSide(color:  isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade300), // Borde con color
                                                   ),
                                                 );
                                               }).toList(),

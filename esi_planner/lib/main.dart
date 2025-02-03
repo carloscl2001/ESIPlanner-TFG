@@ -158,7 +158,7 @@ class _MyAppState extends State<MyApp> {
             (states) {
               if (states.contains(WidgetState.selected)) {
                 return const TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 );
               }
@@ -167,8 +167,8 @@ class _MyAppState extends State<MyApp> {
               );
             },
           ),
-          indicatorColor: Colors.indigo.shade100,
-          backgroundColor: Colors.grey[900],
+          indicatorColor: Colors.white,
+          backgroundColor: Colors.black,
         ),
         cardTheme: CardTheme(
           color: Colors.grey[800],
