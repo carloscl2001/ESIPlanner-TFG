@@ -16,16 +16,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   String errorMessage = "";
-  bool isLoading = false;
-
+ 
   Future<void> login() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    setState(() {
-      isLoading = true;
-    });
+
 
     final String username = usernameController.text;
     final String password = passwordController.text;
@@ -33,9 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final authService = AuthService();
     final result = await authService.login(username: username, password: password);
 
-    setState(() {
-      isLoading = false;
-    });
+   
 
     if (result['success']) {
       final String? token = result['data']['access_token']; // Accediendo al token correctamente
@@ -140,24 +135,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: 24),
                           // Botón de inicio de sesión
                           ElevatedButton(
-                            onPressed: isLoading ? null : login, // Deshabilita el botón si está cargando
-                            child: isLoading
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Text(
-                                    'Iniciar sesión',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                            onPressed: login, // Deshabilita el botón si está cargando
+                            child: 
+                              const Text(
+                                'Iniciar sesión',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                           ),
                           if (errorMessage.isNotEmpty) ...[
                             const SizedBox(height: 16),
