@@ -51,11 +51,11 @@ class ClassCards extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
-                  color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                  color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                 ),
               ),
               const SizedBox(height: 12),
-              _buildRow(Icons.school, 'Tipo de clase: $classType', isDarkMode ? Colors.white : Colors.indigo.shade700,),
+              _buildRow(Icons.school, '$classType', isDarkMode ? Colors.white : Colors.indigo.shade700,),
               const SizedBox(height: 8),
               _buildRow(Icons.access_time, '${event['start_hour']} - ${event['end_hour']}', isDarkMode ? Colors.white : Colors.indigo.shade700,),
               const SizedBox(height: 8),
