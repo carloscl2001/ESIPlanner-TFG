@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/auth_service.dart';
+import '../providers/theme_provider.dart'; // Importa el ThemeProvider
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -82,8 +83,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -99,7 +103,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                      colors: isDarkMode
+                        ? [Colors.grey.shade800, Colors.grey.shade800] // Degradado oscuro
+                        : [Colors.indigo.shade50, Colors.white], // Degradado clarodado claro // Degradado suave
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -117,7 +123,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: Colors.indigo.shade900,
+                              color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -126,20 +132,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: emailController,
                             decoration: InputDecoration(
                               labelText: 'Email',
-                              labelStyle: TextStyle(
-                                color: Colors.indigo.shade700,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
-                                borderSide: BorderSide(color: Colors.indigo.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
-                              ),
                               prefixIcon: Icon(
                                 Icons.email, // Icono para el campo de email
-                                color: Colors.indigo.shade700,
+                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -157,20 +152,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: usernameController,
                             decoration: InputDecoration(
                               labelText: 'Nombre de usuario',
-                              labelStyle: TextStyle(
-                                color: Colors.indigo.shade700,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
-                              ),
                               prefixIcon: Icon(
                                 Icons.person, // Icono para el campo de nombre de usuario
-                                color: Colors.indigo.shade700,
+                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -189,20 +173,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             obscureText: true,
                             decoration: InputDecoration(
                               labelText: 'Contraseña',
-                              labelStyle: TextStyle(
-                                color: Colors.indigo.shade700,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
-                              ),
                               prefixIcon: Icon(
                                 Icons.lock, // Icono para el campo de contraseña
-                                color: Colors.indigo.shade700,
+                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -222,20 +195,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: nameController,
                             decoration: InputDecoration(
                               labelText: 'Nombre',
-                              labelStyle: TextStyle(
-                                color: Colors.indigo.shade700,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
-                              ),
                               prefixIcon: Icon(
                                 Icons.badge, // Icono para el campo de nombre
-                                color: Colors.indigo.shade700,
+                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -253,20 +215,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: surnameController,
                             decoration: InputDecoration(
                               labelText: 'Apellido',
-                              labelStyle: TextStyle(
-                                color: Colors.indigo.shade700,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
-                              ),
                               prefixIcon: Icon(
                                 Icons.family_restroom, // Icono para el campo de apellido
-                                color: Colors.indigo.shade700,
+                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -290,20 +241,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               },
                               decoration: InputDecoration(
                                 labelText: 'Grado',
-                                labelStyle: TextStyle(
-                                  color: Colors.indigo.shade700,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  borderSide: BorderSide(color: Colors.indigo.shade300),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
-                                ),
                                 prefixIcon: Icon(
                                   Icons.school, // Icono para el campo de grado
-                                  color: Colors.indigo.shade700,
+                                  color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                                 ),
                               ),
                               items: degrees
@@ -313,7 +253,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   child: Text(
                                     value,
                                     style: TextStyle(
-                                      color: Colors.indigo.shade900,
+                                      color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                                     ),
                                   ),
                                 );
@@ -325,13 +265,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           const SizedBox(height: 24),
                           ElevatedButton(
                             onPressed: register,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.indigo.shade700, // Color de fondo del botón
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
-                              ),
-                            ),
                             child: const Text(
                               'Registrarse',
                               style: TextStyle(
@@ -362,7 +295,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.indigo.shade700, // Color del texto
+                  foregroundColor: isDarkMode ? Colors.white : Colors.indigo.shade700, // Color del texto
                 ),
                 child: const Text(
                   "¿Ya tienes una cuenta? Inicia sesión aquí",

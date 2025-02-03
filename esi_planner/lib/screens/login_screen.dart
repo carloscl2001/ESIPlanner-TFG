@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/auth_service.dart';
+import '../providers/theme_provider.dart'; // Importa el ThemeProvider
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -55,8 +56,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+    
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -73,7 +77,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.indigo.shade50, Colors.white], // Degradado suave
+                      colors: isDarkMode
+                        ? [Colors.grey.shade800, Colors.grey.shade800] // Degradado oscuro
+                        : [Colors.indigo.shade50, Colors.white], // Degradado clarodado claro
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -91,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: Colors.indigo.shade900,
+                              color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -100,20 +106,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             controller: usernameController,
                             decoration: InputDecoration(
                               labelText: 'Usuario',
-                              labelStyle: TextStyle(
-                                color: Colors.indigo.shade700,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
-                                borderSide: BorderSide(color: Colors.indigo.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
-                              ),
                               prefixIcon: Icon(
                                 Icons.person, // Icono para el campo de usuario
-                                color: Colors.indigo.shade700,
+                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -130,20 +125,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             obscureText: true,
                             decoration: InputDecoration(
                               labelText: 'Contraseña',
-                              labelStyle: TextStyle(
-                                color: Colors.indigo.shade700,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(color: Colors.indigo.shade700, width: 3),
-                              ),
                               prefixIcon: Icon(
                                 Icons.lock, // Icono para el campo de contraseña
-                                color: Colors.indigo.shade700,
+                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -157,13 +141,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           // Botón de inicio de sesión
                           ElevatedButton(
                             onPressed: isLoading ? null : login, // Deshabilita el botón si está cargando
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.indigo.shade700, // Color de fondo del botón
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0), // Bordes redondeados
-                              ),
-                            ),
                             child: isLoading
                                 ? const SizedBox(
                                     width: 20,
@@ -202,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.pushReplacementNamed(context, '/register');
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.indigo.shade700, // Color del texto
+                  foregroundColor: isDarkMode ? Colors.white : Colors.indigo.shade700, // Color del texto
                 ),
                 child: const Text(
                   "¿No tienes una cuenta? Regístrate aquí",

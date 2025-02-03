@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../services/profile_service.dart';
 import '../services/subject_service.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/class_cards.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,7 +56,7 @@ class HomeScreenState extends State<HomeScreen> {
           // Verificar los tipos de datos
           print('Tipos del usuario: ${subject['types']}');
           print('Tipo de subject[types]: ${subject['types'].runtimeType}');
-          
+
           // Filtrar las clases según los tipos del usuario
           final List<dynamic> filteredClasses = subjectData['classes']
               .where((classData) {
@@ -122,10 +123,10 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
         title: const Text(
           'Tus clases esta semana',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -133,228 +134,120 @@ Widget build(BuildContext context) {
         centerTitle: true,
         backgroundColor: Colors.indigo, // Color de la barra de navegación
       ),
-    body: isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: <Widget>[
-                if (errorMessage.isNotEmpty) ...[
-                  Text(
-                    errorMessage,
-                    style: const TextStyle(color: Colors.red, fontSize: 14),
-                    textAlign: TextAlign.center,
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: <Widget>[
+                  if (errorMessage.isNotEmpty) ...[
+                    Text(
+                      errorMessage,
+                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                  Expanded(
+                    child: _buildEventList(),
                   ),
-                  const SizedBox(height: 20),
                 ],
-                Expanded(
-                  child: _buildEventList(),
-                ),
-              ],
+              ),
             ),
-          ),
-  );
-}
-Widget _buildEventList() {
-  // Recopilar todos los eventos de todas las asignaturas
-  List<Map<String, dynamic>> allEvents = [];
-  for (var subject in subjects) {
-    for (var classData in subject['classes']) {
-      for (var event in classData['events']) {
-        allEvents.add({
-          'subjectName': subject['name'] ?? 'No Name',
-          'classType': classData['type'] ?? 'No disponible',
-          'event': event,
-        });
-      }
-    }
+    );
   }
 
-  // Agrupar los eventos por fecha
-  Map<String, List<Map<String, dynamic>>> groupedByDate = {};
-  for (var eventData in allEvents) {
-    final eventDate = eventData['event']['date'];
-
-    if (!groupedByDate.containsKey(eventDate)) {
-      groupedByDate[eventDate] = [];
-    }
-
-    groupedByDate[eventDate]!.add(eventData);
-  }
-
-  // Ordenar los eventos por hora dentro de cada fecha
-  groupedByDate.forEach((date, events) {
-    events.sort((a, b) {
-      DateTime timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
-      DateTime timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
-      return timeA.compareTo(timeB);
-    });
-  });
-
-  // Ordenar las fechas
-  var sortedDates = groupedByDate.keys.toList()..sort();
-
-  return ListView.builder(
-    itemCount: sortedDates.length,
-    itemBuilder: (context, index) {
-      final date = sortedDates[index];
-      final events = groupedByDate[date]!;
-
-      // Verificar solapamientos
-      List<bool> isOverlapping = List.filled(events.length, false);
-      for (int i = 0; i < events.length - 1; i++) {
-        DateTime endTimeCurrent = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['end_hour']}');
-        DateTime startTimeNext = DateTime.parse('${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}');
-
-        if (endTimeCurrent.isAfter(startTimeNext)) {
-          isOverlapping[i] = true;
-          isOverlapping[i + 1] = true;
+  Widget _buildEventList() {
+    // Recopilar todos los eventos de todas las asignaturas
+    List<Map<String, dynamic>> allEvents = [];
+    for (var subject in subjects) {
+      for (var classData in subject['classes']) {
+        for (var event in classData['events']) {
+          allEvents.add({
+            'subjectName': subject['name'] ?? 'No Name',
+            'classType': classData['type'] ?? 'No disponible',
+            'event': event,
+          });
         }
       }
+    }
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          // Título con la fecha
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(
-              'Fecha: $date',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.indigo,
+    // Agrupar los eventos por fecha
+    Map<String, List<Map<String, dynamic>>> groupedByDate = {};
+    for (var eventData in allEvents) {
+      final eventDate = eventData['event']['date'];
+
+      if (!groupedByDate.containsKey(eventDate)) {
+        groupedByDate[eventDate] = [];
+      }
+
+      groupedByDate[eventDate]!.add(eventData);
+    }
+
+    // Ordenar los eventos por hora dentro de cada fecha
+    groupedByDate.forEach((date, events) {
+      events.sort((a, b) {
+        DateTime timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
+        DateTime timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
+        return timeA.compareTo(timeB);
+      });
+    });
+
+    // Ordenar las fechas
+    var sortedDates = groupedByDate.keys.toList()..sort();
+
+    return ListView.builder(
+      itemCount: sortedDates.length,
+      itemBuilder: (context, index) {
+        final date = sortedDates[index];
+        final events = groupedByDate[date]!;
+
+        // Verificar solapamientos
+        List<bool> isOverlapping = List.filled(events.length, false);
+        for (int i = 0; i < events.length - 1; i++) {
+          DateTime endTimeCurrent = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['end_hour']}');
+          DateTime startTimeNext = DateTime.parse('${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}');
+
+          if (endTimeCurrent.isAfter(startTimeNext)) {
+            isOverlapping[i] = true;
+            isOverlapping[i + 1] = true;
+          }
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // Título con la fecha
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                'Fecha: $date',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.indigo,
+                ),
               ),
             ),
-          ),
-          // Cards para cada evento
-          ...events.asMap().entries.map<Widget>((entry) {
-            final index = entry.key;
-            final eventData = entry.value;
-            final event = eventData['event'];
-            final classType = eventData['classType'];
-            final subjectName = eventData['subjectName'];
-            final bool isOverlap = isOverlapping[index];
+            // Cards para cada evento utilizando CustomEventCard
+            ...events.asMap().entries.map<Widget>((entry) {
+              final index = entry.key;
+              final eventData = entry.value;
+              final event = eventData['event'];
+              final classType = eventData['classType'];
+              final subjectName = eventData['subjectName'];
+              final bool isOverlap = isOverlapping[index];
 
-            return Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-                side: isOverlap
-                    ? const BorderSide(color: Colors.red, width: 2.0) // Borde rojo para solapamientos
-                    : BorderSide.none,
-              ),
-              elevation: 4,
-              margin: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.indigo.shade50, Colors.white],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Nombre de la asignatura dentro de la tarjeta
-                      Text(
-                        subjectName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: Colors.indigo.shade700,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // Tipo de clase con icono
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.school,
-                            size: 16,
-                            color: Colors.indigo.shade700,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Tipo de clase: $classType',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: Colors.indigo.shade700,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      // Hora del evento con icono
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.access_time,
-                            size: 16,
-                            color: Colors.indigo.shade700,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '${event['start_hour']} - ${event['end_hour']}',
-                            style: TextStyle(
-                              color: Colors.indigo.shade700,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      // Ubicación del evento con icono
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 16,
-                            color: Colors.indigo.shade700,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '${event['location']}',
-                            style: TextStyle(
-                              color: Colors.indigo.shade700,
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (isOverlap) // Mostrar advertencia de solapamiento
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.warning,
-                                size: 16,
-                                color: Colors.red,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Este evento se solapa con otro',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }),
-        ],
-      );
-    },
-  );
+              return ClassCards(
+                subjectName: subjectName,
+                classType: classType,
+                event: event,
+                isOverlap: isOverlap,
+              );
+            }),
+          ],
+        );
+      },
+    );
+  }
 }
-
-}
-

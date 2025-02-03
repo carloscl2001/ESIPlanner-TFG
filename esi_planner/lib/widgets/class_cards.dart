@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/theme_provider.dart';
 
-class CustomEventCard extends StatelessWidget {
+class ClassCards extends StatelessWidget {
   final String subjectName;
   final String classType;
   final Map<String, dynamic> event;
   final bool isOverlap;
 
-  const CustomEventCard({
+  const ClassCards({
     super.key,
     required this.subjectName,
     required this.classType,
@@ -16,6 +18,9 @@ class CustomEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
@@ -28,7 +33,9 @@ class CustomEventCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.indigo.shade50, Colors.white],
+            colors: isDarkMode
+                  ? [Colors.grey.shade900, Colors.grey.shade900] // Degradado oscuro
+                  : [Colors.indigo.shade50, Colors.white], // Degradado clarodado claro
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -44,15 +51,15 @@ class CustomEventCard extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
-                  color: Colors.indigo.shade700,
+                  color: isDarkMode ? Colors.white : Colors.indigo.shade700,
                 ),
               ),
               const SizedBox(height: 12),
-              _buildRow(Icons.school, 'Tipo de clase: $classType'),
+              _buildRow(Icons.school, 'Tipo de clase: $classType', isDarkMode ? Colors.white : Colors.indigo.shade700,),
               const SizedBox(height: 8),
-              _buildRow(Icons.access_time, '${event['start_hour']} - ${event['end_hour']}'),
+              _buildRow(Icons.access_time, '${event['start_hour']} - ${event['end_hour']}', isDarkMode ? Colors.white : Colors.indigo.shade700,),
               const SizedBox(height: 8),
-              _buildRow(Icons.location_on, event['location'].toString()),
+              _buildRow(Icons.location_on, event['location'].toString(), isDarkMode ? Colors.white : Colors.indigo.shade700,),
               if (isOverlap)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
@@ -65,19 +72,19 @@ class CustomEventCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(IconData icon, String text, [Color? color]) {
+  Widget _buildRow(IconData icon, String text, Color color) {
     return Row(
       children: [
         Icon(
           icon,
           size: 16,
-          color: color ?? Colors.indigo.shade700,
+          color: color,
         ),
         const SizedBox(width: 8),
         Text(
           text,
           style: TextStyle(
-            color: color ?? Colors.indigo.shade700,
+            color: color,
             fontWeight: color != null ? FontWeight.bold : FontWeight.normal,
           ),
         ),

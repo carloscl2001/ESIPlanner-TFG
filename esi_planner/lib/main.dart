@@ -103,8 +103,7 @@ class _MyAppState extends State<MyApp> {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.indigo,
-            foregroundColor: Colors.white,
+            backgroundColor: Colors.indigo.shade700,
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -112,6 +111,7 @@ class _MyAppState extends State<MyApp> {
             textStyle: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
@@ -158,7 +158,7 @@ class _MyAppState extends State<MyApp> {
             (states) {
               if (states.contains(WidgetState.selected)) {
                 return const TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.bold,
                 );
               }
@@ -181,8 +181,8 @@ class _MyAppState extends State<MyApp> {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.indigo,
-            foregroundColor: Colors.white,
+            backgroundColor: Colors.black,
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -190,8 +190,8 @@ class _MyAppState extends State<MyApp> {
             textStyle: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
         ),
         appBarTheme: AppBarTheme(
