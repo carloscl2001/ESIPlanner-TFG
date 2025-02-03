@@ -49,6 +49,8 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+
+      //TEMA CLARO
       theme: ThemeData.light().copyWith(
         // Tema claro
         useMaterial3: true,
@@ -126,27 +128,28 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
+
+      //TEMA OSCURO
       darkTheme: ThemeData.dark().copyWith(
-        // Tema oscuro
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
+          seedColor: Colors.white,
           brightness: Brightness.dark,
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.grey[800],
+          fillColor: Colors.grey.shade900,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
           ),
-          labelStyle: const TextStyle(color: Colors.indigo),
-          hintStyle: TextStyle(color: Colors.grey[400]),
+          labelStyle: const TextStyle(color: Colors.white),
+          hintStyle: const TextStyle(color: Colors.white),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.indigo, width: 1.5),
+            borderSide: const BorderSide(color: Colors.white, width: 1.5),
             borderRadius: BorderRadius.circular(12.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.indigo, width: 2.0),
+            borderSide: const BorderSide(color: Colors.white, width: 2.0),
             borderRadius: BorderRadius.circular(12.0),
           ),
         ),
@@ -155,7 +158,7 @@ class _MyAppState extends State<MyApp> {
             (states) {
               if (states.contains(WidgetState.selected)) {
                 return const TextStyle(
-                  color: Colors.indigo,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 );
               }
@@ -172,7 +175,7 @@ class _MyAppState extends State<MyApp> {
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Colors.indigo, width: 1.5),
+            side: const BorderSide(color: Colors.white, width: 1.5),
           ),
           margin: const EdgeInsets.all(8),
         ),

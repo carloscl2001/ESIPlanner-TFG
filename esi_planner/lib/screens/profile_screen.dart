@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart'; // Importa el ThemeProvider
+import '../widgets/custom_cards.dart'; // Importa el CustomCard
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -37,11 +38,11 @@ class ProfileScreen extends StatelessWidget {
                 onChanged: (value) {
                   themeProvider.toggleTheme(value); // Cambia el tema
                 },
-                activeColor: Colors.indigo, // Color del interruptor cuando está activado
+                activeColor: Colors.white, // Color del interruptor cuando está activado
               ),
             ),
           ),
-          // GridView con las tarjetas
+          // GridView con las tarjetas reutilizando CustomCard
           Expanded(
             child: GridView.count(
               crossAxisCount: 2, // 2 columnas
@@ -49,68 +50,31 @@ class ProfileScreen extends StatelessWidget {
               mainAxisSpacing: 16, // Espacio entre filas
               padding: const EdgeInsets.all(16), // Espaciado exterior
               shrinkWrap: true, // Ajustar al contenido
-              children: [
-                _buildCard(context, 'Ver tu perfil', Icons.person, '/viewProfile', themeProvider),
-                _buildCard(context, 'Cambiar la contraseña', Icons.lock, '/editPassWordProfile', themeProvider),
-                _buildCard(context, 'Tus asignaturas', Icons.school, '/viewSubjectsProfile', themeProvider),
-                _buildCard(context, 'Modificar tus asignaturas', Icons.edit, '/editSubjectsProfile', themeProvider),
+              children: const [
+                CustomCard(
+                  text: 'Mi perfil',
+                  icon: Icons.person,
+                  route: '/viewProfile',
+                ),
+                CustomCard(
+                  text: 'Cambiar la contraseña',
+                  icon: Icons.lock,
+                  route: '/editPassWordProfile',
+                ),
+                CustomCard(
+                  text: 'Mis asignaturas',
+                  icon: Icons.school,
+                  route: '/viewSubjectsProfile',
+                ),
+                CustomCard(
+                  text: 'Cambiar mis asignaturas',
+                  icon: Icons.edit,
+                  route: '/editSubjectsProfile',
+                ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCard(BuildContext context, String text, IconData icon, String route, ThemeProvider themeProvider) {
-    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
-
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0), // Bordes más redondeados
-      ),
-      child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, route);
-        },
-        borderRadius: BorderRadius.circular(20.0), // Bordes redondeados para el InkWell
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isDarkMode
-                  ? [Colors.indigo.shade800, Colors.indigo.shade900] // Degradado oscuro
-                  : [Colors.indigo.shade50, Colors.white], // Degradado claro
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
-          ),
-          alignment: Alignment.center, // Centra el contenido horizontal y verticalmente
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  size: 40,
-                  color: isDarkMode ? Colors.white : Colors.indigo.shade700, // Color del icono
-                ),
-                const SizedBox(height: 12), // Espaciado entre el icono y el texto
-                Text(
-                  text,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: isDarkMode ? Colors.white : Colors.indigo.shade900, // Color del texto
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
