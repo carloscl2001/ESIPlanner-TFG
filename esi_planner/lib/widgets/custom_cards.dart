@@ -49,7 +49,7 @@ class CustomCard extends StatelessWidget {
                 Icon(
                   icon,
                   size: 40,
-                  color: isDarkMode ? Colors.white : Colors.indigo.shade700, // Color del icono
+                  color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700, // Color del icono
                 ),
                 const SizedBox(height: 12), // Espaciado entre el icono y el texto
                 Text(
@@ -58,7 +58,7 @@ class CustomCard extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
-                    color: isDarkMode ? Colors.white : Colors.indigo.shade900, // Color del texto
+                    color: isDarkMode ? Colors.white : Colors.black, // Color del texto
                   ),
                 ),
               ],

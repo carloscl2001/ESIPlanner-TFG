@@ -54,7 +54,8 @@ class ProfileScreen extends StatelessWidget {
                   onChanged: (value) {
                     themeProvider.toggleTheme(value); // Cambia el tema
                   },
-                  activeColor: Colors.white, // Color del interruptor cuando está activado
+                  activeColor: Colors.yellow.shade700, // Color del interruptor cuando está activado
+                  inactiveThumbColor: Colors.indigo.shade700,
                   secondary: Icon(
                     isDarkMode
                         ? Icons.nightlight_round // Luna cuando está activado

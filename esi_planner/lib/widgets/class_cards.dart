@@ -51,19 +51,19 @@ class ClassCards extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
-                  color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                  color: isDarkMode ? Colors.white : Colors.black,
                 ),
               ),
               const SizedBox(height: 12),
-              _buildRow(Icons.school, classType, isDarkMode ? Colors.white : Colors.black,),
+              _buildRow(Icons.school, classType, isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700, isDarkMode ? Colors.white : Colors.black,),
               const SizedBox(height: 8),
-              _buildRow(Icons.access_time, '${event['start_hour']} - ${event['end_hour']}', isDarkMode ? Colors.white : Colors.black,),
+              _buildRow(Icons.access_time, '${event['start_hour']} - ${event['end_hour']}', isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700, isDarkMode ? Colors.white : Colors.black,),
               const SizedBox(height: 8),
-              _buildRow(Icons.location_on, event['location'].toString(), isDarkMode ? Colors.white : Colors.black,),
+              _buildRow(Icons.location_on, event['location'].toString(), isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700, isDarkMode ? Colors.white : Colors.black,),
               if (isOverlap)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: _buildRow(Icons.warning, 'Este evento se solapa con otro', Colors.red),
+                  child: _buildRow(Icons.warning, 'Este evento se solapa con otro', Colors.red, Colors.red),
                 ),
             ],
           ),
@@ -72,20 +72,20 @@ class ClassCards extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(IconData icon, String text, Color color) {
+  Widget _buildRow(IconData icon, String text, Color colorIcon, Color colorTexto) {
     return Row(
       children: [
         Icon(
           icon,
           size: 16,
-          color: color,
+          color: colorIcon,
         ),
         const SizedBox(width: 8),
         Text(
           text,
           style: TextStyle(
-            color: color,
-            fontWeight: color != null ? FontWeight.bold : FontWeight.normal,
+            color: colorTexto,
+            fontWeight: colorTexto != null ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ],

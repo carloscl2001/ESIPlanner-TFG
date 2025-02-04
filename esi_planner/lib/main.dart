@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/providers/auth_provider.dart';
 import '/providers/theme_provider.dart';
+import '/providers/overlap_class_provider.dart';
 
 // Naviagtion menu
 import 'navigation_menu_bar.dart';
@@ -21,6 +22,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()), // Añade el ThemeProvider
+        ChangeNotifierProvider(create: (_) => OverlapClassProvider()),
       ],
       child: const MyApp(),
     ),
@@ -155,8 +157,8 @@ class _MyAppState extends State<MyApp> {
           labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
             (states) {
               if (states.contains(WidgetState.selected)) {
-                return const TextStyle(
-                  color: Colors.white,
+                return TextStyle(
+                  color: Colors.yellow.shade700,
                   fontWeight: FontWeight.bold,
                 );
               }
@@ -165,7 +167,7 @@ class _MyAppState extends State<MyApp> {
               );
             },
           ),
-          indicatorColor: Colors.white,
+          indicatorColor: Colors.yellow.shade700 ,
           backgroundColor: Colors.black,
         ),
         cardTheme: CardTheme(

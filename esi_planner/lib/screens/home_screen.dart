@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../services/profile_service.dart';
 import '../services/subject_service.dart';
 import '../providers/auth_provider.dart';
+import '../providers/overlap_class_provider.dart';
 import '../widgets/class_cards.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -175,6 +176,9 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildEventList() {
+    // Dentro de _buildEventList:
+    List<Map<String, dynamic>> overlappingEvents = [];
+
     // Recopilar todos los eventos de todas las asignaturas
     List<Map<String, dynamic>> allEvents = [];
     for (var subject in subjects) {
@@ -228,8 +232,13 @@ class HomeScreenState extends State<HomeScreen> {
           if (endTimeCurrent.isAfter(startTimeNext)) {
             isOverlapping[i] = true;
             isOverlapping[i + 1] = true;
+            overlappingEvents.add(events[i]);
+            overlappingEvents.add(events[i + 1]);
           }
         }
+
+        // Guardar los eventos solapados en el Provider
+        Provider.of<OverlapClassProvider>(context, listen: false).setOverlappingEvents(overlappingEvents);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
