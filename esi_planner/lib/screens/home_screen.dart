@@ -123,6 +123,23 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String getGroupLabel(String letter) {
+    switch (letter) {
+      case 'A':
+        return 'Clase de teoría';
+      case 'B':
+        return 'Clase de problemas';
+      case 'C':
+        return 'Clase de prácticas informáticas';
+      case 'D':
+        return 'Clase de laboratorio';
+      case 'X':
+        return 'Clase de teoríco-práctica';
+      default:
+        return 'Clase de teoríco-práctica';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -240,7 +257,7 @@ class HomeScreenState extends State<HomeScreen> {
 
               return ClassCards(
                 subjectName: subjectName,
-                classType: classType,
+                classType: '$classType - ${getGroupLabel(classType[0])}', // Aquí se añade el tipo de clase
                 event: event,
                 isOverlap: isOverlap,
               );

@@ -53,7 +53,6 @@ class _MyAppState extends State<MyApp> {
       //TEMA CLARO
       theme: ThemeData.light().copyWith(
         // Tema claro
-        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.indigo,
           brightness: Brightness.light,
@@ -131,7 +130,6 @@ class _MyAppState extends State<MyApp> {
 
       //TEMA OSCURO
       darkTheme: ThemeData.dark().copyWith(
-        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.white,
           brightness: Brightness.dark,
