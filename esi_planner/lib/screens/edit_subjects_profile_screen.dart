@@ -168,7 +168,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: isDarkMode
-                                    ? [Colors.grey.shade800, Colors.grey.shade800] // Degradado oscuro
+                                    ? [Colors.grey.shade900, Colors.grey.shade900] // Degradado oscuro
                                     : [Colors.indigo.shade50, Colors.white],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -186,7 +186,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                       Icon(
                                         Icons.book, // Icono para el nombre de la asignatura
                                         size: 24,
-                                        color: isDarkMode ? Colors.white : Colors.indigo.shade900,
+                                        color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
                                       ),
                                       const SizedBox(width: 8),
                                       Flexible( // Permite que el texto fluya a la siguiente línea
@@ -195,7 +195,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
-                                            color: isDarkMode ? Colors.white : Colors.indigo.shade900,
+                                            color: isDarkMode ? Colors.white : Colors.black,
                                           ),
                                         ),
                                       ),
@@ -208,7 +208,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                       Icon(
                                         Icons.code, // Icono para el código
                                         size: 20,
-                                        color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                                        color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
                                       ),
                                       const SizedBox(width: 8),
                                       Flexible( // Permite que el texto fluya a la siguiente línea
@@ -216,7 +216,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                           subject['code'],
                                           style: TextStyle(
                                             fontSize: 16,
-                                            color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                                            color: isDarkMode ? Colors.white : Colors.black,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -230,8 +230,8 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                       'Seleccionar asignatura',
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: isDarkMode ? Colors.white : Colors.black87,
-                                        fontWeight: FontWeight.w500,
+                                        color: isDarkMode ? Colors.white : Colors.black,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     value: selectedGroupTypes.containsKey(subject['code']),
@@ -244,7 +244,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                         }
                                       });
                                     },
-                                    activeColor: isDarkMode ? Colors.white : Colors.indigo // Color del interruptor cuando está activado
+                                    activeColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo // Color del interruptor cuando está activado
                                   ),
                                   // Grupos seleccionables
                                   if (selectedGroupTypes.containsKey(subject['code'])) ...[
@@ -259,9 +259,9 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                             Text(
                                               getGroupLabel(letter),
                                               style: TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.normal,
                                                 fontSize: 16,
-                                                color: isDarkMode ? Colors.white : Colors.indigo.shade900,
+                                                color: isDarkMode ? Colors.white : Colors.black,
                                               ),
                                             ),
                                             const SizedBox(height: 8),
@@ -275,7 +275,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                                     type,
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      color: isDarkMode ? Colors.grey.shade700 : Colors.indigo,
+                                                      color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
                                                       fontWeight: FontWeight.w500,
                                                     ),
                                                   ),
@@ -288,8 +288,8 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                                       }
                                                     });
                                                   },
-                                                  selectedColor:  isDarkMode ? Colors.grey.shade900 : Colors.indigo.shade100,
-                                                  backgroundColor: Colors.white, // Color de fondo cuando no está seleccionado
+                                                  selectedColor:  isDarkMode ? Colors.black: Colors.indigo.shade100,
+                                                  backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.white, // Color de fondo cuando no está seleccionado
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius: BorderRadius.circular(12), // Bordes redondeados
                                                     side: BorderSide(color:  isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade300), // Borde con color

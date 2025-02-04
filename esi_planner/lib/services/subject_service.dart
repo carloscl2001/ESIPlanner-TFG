@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-// Importa el AuthProvider para acceder al token
 
 class SubjectService {
   //Funcion que hace la solictud HTTP para obtner los datos de una asignatura

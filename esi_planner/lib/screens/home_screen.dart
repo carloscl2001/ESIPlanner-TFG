@@ -176,8 +176,6 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildEventList() {
-    // Dentro de _buildEventList:
-    List<Map<String, dynamic>> overlappingEvents = [];
 
     // Recopilar todos los eventos de todas las asignaturas
     List<Map<String, dynamic>> allEvents = [];
@@ -232,13 +230,8 @@ class HomeScreenState extends State<HomeScreen> {
           if (endTimeCurrent.isAfter(startTimeNext)) {
             isOverlapping[i] = true;
             isOverlapping[i + 1] = true;
-            overlappingEvents.add(events[i]);
-            overlappingEvents.add(events[i + 1]);
           }
         }
-
-        // Guardar los eventos solapados en el Provider
-        Provider.of<OverlapClassProvider>(context, listen: false).setOverlappingEvents(overlappingEvents);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

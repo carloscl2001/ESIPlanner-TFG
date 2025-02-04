@@ -25,7 +25,7 @@ class ClassCards extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
         side: isOverlap
-            ? const BorderSide(color: Colors.red, width: 2.0) // Borde rojo para solapamientos
+            ? const BorderSide(color: Colors.red, width: 1.0) // Borde rojo para solapamientos
             : BorderSide.none,
       ),
       elevation: 4,
@@ -85,7 +85,7 @@ class ClassCards extends StatelessWidget {
           text,
           style: TextStyle(
             color: colorTexto,
-            fontWeight: colorTexto != null ? FontWeight.bold : FontWeight.normal,
+            fontWeight: FontWeight.normal,
           ),
         ),
       ],

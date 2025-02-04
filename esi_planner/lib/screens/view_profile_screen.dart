@@ -28,6 +28,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
   Future<void> _loadUserProfile() async {
     final String? username = Provider.of<AuthProvider>(context, listen: false).username;
 
+
     if (username != null) {
 
       final profileData = await profileService.getProfileData(username: username);
@@ -78,7 +79,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: isDarkMode
-                              ? [Colors.grey.shade900, Colors.grey.shade900] // Degradado oscuro
+                              ? [Colors.grey.shade800, Colors.grey.shade800] // Degradado oscuro
                               : [Colors.indigo.shade50, Colors.white], // Degradado clarodado claro
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -151,7 +152,7 @@ class ProfileField extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+        color: isDarkMode ? Colors.grey.shade900 : Colors.white,
         borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
@@ -166,7 +167,7 @@ class ProfileField extends StatelessWidget {
           Icon(
             icon,
             size: 24,
-            color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+            color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
           ),
           const SizedBox(width: 12),
           Text(
@@ -174,7 +175,7 @@ class ProfileField extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : Colors.indigo.shade900,
+              color: isDarkMode ? Colors.white : Colors.black,
             ),
           ),
         ],
