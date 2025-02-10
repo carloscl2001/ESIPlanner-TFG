@@ -14,7 +14,6 @@ class ViewProfileScreen extends StatefulWidget {
 class _ViewProfileScreenState extends State<ViewProfileScreen> {
   late ProfileService profileService;
 
-  bool isLoading = true;
   Map<String, dynamic> userProfile = {};
   String errorMessage = '';
 
@@ -40,12 +39,10 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         } else {
           userProfile = profileData;
         }
-        isLoading = false;
       });
     } else {
       setState(() {
         errorMessage = "El nombre de usuario no está disponible";
-        isLoading = false;
       });
     }
   }
@@ -64,9 +61,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         centerTitle: true,
         backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Center(
+      body: Center(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SingleChildScrollView(
