@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../services/profile_service.dart';
 import '../services/subject_service.dart';
 import '../providers/auth_provider.dart';
-import '../providers/overlap_class_provider.dart';
 import '../widgets/class_cards.dart';
 
 class HomeScreen extends StatefulWidget {
