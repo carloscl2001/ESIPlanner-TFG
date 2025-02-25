@@ -35,48 +35,66 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
 
   Future<void> _loadSubjects() async {
     final String? username =
-        Provider.of<AuthProvider>(context, listen: false).username;
+    Provider.of<AuthProvider>(context, listen: false).username;
 
     if (username != null) {
-      final profileData = await profileService.getProfileData(username: username);
-      final degree = profileData["degree"];
+      try {
+        final profileData = await profileService.getProfileData(username: username);
+        final degree = profileData["degree"];
 
-      if (degree != null) {
-        final degreeData = await subjectService.getDegreeData(degreeName: degree);
+        if (degree != null) {
+          final degreeData = await subjectService.getDegreeData(degreeName: degree);
 
-        if (degreeData['subjects'] != null) {
-          List<Map<String, dynamic>> updatedSubjects = [];
+          if (degreeData['subjects'] != null) {
+            List<Map<String, dynamic>> updatedSubjects = [];
 
-          for (var subject in degreeData['subjects']) {
-            final subjectData = await subjectService.getSubjectData(codeSubject: subject['code']);
-            updatedSubjects.add({
-              'name': subjectData['name'] ?? subject['name'],
-              'code': subject['code'],
-              'classes': subjectData['classes'] ?? [],
+            for (var subject in degreeData['subjects']) {
+              final subjectData = await subjectService.getSubjectData(codeSubject: subject['code']);
+              updatedSubjects.add({
+                'name': subjectData['name'] ?? subject['name'],
+                'code': subject['code'],
+                'classes': subjectData['classes'] ?? [],
+              });
+            }
+
+            // Verifica si el widget está montado antes de llamar a setState
+            if (mounted) {
+              setState(() {
+                subjects = updatedSubjects;
+                isLoading = false;
+              });
+            }
+          } else {
+            if (mounted) {
+              setState(() {
+                errorMessage = 'No se encontraron asignaturas para este grado';
+                isLoading = false;
+              });
+            }
+          }
+        } else {
+          if (mounted) {
+            setState(() {
+              errorMessage = 'No se encontró el grado en los datos del perfil';
+              isLoading = false;
             });
           }
-
+        }
+      } catch (e) {
+        if (mounted) {
           setState(() {
-            subjects = updatedSubjects;
-            isLoading = false;
-          });
-        } else {
-          setState(() {
-            errorMessage = 'No se encontraron asignaturas para este grado';
+            errorMessage = 'Error al cargar los datos: $e';
             isLoading = false;
           });
         }
-      } else {
+      }
+    } else {
+      if (mounted) {
         setState(() {
-          errorMessage = 'No se encontró el grado en los datos del perfil';
+          errorMessage = 'Usuario no autenticado';
           isLoading = false;
         });
       }
-    } else {
-      setState(() {
-        errorMessage = 'Usuario no autenticado';
-        isLoading = false;
-      });
     }
   }
 
@@ -84,14 +102,29 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
     final String? username = Provider.of<AuthProvider>(context, listen: false).username;
     if (username == null) return;
 
-    List<Map<String, dynamic>> selectedSubjects = selectedGroupTypes.entries.map((entry) {
-      return {
-        'code': entry.key,
-        'types': entry.value.toList(),
-      };
-    }).toList();
+    try {
+      List<Map<String, dynamic>> selectedSubjects = selectedGroupTypes.entries.map((entry) {
+        return {
+          'code': entry.key,
+          'types': entry.value.toList(),
+        };
+      }).toList();
 
-    await subjectService.updateSubjects(username: username, subjects: selectedSubjects);
+      await subjectService.updateSubjects(username: username, subjects: selectedSubjects);
+
+      // Verifica si el widget está montado antes de llamar a setState
+      if (mounted) {
+        setState(() {
+          // Actualiza el estado si es necesario
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          errorMessage = 'Error al guardar las selecciones: $e';
+        });
+      }
+    }
   }
 
   String getGroupLabel(String letter) {
