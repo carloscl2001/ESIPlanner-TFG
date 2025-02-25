@@ -56,22 +56,15 @@ class HomeScreenState extends State<HomeScreen> {
         for (var subject in userSubjects) {
           final subjectData = await subjectService.getSubjectData(codeSubject: subject['code']);
 
-          // Verificar los tipos de datos
-          print('Tipos del usuario: ${subject['types']}');
-          print('Tipo de subject[types]: ${subject['types'].runtimeType}');
-
           // Filtrar las clases según los tipos del usuario
           final List<dynamic> filteredClasses = subjectData['classes']
               .where((classData) {
                 // Verificar si 'type' está presente en classData
                 if (classData.containsKey('type')) {
                   final classType = classData['type'].toString(); // Asegurarse de que es una cadena
-                  print('Tipo de classData[type]: $classType');
                   final bool isTypeMatching = subject['types'].contains(classType);
-                  print('¿Tipo coincide? $isTypeMatching (Usuario: ${subject['types']}, Clase: $classType)');
                   return isTypeMatching;
                 } else {
-                  print('El campo "type" no está presente en classData');
                   return false; // Si no tiene 'type', no se incluye en los resultados
                 }
               })
@@ -179,8 +172,9 @@ Widget build(BuildContext context) {
 
   final weekDates = getWeekDates();
   final now = DateTime.now();
-  final monthYear = '${_getMonthName(now.month)} ${now.year}'; // Obtener el nombre del mes y el año
-  
+  final startOfWeek = _startOfWeek(now); // Lunes
+  final endOfWeek = startOfWeek.add(const Duration(days: 4)); // Viernes
+  final monthYearRange = _getMonthYearRange(startOfWeek, endOfWeek); // Obtener el rango de meses y años
 
   return Scaffold(
     appBar: AppBar(
@@ -197,15 +191,6 @@ Widget build(BuildContext context) {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
-                Text(
-                  monthYear,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 20),
                 if (errorMessage.isNotEmpty) ...[
                   Text(
                     errorMessage,
@@ -214,6 +199,16 @@ Widget build(BuildContext context) {
                   ),
                   const SizedBox(height: 20),
                 ],
+                // Mostrar el rango de meses y años
+                Text(
+                  monthYearRange,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 // Mostrar días de la semana y fechas
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -240,8 +235,8 @@ Widget build(BuildContext context) {
                               day,
                               style: TextStyle(
                                 color: selectedDay == day 
-                                ? (isDarkMode ? Colors.black : Colors.white) 
-                                : (isDarkMode ? Colors.white : Colors.black),
+                                  ? (isDarkMode ? Colors.black : Colors.white) 
+                                  : (isDarkMode ? Colors.white : Colors.black),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
@@ -272,49 +267,53 @@ Widget build(BuildContext context) {
           ),
   );
 }
-String _getMonthYearRange(DateTime startOfWeek, DateTime endOfWeek) {
-  final startMonth = _getMonthName(startOfWeek.month);
-  final startYear = startOfWeek.year;
-  final endMonth = _getMonthName(endOfWeek.month);
-  final endYear = endOfWeek.year;
 
-  if (startMonth == endMonth && startYear == endYear) {
-    return '$startMonth $startYear'; // Semana dentro del mismo mes y año
-  } else {
-    return '$startMonth $startYear - $endMonth $endYear'; // Semana que abarca dos meses/años
-  }
-}
+  // Función para obtener el rango de meses y años (lunes a viernes)
+  String _getMonthYearRange(DateTime startOfWeek, DateTime endOfWeek) {
+    final startMonth = _getMonthName(startOfWeek.month);
+    final startYear = startOfWeek.year;
+    final endMonth = _getMonthName(endOfWeek.month);
+    final endYear = endOfWeek.year;
 
-String _getMonthName(int month) {
-  switch (month) {
-    case 1:
-      return 'Enero';
-    case 2:
-      return 'Febrero';
-    case 3:
-      return 'Marzo';
-    case 4:
-      return 'Abril';
-    case 5:
-      return 'Mayo';
-    case 6:
-      return 'Junio';
-    case 7:
-      return 'Julio';
-    case 8:
-      return 'Agosto';
-    case 9:
-      return 'Septiembre';
-    case 10:
-      return 'Octubre';
-    case 11:
-      return 'Noviembre';
-    case 12:
-      return 'Diciembre';
-    default:
-      return '';
+    if (startMonth == endMonth && startYear == endYear) {
+      return '$startMonth $startYear'; // Semana dentro del mismo mes y año
+    } else {
+      return '$startMonth $startYear - $endMonth $endYear'; // Semana que abarca dos meses/años
+    }
   }
-}
+
+  // Función para obtener el nombre del mes
+  String _getMonthName(int month) {
+    switch (month) {
+      case 1:
+        return 'Enero';
+      case 2:
+        return 'Febrero';
+      case 3:
+        return 'Marzo';
+      case 4:
+        return 'Abril';
+      case 5:
+        return 'Mayo';
+      case 6:
+        return 'Junio';
+      case 7:
+        return 'Julio';
+      case 8:
+        return 'Agosto';
+      case 9:
+        return 'Septiembre';
+      case 10:
+        return 'Octubre';
+      case 11:
+        return 'Noviembre';
+      case 12:
+        return 'Diciembre';
+      default:
+        return '';
+    }
+  }
+
   Widget _buildEventList() {
     // Obtener el inicio y el fin de la semana actual
     final now = DateTime.now();

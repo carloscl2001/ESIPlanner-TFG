@@ -4,7 +4,9 @@ import '../services/profile_service.dart';
 import '../services/subject_service.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/class_cards.dart';
-import '../providers/theme_provider.dart'; 
+import '../providers/theme_provider.dart';
+import 'package:intl/intl.dart';
+
 
 class AgendaScreen extends StatefulWidget {
   const AgendaScreen({super.key});
@@ -126,6 +128,11 @@ class AgendaScreenState extends State<AgendaScreen> {
       }
     }
   }
+
+  String formatDateToFullDate(DateTime date) {
+    return DateFormat('EEEE d MMMM y', 'es_ES').format(date);
+  }
+
   // Calcular las semanas del curso
   void _calculateWeekRanges() {
     if (subjects.isEmpty) return;
@@ -157,8 +164,28 @@ class AgendaScreenState extends State<AgendaScreen> {
     DateTime currentStart = _getStartOfWeek(firstDate);
     while (currentStart.isBefore(lastDate) || currentStart.isAtSameMomentAs(lastDate)) {
       DateTime currentEnd = currentStart.add(const Duration(days: 6));
-      weekRanges.add(DateTimeRange(start: currentStart, end: currentEnd));
-      weekLabels.add('${_formatDate(currentStart)} - ${_formatDate(currentEnd)}');
+
+      // Verificar si hay algún evento en esta semana
+      bool hasEvents = false;
+      for (var subject in subjects) {
+        for (var classData in subject['classes']) {
+          for (var event in classData['events']) {
+            final eventDate = DateTime.parse(event['date']);
+            if (eventDate.isAfter(currentStart.subtract(const Duration(days: 1))) &&
+                eventDate.isBefore(currentEnd.add(const Duration(days: 1)))) {
+              hasEvents = true;
+              break;
+            }
+          }
+        }
+        if (hasEvents) break;
+      }
+
+      if (hasEvents) {
+        weekRanges.add(DateTimeRange(start: currentStart, end: currentEnd));
+        weekLabels.add('${_formatDate(currentStart)} - ${_formatDate(currentEnd)}');
+      }
+
       currentStart = currentStart.add(const Duration(days: 7));
     }
 
@@ -214,20 +241,57 @@ class AgendaScreenState extends State<AgendaScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: <Widget>[
-                  // Selector de semanas
-                  DropdownButton<int>(
-                    value: selectedWeekIndex,
-                    onChanged: (int? newValue) {
-                      setState(() {
-                        selectedWeekIndex = newValue!;
-                      });
-                    },
-                    items: weekLabels.asMap().entries.map<DropdownMenuItem<int>>((entry) {
-                      return DropdownMenuItem<int>(
-                        value: entry.key,
-                        child: Text(entry.value),
-                      );
-                    }).toList(),
+                  // Selector de semanas mejorado
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    decoration: BoxDecoration(
+                      color: isDarkMode ? Colors.grey.shade900 : Colors.white,
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 6.0,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: DropdownButton<int>(
+                      value: selectedWeekIndex,
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          selectedWeekIndex = newValue!;
+                        });
+                      },
+                      items: weekLabels.asMap().entries.map<DropdownMenuItem<int>>((entry) {
+                        return DropdownMenuItem<int>(
+                          value: entry.key,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                color: isDarkMode ? Colors.white : Colors.indigo,
+                                size: 18.0,
+                              ),
+                              const SizedBox(width: 8.0),
+                              Text(
+                                entry.value,
+                                style: TextStyle(
+                                  color: isDarkMode ? Colors.white : Colors.black,
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      underline: const SizedBox(), // Elimina la línea inferior por defecto
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: isDarkMode ? Colors.white : Colors.indigo,
+                      ),
+                      isExpanded: true,
+                      dropdownColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   if (errorMessage.isNotEmpty) ...[
@@ -322,7 +386,8 @@ class AgendaScreenState extends State<AgendaScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                'Fecha: $date',
+                // Formatea la fecha usando DateFormat
+              DateFormat('EEEE d MMMM y', 'es_ES').format(DateTime.parse(date)),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

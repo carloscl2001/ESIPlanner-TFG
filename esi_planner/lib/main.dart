@@ -16,7 +16,15 @@ import 'screens/edit_password_profile_screen.dart';
 import 'screens/edit_subjects_profile_screen.dart';
 import 'screens/view_subjects_profile_screen.dart';
 
-void main() {
+import 'package:intl/date_symbol_data_local.dart';
+
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Inicializa los datos de localización para español (ajusta a tu idioma y región)
+  await initializeDateFormatting('es_ES', null); // O el locale que desees
+
   runApp(
     MultiProvider(
       providers: [
