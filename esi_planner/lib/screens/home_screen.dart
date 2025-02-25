@@ -27,6 +27,7 @@ class HomeScreenState extends State<HomeScreen> {
     super.initState();
     profileService = ProfileService();
     subjectService = SubjectService();
+    selectedDay = _getCurrentWeekday(); // Seleccionar el día actual
     _loadSubjects();
   }
 
@@ -165,6 +166,12 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  String _getCurrentWeekday() {
+    final now = DateTime.now();
+    final int weekdayIndex = now.weekday - 1; // Convertir a índice (0 = lunes, 4 = viernes)
+    return (weekdayIndex >= 0 && weekdayIndex < weekDays.length) ? weekDays[weekdayIndex] : 'L';
+  }
+  
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
