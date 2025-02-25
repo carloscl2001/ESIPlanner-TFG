@@ -171,87 +171,150 @@ class HomeScreenState extends State<HomeScreen> {
     final int weekdayIndex = now.weekday - 1; // Convertir a índice (0 = lunes, 4 = viernes)
     return (weekdayIndex >= 0 && weekdayIndex < weekDays.length) ? weekDays[weekdayIndex] : 'L';
   }
+
+ @override
+Widget build(BuildContext context) {
+  final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+  final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
+  final weekDates = getWeekDates();
+  final now = DateTime.now();
+  final monthYear = '${_getMonthName(now.month)} ${now.year}'; // Obtener el nombre del mes y el año
   
-  @override
-  Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
-    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
-    final weekDates = getWeekDates();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Tus clases esta semana',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text(
+        'Tus clases esta semana',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: <Widget>[
-                  if (errorMessage.isNotEmpty) ...[
-                    Text(
-                      errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                  // Mostrar días de la semana y fechas
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: List.generate(weekDays.length, (index) {
-                      final day = weekDays[index];
-                      final date = weekDates[index];
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedDay = day; // Seleccionar el día
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: selectedDay == day ? Colors.indigo : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                day,
-                                style: TextStyle(
-                                  color: selectedDay == day ? Colors.white : Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                date,
-                                style: TextStyle(
-                                  color: selectedDay == day ? Colors.white : Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
+      centerTitle: true,
+      backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
+    ),
+    body: isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  monthYear,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (errorMessage.isNotEmpty) ...[
+                  Text(
+                    errorMessage,
+                    style: const TextStyle(color: Colors.red, fontSize: 14),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
-                  Expanded(
-                    child: _buildEventList(),
-                  ),
                 ],
-              ),
+                // Mostrar días de la semana y fechas
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(weekDays.length, (index) {
+                    final day = weekDays[index];
+                    final date = weekDates[index];
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedDay = day; // Seleccionar el día
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: selectedDay == day 
+                            ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo) 
+                            : (isDarkMode ? Colors.grey.shade900 : Colors.indigo.shade50),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              day,
+                              style: TextStyle(
+                                color: selectedDay == day 
+                                ? (isDarkMode ? Colors.black : Colors.white) 
+                                : (isDarkMode ? Colors.white : Colors.black),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              date,
+                              style: TextStyle(
+                                color: selectedDay == day 
+                                  ? (isDarkMode ? Colors.black : Colors.white) 
+                                  : (isDarkMode ? Colors.white : Colors.black),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: _buildEventList(),
+                ),
+              ],
             ),
-    );
-  }
+          ),
+  );
+}
+String _getMonthYearRange(DateTime startOfWeek, DateTime endOfWeek) {
+  final startMonth = _getMonthName(startOfWeek.month);
+  final startYear = startOfWeek.year;
+  final endMonth = _getMonthName(endOfWeek.month);
+  final endYear = endOfWeek.year;
 
+  if (startMonth == endMonth && startYear == endYear) {
+    return '$startMonth $startYear'; // Semana dentro del mismo mes y año
+  } else {
+    return '$startMonth $startYear - $endMonth $endYear'; // Semana que abarca dos meses/años
+  }
+}
+
+String _getMonthName(int month) {
+  switch (month) {
+    case 1:
+      return 'Enero';
+    case 2:
+      return 'Febrero';
+    case 3:
+      return 'Marzo';
+    case 4:
+      return 'Abril';
+    case 5:
+      return 'Mayo';
+    case 6:
+      return 'Junio';
+    case 7:
+      return 'Julio';
+    case 8:
+      return 'Agosto';
+    case 9:
+      return 'Septiembre';
+    case 10:
+      return 'Octubre';
+    case 11:
+      return 'Noviembre';
+    case 12:
+      return 'Diciembre';
+    default:
+      return '';
+  }
+}
   Widget _buildEventList() {
     // Obtener el inicio y el fin de la semana actual
     final now = DateTime.now();
