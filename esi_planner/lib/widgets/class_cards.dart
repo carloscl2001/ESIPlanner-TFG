@@ -85,7 +85,7 @@ class ClassCards extends StatelessWidget {
           text,
           style: TextStyle(
             color: colorTexto,
-            fontWeight: FontWeight.normal,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],

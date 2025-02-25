@@ -227,12 +227,12 @@ Widget build(BuildContext context) {
                         });
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
                         decoration: BoxDecoration(
                           color: selectedDay == day 
                             ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo) 
                             : (isDarkMode ? Colors.grey.shade900 : Colors.indigo.shade50),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
                           children: [
