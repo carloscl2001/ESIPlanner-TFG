@@ -57,18 +57,21 @@ class HomeScreenState extends State<HomeScreen> {
           final subjectData = await subjectService.getSubjectData(codeSubject: subject['code']);
 
           // Filtrar las clases según los tipos del usuario
-          final List<dynamic> filteredClasses = subjectData['classes']
-              .where((classData) {
-                // Verificar si 'type' está presente en classData
-                if (classData.containsKey('type')) {
-                  final classType = classData['type'].toString(); // Asegurarse de que es una cadena
-                  final bool isTypeMatching = subject['types'].contains(classType);
-                  return isTypeMatching;
-                } else {
-                  return false; // Si no tiene 'type', no se incluye en los resultados
-                }
-              })
-              .toList();
+          final List<dynamic> filteredClasses = subjectData['classes'] != null
+            ? subjectData['classes']
+                .where((classData) {
+                  // Verificar si 'type' está presente en classData
+                  if (classData.containsKey('type')) {
+                    final classType = classData['type'].toString(); // Asegurarse de que es una cadena
+                    final List<String> userTypes = (subject['types'] as List<dynamic>?)?.cast<String>() ?? [];
+                    final bool isTypeMatching = userTypes.contains(classType);
+                    return isTypeMatching;
+                  } else {
+                    return false; // Si no tiene 'type', no se incluye en los resultados
+                  }
+                })
+                .toList()
+            : []; // Si es null, devuelve una lista vacía
 
           // Ordenar los eventos de cada clase por fecha
           for (var classData in filteredClasses) {

@@ -141,13 +141,13 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
               label: 'Inicio',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.calendar_today, color: isDarkMode ? Colors.black : Colors.indigo),
-              icon: const Icon(Icons.calendar_today_outlined, color: Colors.grey),
+              selectedIcon: Icon(Icons.calendar_view_week, color: isDarkMode ? Colors.black : Colors.indigo),
+              icon: const Icon(Icons.calendar_view_week_outlined, color: Colors.grey),
               label: 'Horario',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.calendar_view_week, color: isDarkMode ? Colors.black : Colors.indigo),
-              icon: const Icon(Icons.calendar_view_week_outlined, color: Colors.grey),
+              selectedIcon: Icon(Icons.calendar_month_rounded, color: isDarkMode ? Colors.black : Colors.indigo),
+              icon: const Icon(Icons.calendar_month_rounded, color: Colors.grey),
               label: 'Agenda',
             ),
             NavigationDestination(

@@ -62,22 +62,21 @@ class TimetableScreenState extends State<TimetableScreen> {
           final subjectData = await subjectService.getSubjectData(codeSubject: subject['code']);
 
           // Filtrar las clases según los tipos del usuario
-          final List<dynamic> filteredClasses = subjectData['classes']
-              .where((classData) {
-                // Verificar si 'type' está presente en classData
-                if (classData.containsKey('type')) {
-                  // Convertir classData['type'] a String
-                  final classType = classData['type'].toString();
-
-                  // Convertir subject['types'] a List<String>
-                  final List<String> userTypes = (subject['types'] as List<dynamic>).cast<String>();
-
-                  // Verificar si el tipo de clase está en la lista de tipos del usuario
-                  return userTypes.contains(classType);
-                }
-                return false; // Si no tiene 'type', no se incluye en los resultados
-              })
-              .toList();
+          final List<dynamic> filteredClasses = subjectData['classes'] != null
+            ? subjectData['classes']
+                .where((classData) {
+                  // Verificar si 'type' está presente en classData
+                  if (classData.containsKey('type')) {
+                    final classType = classData['type'].toString(); // Asegurarse de que es una cadena
+                    final List<String> userTypes = (subject['types'] as List<dynamic>?)?.cast<String>() ?? [];
+                    final bool isTypeMatching = userTypes.contains(classType);
+                    return isTypeMatching;
+                  } else {
+                    return false; // Si no tiene 'type', no se incluye en los resultados
+                  }
+                })
+                .toList()
+            : []; // Si es null, devuelve una lista vacía
 
           // Ordenar los eventos de cada clase por fecha
           for (var classData in filteredClasses) {
@@ -130,12 +129,11 @@ class TimetableScreenState extends State<TimetableScreen> {
   }
 
   String _formatDateWithWeekNumber(DateTime startDate, DateTime endDate) {
-    final weekNumber = DateFormat('w', 'es_ES').format(startDate);
-    return 'Semana $weekNumber: ${_formatDateShort(startDate)} - ${_formatDateShort(endDate)}';
+    return '${_formatDateShort(startDate)} --> ${_formatDateShort(endDate)}';
   }
 
   String _formatDateShort(DateTime date) {
-    return DateFormat('dd MMM', 'es_ES').format(date);
+    return DateFormat('dd MMMM', 'es_ES').format(date);
   }
 
 
@@ -204,11 +202,6 @@ class TimetableScreenState extends State<TimetableScreen> {
   // Obtener el inicio de la semana (lunes)
   DateTime _getStartOfWeek(DateTime date) {
     return date.subtract(Duration(days: date.weekday - 1));
-  }
-
-  // Formatear una fecha como "dd/MM/yyyy"
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 
   String getGroupLabel(String letter) {
