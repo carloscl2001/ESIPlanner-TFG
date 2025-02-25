@@ -4,6 +4,7 @@ import '../services/profile_service.dart';
 import '../services/subject_service.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/class_cards.dart';
+import '../providers/theme_provider.dart'; // Importa el ThemeProvider
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +20,7 @@ class HomeScreenState extends State<HomeScreen> {
   bool isLoading = true;
   List<Map<String, dynamic>> subjects = [];
   String errorMessage = '';
+  String? selectedDay; // Día seleccionado (lunes, martes, etc.)
 
   @override
   void initState() {
@@ -140,8 +142,36 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // Función para obtener el inicio de la semana (lunes)
+  DateTime _startOfWeek(DateTime date) {
+    return date.subtract(Duration(days: date.weekday - 1));
+  }
+
+  // Función para obtener el fin de la semana (domingo)
+  DateTime _endOfWeek(DateTime date) {
+    return date.add(Duration(days: DateTime.daysPerWeek - date.weekday));
+  }
+
+  // Lista de días de la semana (lunes a viernes)
+  final List<String> weekDays = ['L', 'M', 'X', 'J', 'V'];
+
+  // Obtener las fechas de la semana actual
+  List<String> getWeekDates() {
+    final now = DateTime.now();
+    final startOfWeek = _startOfWeek(now);
+    return List.generate(7, (index) {
+      final date = startOfWeek.add(Duration(days: index));
+      return date.day.toString();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
+    final weekDates = getWeekDates();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -149,7 +179,7 @@ class HomeScreenState extends State<HomeScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.indigo, // Color de la barra de navegación
+        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -165,6 +195,47 @@ class HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 20),
                   ],
+                  // Mostrar días de la semana y fechas
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: List.generate(weekDays.length, (index) {
+                      final day = weekDays[index];
+                      final date = weekDates[index];
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedDay = day; // Seleccionar el día
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: selectedDay == day ? Colors.indigo : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                day,
+                                style: TextStyle(
+                                  color: selectedDay == day ? Colors.white : Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                date,
+                                style: TextStyle(
+                                  color: selectedDay == day ? Colors.white : Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 20),
                   Expanded(
                     child: _buildEventList(),
                   ),
@@ -175,19 +246,40 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildEventList() {
+    // Obtener el inicio y el fin de la semana actual
+    final now = DateTime.now();
+    final startOfWeek = _startOfWeek(now);
+    final endOfWeek = _endOfWeek(now);
 
     // Recopilar todos los eventos de todas las asignaturas
     List<Map<String, dynamic>> allEvents = [];
     for (var subject in subjects) {
       for (var classData in subject['classes']) {
         for (var event in classData['events']) {
-          allEvents.add({
-            'subjectName': subject['name'] ?? 'No Name',
-            'classType': classData['type'] ?? 'No disponible',
-            'event': event,
-          });
+          final eventDate = DateTime.parse(event['date']);
+          if (eventDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
+              eventDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
+            allEvents.add({
+              'subjectName': subject['name'] ?? 'No Name',
+              'classType': classData['type'] ?? 'No disponible',
+              'event': event,
+            });
+          }
         }
       }
+    }
+
+    // Filtrar eventos por día seleccionado
+    if (selectedDay != null) {
+      final selectedDayIndex = weekDays.indexOf(selectedDay!);
+      final selectedDate = _startOfWeek(now).add(Duration(days: selectedDayIndex));
+
+      allEvents = allEvents.where((eventData) {
+        final eventDate = DateTime.parse(eventData['event']['date']);
+        return eventDate.year == selectedDate.year &&
+            eventDate.month == selectedDate.month &&
+            eventDate.day == selectedDate.day;
+      }).toList();
     }
 
     // Agrupar los eventos por fecha
@@ -235,18 +327,6 @@ class HomeScreenState extends State<HomeScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Título con la fecha
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                'Fecha: $date',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.indigo,
-                ),
-              ),
-            ),
             // Cards para cada evento utilizando CustomEventCard
             ...events.asMap().entries.map<Widget>((entry) {
               final index = entry.key;
