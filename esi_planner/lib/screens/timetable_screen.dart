@@ -222,198 +222,205 @@ class TimetableScreenState extends State<TimetableScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
-    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+Widget build(BuildContext context) {
+  final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+  final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Elige una semana para ver tus clases',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text(
+        'Elige una semana para ver tus clases',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: <Widget>[
-                  // Selector de semanas mejorado
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.grey.shade900 : Colors.white,
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 6.0,
-                          offset: const Offset(0, 2),
+      centerTitle: true,
+      backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
+    ),
+    body: isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                // Selector de semanas mejorado
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  decoration: BoxDecoration(
+                    color:  isDarkMode ? Colors.grey.shade900 : null,
+                    gradient: isDarkMode
+                      ? null
+                      : LinearGradient(
+                          colors: [Colors.indigo.shade50, Colors.white],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                      ],
-                    ),
-                    child: DropdownButton<int>(
-                      value: selectedWeekIndex,
-                      onChanged: (int? newValue) {
-                        setState(() {
-                          selectedWeekIndex = newValue!;
-                        });
-                      },
-                      items: weekLabels.asMap().entries.map<DropdownMenuItem<int>>((entry) {
-                        return DropdownMenuItem<int>(
-                          value: entry.key,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.calendar_today,
-                                color: isDarkMode ? Colors.white : Colors.indigo,
-                                size: 18.0,
-                              ),
-                              const SizedBox(width: 8.0),
-                              Text(
-                                entry.value,
-                                style: TextStyle(
-                                  color: isDarkMode ? Colors.white : Colors.black,
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      underline: const SizedBox(), // Elimina la línea inferior por defecto
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: isDarkMode ? Colors.white : Colors.indigo,
+                    borderRadius: BorderRadius.circular(12.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 6.0,
+                        offset: const Offset(0, 2),
                       ),
-                      isExpanded: true,
-                      dropdownColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
+                    ],
+                  ),
+                  child: DropdownButton<int>(
+                    value: selectedWeekIndex,
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        selectedWeekIndex = newValue!;
+                      });
+                    },
+                    items: weekLabels.asMap().entries.map<DropdownMenuItem<int>>((entry) {
+                      return DropdownMenuItem<int>(
+                        value: entry.key,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today,
+                              color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                              size: 18.0,
+                            ),
+                            const SizedBox(width: 8.0),
+                            Text(
+                              entry.value,
+                              style: TextStyle(
+                                color: isDarkMode ? Colors.white : Colors.black,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    underline: const SizedBox(), // Elimina la línea inferior por defecto
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
                     ),
+                    isExpanded: true,
+                    dropdownColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (errorMessage.isNotEmpty) ...[
+                  Text(
+                    errorMessage,
+                    style: const TextStyle(color: Colors.red, fontSize: 14),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
-                  if (errorMessage.isNotEmpty) ...[
-                    Text(
-                      errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                  Expanded(
-                    child: _buildEventList(),
-                  ),
                 ],
-              ),
-            ),
-    );
-  }
-
-  Widget _buildEventList() {
-    if (weekRanges.isEmpty) {
-      return const Center(child: Text('No hay clases disponibles'));
-    }
-
-    // Obtener el rango de fechas de la semana seleccionada
-    final weekRange = weekRanges[selectedWeekIndex];
-
-    // Recopilar todos los eventos de la semana seleccionada
-    List<Map<String, dynamic>> allEvents = [];
-    for (var subject in subjects) {
-      for (var classData in subject['classes']) {
-        for (var event in classData['events']) {
-          final eventDate = DateTime.parse(event['date']);
-          if (eventDate.isAfter(weekRange.start.subtract(const Duration(days: 1))) &&
-              eventDate.isBefore(weekRange.end.add(const Duration(days: 1)))) {
-            allEvents.add({
-              'subjectName': subject['name'] ?? 'No Name',
-              'classType': classData['type'] ?? 'No disponible',
-              'event': event,
-            });
-          }
-        }
-      }
-    }
-
-    // Agrupar los eventos por fecha
-    Map<String, List<Map<String, dynamic>>> groupedByDate = {};
-    for (var eventData in allEvents) {
-      final eventDate = eventData['event']['date'];
-
-      if (!groupedByDate.containsKey(eventDate)) {
-        groupedByDate[eventDate] = [];
-      }
-
-      groupedByDate[eventDate]!.add(eventData);
-    }
-
-    // Ordenar los eventos por hora dentro de cada fecha
-    groupedByDate.forEach((date, events) {
-      events.sort((a, b) {
-        DateTime timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
-        DateTime timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
-        return timeA.compareTo(timeB);
-      });
-    });
-
-    // Ordenar las fechas
-    var sortedDates = groupedByDate.keys.toList()..sort();
-
-    return ListView.builder(
-      itemCount: sortedDates.length,
-      itemBuilder: (context, index) {
-        final date = sortedDates[index];
-        final events = groupedByDate[date]!;
-
-        // Verificar solapamientos
-        List<bool> isOverlapping = List.filled(events.length, false);
-        for (int i = 0; i < events.length - 1; i++) {
-          DateTime endTimeCurrent = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['end_hour']}');
-          DateTime startTimeNext = DateTime.parse('${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}');
-
-          if (endTimeCurrent.isAfter(startTimeNext)) {
-            isOverlapping[i] = true;
-            isOverlapping[i + 1] = true;
-          }
-        }
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // Título con la fecha
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                // Formatea la fecha usando DateFormat
-              DateFormat('EEEE d MMMM y', 'es_ES').format(DateTime.parse(date)),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.indigo,
+                Expanded(
+                  child: _buildEventList(isDarkMode), // Pasa isDarkMode al método
                 ),
+              ],
+            ),
+          ),
+  );
+}
+
+Widget _buildEventList(bool isDarkMode) {
+  if (weekRanges.isEmpty) {
+    return const Center(child: Text('No hay clases disponibles'));
+  }
+
+  // Obtener el rango de fechas de la semana seleccionada
+  final weekRange = weekRanges[selectedWeekIndex];
+
+  // Recopilar todos los eventos de la semana seleccionada
+  List<Map<String, dynamic>> allEvents = [];
+  for (var subject in subjects) {
+    for (var classData in subject['classes']) {
+      for (var event in classData['events']) {
+        final eventDate = DateTime.parse(event['date']);
+        if (eventDate.isAfter(weekRange.start.subtract(const Duration(days: 1))) &&
+            eventDate.isBefore(weekRange.end.add(const Duration(days: 1)))) {
+          allEvents.add({
+            'subjectName': subject['name'] ?? 'No Name',
+            'classType': classData['type'] ?? 'No disponible',
+            'event': event,
+          });
+        }
+      }
+    }
+  }
+
+  // Agrupar los eventos por fecha
+  Map<String, List<Map<String, dynamic>>> groupedByDate = {};
+  for (var eventData in allEvents) {
+    final eventDate = eventData['event']['date'];
+
+    if (!groupedByDate.containsKey(eventDate)) {
+      groupedByDate[eventDate] = [];
+    }
+
+    groupedByDate[eventDate]!.add(eventData);
+  }
+
+  // Ordenar los eventos por hora dentro de cada fecha
+  groupedByDate.forEach((date, events) {
+    events.sort((a, b) {
+      DateTime timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
+      DateTime timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
+      return timeA.compareTo(timeB);
+    });
+  });
+
+  // Ordenar las fechas
+  var sortedDates = groupedByDate.keys.toList()..sort();
+
+  return ListView.builder(
+    itemCount: sortedDates.length,
+    itemBuilder: (context, index) {
+      final date = sortedDates[index];
+      final events = groupedByDate[date]!;
+
+      // Verificar solapamientos
+      List<bool> isOverlapping = List.filled(events.length, false);
+      for (int i = 0; i < events.length - 1; i++) {
+        DateTime endTimeCurrent = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['end_hour']}');
+        DateTime startTimeNext = DateTime.parse('${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}');
+
+        if (endTimeCurrent.isAfter(startTimeNext)) {
+          isOverlapping[i] = true;
+          isOverlapping[i + 1] = true;
+        }
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Título con la fecha
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              // Formatea la fecha usando DateFormat
+              DateFormat('EEEE d MMMM y', 'es_ES').format(DateTime.parse(date)),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo, // Cambia el color según el modo
               ),
             ),
-            // Cards para cada evento utilizando CustomEventCard
-            ...events.asMap().entries.map<Widget>((entry) {
-              final index = entry.key;
-              final eventData = entry.value;
-              final event = eventData['event'];
-              final classType = eventData['classType'];
-              final subjectName = eventData['subjectName'];
-              final bool isOverlap = isOverlapping[index];
+          ),
+          // Cards para cada evento utilizando CustomEventCard
+          ...events.asMap().entries.map<Widget>((entry) {
+            final index = entry.key;
+            final eventData = entry.value;
+            final event = eventData['event'];
+            final classType = eventData['classType'];
+            final subjectName = eventData['subjectName'];
+            final bool isOverlap = isOverlapping[index];
 
-              return ClassCards(
-                subjectName: subjectName,
-                classType: '$classType - ${getGroupLabel(classType[0])}',
-                event: event,
-                isOverlap: isOverlap,
-              );
-            }),
-          ],
-        );
-      },
-    );
-  }
+            return ClassCards(
+              subjectName: subjectName,
+              classType: '$classType - ${getGroupLabel(classType[0])}',
+              event: event,
+              isOverlap: isOverlap,
+            );
+          }),
+        ],
+      );
+    },
+  );
+}
 }
