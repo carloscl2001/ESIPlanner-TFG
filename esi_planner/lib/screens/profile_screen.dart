@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart'; // Importa el ThemeProvider
-import '../widgets/custom_cards.dart'; // Importa el CustomCard
+import '../providers/theme_provider.dart';
+import '../providers/auth_provider.dart';
+import '../widgets/custom_cards.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+  void logout(BuildContext context) {
+    context.read<AuthProvider>().logout();
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
@@ -18,11 +24,11 @@ class ProfileScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
+        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo,
       ),
       body: Column(
         children: [
-          // Interruptor para cambiar entre modo claro y oscuro
+          // Interruptor de modo oscuro
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Card(
@@ -34,49 +40,45 @@ class ProfileScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: isDarkMode
                       ? LinearGradient(
-                          colors: [Colors.grey.shade900, Colors.grey.shade900], // Gradiente claro
+                          colors: [Colors.grey.shade900, Colors.grey.shade900],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                        )// Sin gradiente en modo oscuro
+                        )
                       : LinearGradient(
-                          colors: [Colors.indigo.shade50, Colors.white], // Gradiente claro
+                          colors: [Colors.indigo.shade50, Colors.white],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
-                  borderRadius: BorderRadius.circular(12), // Bordes redondeados
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: SwitchListTile(
                   title: Text(
-                    isDarkMode ? 'Modo Oscuro' : 'Modo Claro', // Cambia el texto según el tema
+                    isDarkMode ? 'Modo Oscuro' : 'Modo Claro',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  value: themeProvider.themeMode == ThemeMode.dark,
+                  value: isDarkMode,
                   onChanged: (value) {
-                    themeProvider.toggleTheme(value); // Cambia el tema
+                    themeProvider.toggleTheme(value);
                   },
-                  activeColor: Colors.yellow.shade700, // Color del interruptor cuando está activado
+                  activeColor: Colors.yellow.shade700,
                   inactiveThumbColor: Colors.indigo.shade700,
                   secondary: Icon(
-                    isDarkMode
-                        ? Icons.nightlight_round // Luna cuando está activado
-                        : Icons.wb_sunny, // Sol cuando no está activado
-                    color: isDarkMode
-                        ? Colors.white
-                        : Colors.yellow, // Cambia el color según el modo
+                    isDarkMode ? Icons.nightlight_round : Icons.wb_sunny,
+                    color: isDarkMode ? Colors.white : Colors.yellow,
                   ),
                 ),
               ),
-
             ),
           ),
+
           // GridView con las tarjetas reutilizando CustomCard
           Expanded(
             child: GridView.count(
-              crossAxisCount: 2, // 2 columnas
-              crossAxisSpacing: 16, // Espacio entre columnas
-              mainAxisSpacing: 16, // Espacio entre filas
-              padding: const EdgeInsets.all(16), // Espaciado exterior
-              shrinkWrap: true, // Ajustar al contenido
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              padding: const EdgeInsets.all(16),
+              shrinkWrap: true,
               children: const [
                 CustomCard(
                   text: 'Mi perfil',
@@ -99,6 +101,44 @@ class ProfileScreen extends StatelessWidget {
                   route: '/editSubjectsProfile',
                 ),
               ],
+            ),
+          ),
+
+          // Cerrar sesión alineado al final
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: isDarkMode
+                      ? LinearGradient(
+                          colors: [Colors.grey.shade900, Colors.grey.shade900],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : LinearGradient(
+                          colors: [Colors.indigo.shade50, Colors.white],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  title: const Text(
+                    'Cerrar sesión',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  leading: const Icon(
+                    Icons.logout,
+                    color: Colors.red,
+                  ),
+                  onTap: () => logout(context),
+                ),
+              ),
             ),
           ),
         ],
