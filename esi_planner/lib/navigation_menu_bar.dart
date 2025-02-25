@@ -19,17 +19,76 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
 
   // Método para hacer logout
   void logout() {
-    // Actualiza el estado de autenticación en el AuthProvider
     context.read<AuthProvider>().logout();
-
-    // Redirige al LoginScreen
     Navigator.pushReplacementNamed(context, '/login');
+  }
+
+  // Método para mostrar el menú de configuración
+  void showSettingsMenu(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    bool isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Opción de cambiar modo oscuro
+              ListTile(
+                leading: Icon(
+                  isDarkMode ? Icons.nightlight_round : Icons.wb_sunny,
+                  color: isDarkMode ? Colors.white : Colors.yellow.shade700,
+                ),
+                title: Text(
+                  isDarkMode ? 'Modo Oscuro' : 'Modo Claro',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                trailing: Switch(
+                  value: isDarkMode,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme(value);
+                    Navigator.pop(context); // Cerrar el menú después del cambio
+                  },
+                  activeColor: Colors.yellow.shade700,
+                  inactiveThumbColor: Colors.indigo.shade700,
+                ),
+              ),
+
+              const Divider(),
+
+              // Opción de cerrar sesión
+              ListTile(
+                leading: const Icon(Icons.logout, color: Colors.red),
+                title: const Text(
+                  'Cerrar sesión',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                onTap: () {
+                  Navigator.pop(context); // Cerrar el menú antes de cerrar sesión
+                  logout();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final username = Provider.of<AuthProvider>(context).username ?? 'Usuario';
-    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
@@ -37,23 +96,23 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
         title: Text(
           'Hola, $username',
           style: const TextStyle(
-            color:  Colors.white,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
         ),
-        elevation: 10, // Aumenta la sombra
+        elevation: 10,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            color:  isDarkMode ? Colors.black : Colors.indigo.shade900, // Usas un color sólido en lugar de un gradiente
+            color: isDarkMode ? Colors.black : Colors.indigo.shade900,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: logout, // Llamada al método de logout
-            color:  Colors.white,
-            tooltip: 'Cerrar sesión',
+            icon: const Icon(Icons.settings),
+            onPressed: () => showSettingsMenu(context), // Abre el menú
+            color: isDarkMode ? Colors.yellow.shade700 : Colors.white,
+            tooltip: 'Configuración',
           ),
         ],
       ),
@@ -74,11 +133,11 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             });
           },
           selectedIndex: currentPageIndex,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow, // Mostrar siempre las etiquetas
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: <Widget>[
             NavigationDestination(
-              selectedIcon: Icon(Icons.home, color: isDarkMode ? Colors.black : Colors.indigo),
-              icon: const Icon(Icons.home_outlined, color: Colors.grey),
+              selectedIcon: Icon(Icons.home_filled, color: isDarkMode ? Colors.black : Colors.indigo),
+              icon: const Icon(Icons.home_filled, color: Colors.grey),
               label: 'Inicio',
             ),
             NavigationDestination(
@@ -100,7 +159,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
         ),
       ),
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300), // Duración de la animación
+        duration: const Duration(milliseconds: 300),
         child: <Widget>[
           const HomeScreen(),
           const TimetableScreen(),

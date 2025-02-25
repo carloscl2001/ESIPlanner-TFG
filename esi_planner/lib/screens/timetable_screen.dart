@@ -129,70 +129,77 @@ class TimetableScreenState extends State<TimetableScreen> {
     }
   }
 
+  String _formatDateWithWeekNumber(DateTime startDate, DateTime endDate) {
+    final weekNumber = DateFormat('w', 'es_ES').format(startDate);
+    return 'Semana $weekNumber: ${_formatDateShort(startDate)} - ${_formatDateShort(endDate)}';
+  }
+
+  String _formatDateShort(DateTime date) {
+    return DateFormat('dd MMM', 'es_ES').format(date);
+  }
+
+
   String formatDateToFullDate(DateTime date) {
     return DateFormat('EEEE d MMMM y', 'es_ES').format(date);
   }
 
   // Calcular las semanas del curso
   void _calculateWeekRanges() {
-    if (subjects.isEmpty) return;
+  if (subjects.isEmpty) return;
 
-    // Obtener la fecha de la primera y última clase
-    DateTime? firstDate;
-    DateTime? lastDate;
+  DateTime? firstDate;
+  DateTime? lastDate;
 
+  for (var subject in subjects) {
+    for (var classData in subject['classes']) {
+      for (var event in classData['events']) {
+        final eventDate = DateTime.parse(event['date']);
+        if (firstDate == null || eventDate.isBefore(firstDate)) {
+          firstDate = eventDate;
+        }
+        if (lastDate == null || eventDate.isAfter(lastDate)) {
+          lastDate = eventDate;
+        }
+      }
+    }
+  }
+
+  if (firstDate == null || lastDate == null) return;
+
+  weekRanges = [];
+  weekLabels = [];
+
+  DateTime currentStart = _getStartOfWeek(firstDate);
+  while (currentStart.isBefore(lastDate) || currentStart.isAtSameMomentAs(lastDate)) {
+    DateTime currentEnd = currentStart.add(const Duration(days: 6));
+
+    bool hasEvents = false;
     for (var subject in subjects) {
       for (var classData in subject['classes']) {
         for (var event in classData['events']) {
           final eventDate = DateTime.parse(event['date']);
-          if (firstDate == null || eventDate.isBefore(firstDate)) {
-            firstDate = eventDate;
-          }
-          if (lastDate == null || eventDate.isAfter(lastDate)) {
-            lastDate = eventDate;
-          }
-        }
-      }
-    }
-
-    if (firstDate == null || lastDate == null) return;
-
-    // Generar las semanas desde la primera hasta la última
-    weekRanges = [];
-    weekLabels = [];
-
-    DateTime currentStart = _getStartOfWeek(firstDate);
-    while (currentStart.isBefore(lastDate) || currentStart.isAtSameMomentAs(lastDate)) {
-      DateTime currentEnd = currentStart.add(const Duration(days: 6));
-
-      // Verificar si hay algún evento en esta semana
-      bool hasEvents = false;
-      for (var subject in subjects) {
-        for (var classData in subject['classes']) {
-          for (var event in classData['events']) {
-            final eventDate = DateTime.parse(event['date']);
-            if (eventDate.isAfter(currentStart.subtract(const Duration(days: 1))) &&
-                eventDate.isBefore(currentEnd.add(const Duration(days: 1)))) {
-              hasEvents = true;
-              break;
-            }
+          if (eventDate.isAfter(currentStart.subtract(const Duration(days: 1))) &&
+              eventDate.isBefore(currentEnd.add(const Duration(days: 1)))) {
+            hasEvents = true;
+            break;
           }
         }
-        if (hasEvents) break;
       }
-
-      if (hasEvents) {
-        weekRanges.add(DateTimeRange(start: currentStart, end: currentEnd));
-        weekLabels.add('${_formatDate(currentStart)} - ${_formatDate(currentEnd)}');
-      }
-
-      currentStart = currentStart.add(const Duration(days: 7));
+      if (hasEvents) break;
     }
 
-    if (mounted) {
-      setState(() {});
+    if (hasEvents) {
+      weekRanges.add(DateTimeRange(start: currentStart, end: currentEnd));
+      weekLabels.add(_formatDateWithWeekNumber(currentStart, currentEnd));
     }
+
+    currentStart = currentStart.add(const Duration(days: 7));
   }
+
+  if (mounted) {
+    setState(() {});
+  }
+}
 
   // Obtener el inicio de la semana (lunes)
   DateTime _getStartOfWeek(DateTime date) {
@@ -300,15 +307,17 @@ Widget build(BuildContext context) {
                     dropdownColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 if (errorMessage.isNotEmpty) ...[
                   Text(
                     errorMessage,
                     style: const TextStyle(color: Colors.red, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                 ],
+                const Divider(),
+                const SizedBox(height: 10),
                 Expanded(
                   child: _buildEventList(isDarkMode), // Pasa isDarkMode al método
                 ),

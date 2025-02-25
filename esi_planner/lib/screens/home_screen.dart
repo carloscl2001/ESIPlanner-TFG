@@ -208,7 +208,9 @@ Widget build(BuildContext context) {
                     color: isDarkMode ? Colors.white : Colors.black,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
+                const Divider(),
+                const SizedBox(height: 10),
                 // Mostrar días de la semana y fechas
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -258,7 +260,9 @@ Widget build(BuildContext context) {
                     );
                   }),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
+                const Divider(),
+                const SizedBox(height: 10),
                 Expanded(
                   child: _buildEventList(),
                 ),
