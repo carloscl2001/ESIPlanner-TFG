@@ -19,6 +19,11 @@ class ProfileScreen extends StatelessWidget {
         ),
         centerTitle: true,
         backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(25), // Ajusta el radio para cambiar la curvatura
+          ),
+        ),
       ),
       body: Column(
         children: [
