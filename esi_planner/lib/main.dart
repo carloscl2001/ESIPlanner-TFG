@@ -59,6 +59,7 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+       title: 'ESIP', // Título de la aplicación
 
       //TEMA CLARO
       theme: ThemeData.light().copyWith(
