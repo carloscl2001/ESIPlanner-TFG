@@ -106,7 +106,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     if (classes == null) return [];
     return classes.where((classData) {
       final classType = classData['type']?.toString();
-      final types = (userTypes as List<dynamic>?)?.cast<String>() ?? [];
+      final types = (userTypes)?.cast<String>() ?? [];
       return classType != null && types.contains(classType);
     }).toList();
   }
