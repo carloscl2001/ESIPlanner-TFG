@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart'; // Asegúrate de importar correctamente el provider
 
-class CustomCard extends StatelessWidget {
+class ProfileCard extends StatelessWidget {
   final String text;
   final IconData icon;
   final String route;
 
-  const CustomCard({
+  const ProfileCard({
     super.key,
     required this.text,
     required this.icon,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
-import '../widgets/custom_cards.dart';
+import '../widgets/profile_cards.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -31,22 +31,22 @@ class ProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               shrinkWrap: true,
               children: const [
-                CustomCard(
+                ProfileCard(
                   text: 'Mi perfil',
                   icon: Icons.person,
                   route: '/viewProfile',
                 ),
-                CustomCard(
+                ProfileCard(
                   text: 'Cambiar la contraseña',
                   icon: Icons.lock,
                   route: '/editPassWordProfile',
                 ),
-                CustomCard(
+                ProfileCard(
                   text: 'Mis asignaturas',
                   icon: Icons.school,
                   route: '/viewSubjectsProfile',
                 ),
-                CustomCard(
+                ProfileCard(
                   text: 'Cambiar mis asignaturas',
                   icon: Icons.edit,
                   route: '/editSubjectsProfile',
