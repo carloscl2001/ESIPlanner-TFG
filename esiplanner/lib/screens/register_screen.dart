@@ -271,39 +271,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           // DropdownButtonFormField para seleccionar el grado
                           if (degrees.isNotEmpty) ...[
                             DropdownButtonFormField<String>(
-  value: selectedDegree,
-  onChanged: (String? newValue) {
-    setState(() {
-      selectedDegree = newValue;
-    });
-  },
-  decoration: InputDecoration(
-    labelText: 'Grado',
-    prefixIcon: Icon(
-      Icons.school,
-      color: isDarkMode ? Colors.white : Colors.indigo.shade700,
-    ),
-  ),
-  isExpanded: true, // Permite que el cuadro se expanda horizontalmente
-  items: degrees.map<DropdownMenuItem<String>>((String value) {
-    return DropdownMenuItem<String>(
-      value: value,
-      child: Text(
-        value, // Aquí el texto se muestra completo en el menú
-      ),
-    );
-  }).toList(),
-  selectedItemBuilder: (BuildContext context) {
-    return degrees.map<Widget>((String value) {
-      return Text(
-        value,
-        overflow: TextOverflow.ellipsis, // Solo se aplica al texto seleccionado
-      );
-    }).toList();
-  },
-),
-
-
+                              value: selectedDegree,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedDegree = newValue;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Grado',
+                                prefixIcon: Icon(
+                                  Icons.school,
+                                  color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                                ),
+                              ),
+                              isExpanded: true, // Permite que el cuadro se expanda horizontalmente
+                              items: degrees.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value, // Aquí el texto se muestra completo en el menú
+                                  ),
+                                );
+                              }).toList(),
+                              selectedItemBuilder: (BuildContext context) {
+                                return degrees.map<Widget>((String value) {
+                                  return Text(
+                                    value,
+                                    overflow: TextOverflow.ellipsis, // Solo se aplica al texto seleccionado
+                                  );
+                                }).toList();
+                              },
+                            ),
                           ] else ...[
                             const CircularProgressIndicator(), // Cargando si los grados están siendo obtenidos
                           ],
