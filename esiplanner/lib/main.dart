@@ -5,10 +5,11 @@ import '/providers/theme_provider.dart';
 
 // Navigation menu
 import 'features/login/login_ui.dart';
+import 'features/register/register_ui.dart';
 import 'navigation_menu_bar.dart';
 
 // Screens
-import 'screens/register_screen.dart';
+// import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/view_profile_screen.dart';
 import 'screens/edit_password_profile_screen.dart';
