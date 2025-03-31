@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import 'screens/home_screen.dart';
+import 'home/home_ui.dart';
 import 'screens/timetable_screen.dart';
 // import 'screens/agenda_screen.dart';
 import 'screens/profile_screen.dart';
