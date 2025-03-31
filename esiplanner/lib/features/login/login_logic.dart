@@ -22,11 +22,13 @@ class LoginLogic {
       password: password
     );
 
+    if (!context.mounted) return;
+
     if (result['success']) {
       final String? token = result['data']['access_token'];
       if (token != null) {
         Provider.of<AuthProvider>(context, listen: false).login(username, token);
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.of(context).pushReplacementNamed('/home');
       } else {
         errorMessage = 'No se recibió un token válido.';
       }
