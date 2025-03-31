@@ -42,7 +42,7 @@ class SelectedDayRow extends StatelessWidget {
                    selectedDate.day == now.day;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.only(left: 14, right: 8, top: 8, bottom: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -103,6 +103,7 @@ class SelectedDayRow extends StatelessWidget {
     );
   }
 }
+
 class DayButtonRow extends StatelessWidget {
   final List<String> weekDays;
   final List<String> weekDates;
@@ -127,96 +128,99 @@ class DayButtonRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Row(
-          children: weekDays.asMap().entries.map((entry) {
-            final index = entry.key;
-            final day = entry.value;
-            final date = weekDates[index];
-            final hasEvents = getFilteredEvents(day).isNotEmpty;
-
-            return Expanded(
-              child: GestureDetector(
-                onTap: () => onDaySelected(day),
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: selectedDay == day
-                        ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo)
-                        : null,
-                    gradient: selectedDay != day
-                        ? (isDarkMode
-                            ? LinearGradient(
-                                colors: [Colors.black, Colors.black],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              )
-                            : LinearGradient(
-                                colors: [Colors.white, Colors.white],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ))
-                        : null,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: !isDarkMode
-                            ? Colors.black.withAlpha(115)
-                            : Colors.grey.withAlpha(115),
-                        blurRadius: 8.0,
-                        offset: const Offset(0, 0),
-                      ),
-                    ],
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            day,
-                            style: TextStyle(
-                              color: selectedDay == day
-                                  ? (isDarkMode ? Colors.black : Colors.white)
-                                  : Colors.grey,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                          Text(
-                            date,
-                            style: TextStyle(
-                              color: selectedDay == day
-                                  ? (isDarkMode ? Colors.black : Colors.white)
-                                  : (isDarkMode ? Colors.white : Colors.black),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 26,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                        ],
-                      ),
-                      if (hasEvents)
-                        Positioned(
-                          bottom: 0,
-                          child: Container(
-                            width: 6,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              color: selectedDay == day
-                                  ? (isDarkMode ? Colors.black : Colors.white)
-                                  : (isDarkMode ? Colors.white : Colors.black),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            children: weekDays.asMap().entries.map((entry) {
+              final index = entry.key;
+              final day = entry.value;
+              final date = weekDates[index];
+              final hasEvents = getFilteredEvents(day).isNotEmpty;
+          
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => onDaySelected(day),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 6),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: selectedDay == day
+                          ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo)
+                          : null,
+                      gradient: selectedDay != day
+                          ? (isDarkMode
+                              ? LinearGradient(
+                                  colors: [Colors.black, Colors.black],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                )
+                              : LinearGradient(
+                                  colors: [Colors.white, Colors.white],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ))
+                          : null,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: !isDarkMode
+                              ? Colors.black.withAlpha(115)
+                              : Colors.grey.withAlpha(115),
+                          blurRadius: 8.0,
+                          offset: const Offset(0, 0),
                         ),
-                    ],
+                      ],
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              day,
+                              style: TextStyle(
+                                color: selectedDay == day
+                                    ? (isDarkMode ? Colors.black : Colors.white)
+                                    : Colors.grey,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                            Text(
+                              date,
+                              style: TextStyle(
+                                color: selectedDay == day
+                                    ? (isDarkMode ? Colors.black : Colors.white)
+                                    : (isDarkMode ? Colors.white : Colors.black),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 26,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                          ],
+                        ),
+                        if (hasEvents)
+                          Positioned(
+                            bottom: 0,
+                            child: Container(
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: selectedDay == day
+                                    ? (isDarkMode ? Colors.black : Colors.white)
+                                    : (isDarkMode ? Colors.white : Colors.black),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          }).toList(),
+              );
+            }).toList(),
+          ),
         );
       },
     );
@@ -280,7 +284,7 @@ class EventListView extends StatelessWidget {
           final sortedDates = groupedEvents.keys.toList()..sort();
 
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: sortedDates.length,
             itemBuilder: (context, index) {
               final date = sortedDates[index];
@@ -309,7 +313,7 @@ class EventListView extends StatelessWidget {
                   final event = eventData['event'];
                   final classType = eventData['classType'];
                   final subjectName = eventData['subjectName'];
-
+              
                   return ClassCards(
                     subjectName: subjectName,
                     classType: '$classType - ${getGroupLabel(classType[0])}',
