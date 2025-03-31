@@ -16,7 +16,9 @@ import 'screens/edit_subjects_profile_screen.dart';
 import 'screens/view_subjects_profile_screen.dart';
 
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:google_fonts/google_fonts.dart'; // Importa google_fonts
+import 'package:google_fonts/google_fonts.dart';
+
+import 'timetable/timetable_logic.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +31,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => TimetableLogic(context)),
       ],
       child: const MyApp(),
     ),

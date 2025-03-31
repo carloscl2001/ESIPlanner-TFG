@@ -6,7 +6,7 @@ import '../services/profile_service.dart';
 import '../services/subject_service.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
-import 'week_classes_screen.dart'; // Importa la nueva pantalla
+import '../timetable/week_classes_screen.dart'; // Importa la nueva pantalla
 
 class TimetableScreen extends StatefulWidget {
   const TimetableScreen({super.key});
