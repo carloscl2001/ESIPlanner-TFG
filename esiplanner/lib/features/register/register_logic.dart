@@ -53,8 +53,11 @@ class RegisterLogic with ChangeNotifier {
       );
 
       isLoading = false;
+
+      if(context.mounted){
+        context.read<AuthProvider>().register(usernameController.text, result['token']);
+      }
       
-      context.read<AuthProvider>().register(usernameController.text, result['token']);
       notifyListeners();
       return result['success'];
     } catch (e) {
