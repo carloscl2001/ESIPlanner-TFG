@@ -1,17 +1,17 @@
-
 import 'package:intl/intl.dart';
 
 class TimetableWeekLogic {
   final List<Map<String, dynamic>> events;
-  final int selectedWeekIndex;
   final DateTime weekStartDate;
+  List<String> get weekDays => _weekDays;
+  final List<String> _weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'];
 
   TimetableWeekLogic({
     required this.events,
-    required this.selectedWeekIndex,
     required this.weekStartDate,
   });
 
+  // Métodos de agrupación y ordenamiento
   Map<String, List<Map<String, dynamic>>> groupEventsByDate() {
     final groupedByDate = <String, List<Map<String, dynamic>>>{};
     for (var eventData in events) {
@@ -27,6 +27,18 @@ class TimetableWeekLogic {
     return timeA.compareTo(timeB);
   }
 
+  // Métodos de formato
+  String formatDateToFullDate(DateTime date) {
+    final formattedDate = DateFormat('EEEE', 'es_ES').format(date);
+    return _capitalize(formattedDate);
+  }
+
+  String _capitalize(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
+  }
+
+  // Métodos de cálculo
   List<bool> calculateOverlappingEvents(List<Map<String, dynamic>> events) {
     final isOverlapping = List<bool>.filled(events.length, false);
     for (int i = 0; i < events.length - 1; i++) {
@@ -41,9 +53,26 @@ class TimetableWeekLogic {
     return isOverlapping;
   }
 
-  String formatDateToFullDate(DateTime date) {
-    final formattedDate = DateFormat('EEEE', 'es_ES').format(date);
-    return _capitalize(formattedDate);
+  // Métodos para el header
+  Map<String, String> getWeekHeaderInfo() {
+    final startOfWeek = _getStartOfWeek(weekStartDate);
+    final endOfWeek = startOfWeek.add(const Duration(days: 4));
+
+    return {
+      'startMonth': DateFormat('MMMM', 'es_ES').format(startOfWeek),
+      'endMonth': DateFormat('MMMM', 'es_ES').format(endOfWeek),
+      'startYear': DateFormat('y', 'es_ES').format(startOfWeek),
+      'endYear': DateFormat('y', 'es_ES').format(endOfWeek),
+    };
+  }
+
+  List<DateTime> getWeekDays() {
+    final startOfWeek = _getStartOfWeek(weekStartDate);
+    return List.generate(5, (index) => startOfWeek.add(Duration(days: index)));
+  }
+
+  DateTime _getStartOfWeek(DateTime date) {
+    return DateTime.utc(date.year, date.month, date.day).subtract(Duration(days: date.weekday - 1));
   }
 
   String getGroupLabel(String letter) {
@@ -55,15 +84,5 @@ class TimetableWeekLogic {
       case 'X': return 'Clase de teoría-práctica';
       default: return 'Clase de teoría-práctica';
     }
-  }
-
-  String _capitalize(String text) {
-    if (text.isEmpty) return text;
-    return text[0].toUpperCase() + text.substring(1);
-  }
-
-  DateTime getStartOfWeek() {
-    final localDate = DateTime.utc(weekStartDate.year, weekStartDate.month, weekStartDate.day);
-    return localDate.subtract(Duration(days: localDate.weekday - 1));
   }
 }

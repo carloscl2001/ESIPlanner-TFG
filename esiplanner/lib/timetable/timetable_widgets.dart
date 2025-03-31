@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'timetable_logic.dart';
-import '../timetable/week_classes_screen.dart';
+import '../timetable_week/timetable_week_ui.dart';
 
 class WeekDaysHeader extends StatelessWidget {
   final bool isDarkMode;
@@ -170,7 +170,7 @@ class WeekRow extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => WeekClassesScreen(
+            builder: (context) => TimetableWeekScreen(
               events: allEvents,
               selectedWeekIndex: weekIndex,
               isDarkMode: isDarkMode,

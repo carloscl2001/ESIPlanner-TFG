@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'timetable_week_logic.dart';
 import 'timetable_week_widgets.dart';
 
-class WeekClassesScreen extends StatelessWidget {
+class TimetableWeekScreen extends StatelessWidget {
   final List<Map<String, dynamic>> events;
   final int selectedWeekIndex;
   final bool isDarkMode;
   final DateTime weekStartDate;
 
-  const WeekClassesScreen({
+  const TimetableWeekScreen({
     super.key,
     required this.events,
     required this.selectedWeekIndex,
@@ -18,11 +18,7 @@ class WeekClassesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logic = TimetableWeekLogic(
-      events: events,
-      selectedWeekIndex: selectedWeekIndex,
-      weekStartDate: weekStartDate,
-    );
+    final logic = TimetableWeekLogic(events: events, weekStartDate: weekStartDate);
 
     return Scaffold(
       appBar: AppBar(
