@@ -78,7 +78,7 @@ class LoginCard extends StatelessWidget {
               children: <Widget>[
                 const SizedBox(height: 20),
                 Text(
-                  'Iniciar Sesión del widgets',
+                  'Iniciar Sesión',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
