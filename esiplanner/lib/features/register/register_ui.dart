@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';
 import 'register_logic.dart';
 import 'register_widgets.dart';
@@ -34,8 +33,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (!mounted) return;
       
       if (success) {
-        Provider.of<AuthProvider>(context, listen: false)
-            .register(logic.usernameController.text, "token");
         if (mounted) {
           Navigator.pushReplacementNamed(context, '/home');
         }

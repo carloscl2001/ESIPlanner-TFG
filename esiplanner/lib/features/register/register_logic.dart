@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../services/auth_service.dart';
 
 class RegisterLogic with ChangeNotifier {
@@ -51,6 +53,8 @@ class RegisterLogic with ChangeNotifier {
       );
 
       isLoading = false;
+      
+      context.read<AuthProvider>().register(usernameController.text, result['token']);
       notifyListeners();
       return result['success'];
     } catch (e) {
