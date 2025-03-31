@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/profile_service.dart';
-import '../services/subject_service.dart';
-import '../providers/auth_provider.dart';
+import '../../services/profile_service.dart';
+import '../../services/subject_service.dart';
+import '../../providers/auth_provider.dart';
 
 class HomeLogic {
   final BuildContext context;

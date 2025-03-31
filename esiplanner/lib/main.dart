@@ -4,10 +4,10 @@ import '/providers/auth_provider.dart';
 import '/providers/theme_provider.dart';
 
 // Navigation menu
+import 'features/login/login_ui.dart';
 import 'navigation_menu_bar.dart';
 
 // Screens
-import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/view_profile_screen.dart';
@@ -18,7 +18,7 @@ import 'screens/view_subjects_profile_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'timetable/timetable_logic.dart';
+import 'features/timetable/timetable_logic.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
