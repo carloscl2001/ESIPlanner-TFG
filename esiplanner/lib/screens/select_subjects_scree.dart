@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../services/subject_service.dart';
-import '../providers/theme_provider.dart';
 import 'degree_subjects_screen.dart';
 import 'select_group_screen.dart';
 

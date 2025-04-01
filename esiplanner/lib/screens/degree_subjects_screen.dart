@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/subject_service.dart';
+import '../widgets/degree_subjects_cards.dart'; // Importa el nuevo archivo
 
 class DegreeSubjectsScreen extends StatefulWidget {
   final String degreeName;
@@ -35,7 +36,7 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
         degreeName: widget.degreeName,
       );
 
-      if (!mounted) return; // Verifica si el widget sigue montado
+      if (!mounted) return;
 
       if (degreeData['subjects'] != null) {
         List<Map<String, dynamic>> loadedSubjects = [];
@@ -45,15 +46,15 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
             codeSubject: subject['code'],
           );
           
-          if (!mounted) return; // Verifica nuevamente después de cada await
+          if (!mounted) return;
           
           loadedSubjects.add({
             'name': subjectData['name'] ?? 'Sin nombre',
             'code': subject['code'],
           });
         }
-
-        if (!mounted) return; // Última verificación antes de setState
+        
+        if (!mounted) return;
         
         setState(() {
           subjects = loadedSubjects;
@@ -79,7 +80,7 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red,
+        backgroundColor: Theme.of(context).colorScheme.error,
       ),
     );
   }
@@ -108,25 +109,26 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
         ],
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: const EdgeInsets.only(bottom: 16),
-              itemCount: subjects.length,
-              itemBuilder: (context, index) {
-                final subject = subjects[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: CheckboxListTile(
-                    title: Text(subject['name']),
-                    subtitle: Text(subject['code']),
-                    value: selectedSubjects.contains(subject['code']),
-                    onChanged: (_) => _toggleSelection(subject['code']),
-                    secondary: const Icon(Icons.book),
-                    controlAffinity: ListTileControlAffinity.trailing,
-                  ),
-                );
-              },
-            ),
+          ? SubjectDegreeCards.buildLoadingIndicator()
+          : subjects.isEmpty
+              ? SubjectDegreeCards.buildErrorWidget(
+                  'No hay asignaturas disponibles', 
+                  context,
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  itemCount: subjects.length,
+                  itemBuilder: (context, index) {
+                    final subject = subjects[index];
+                    return SubjectDegreeCards.buildSubjectCard(
+                      context: context,
+                      name: subject['name'],
+                      code: subject['code'],
+                      isSelected: selectedSubjects.contains(subject['code']),
+                      onTap: () => _toggleSelection(subject['code']),
+                    );
+                  },
+                ),
     );
   }
 }
