@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/subject_service.dart';
@@ -21,7 +20,7 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
   bool isLoading = true;
   String errorMessage = '';
   List<Map<String, dynamic>> subjects = [];
-  Map<String, Set<String>> selectedGroupTypes = {};
+  Map<String, Map<String, String>> selectedGroups = {}; // {subjectCode: {typePrefix: groupType}}
 
   @override
   void initState() {
@@ -48,9 +47,9 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
         setState(() {
           subjects = loadedSubjects;
           isLoading = false;
-          // Inicializar todas las asignaturas como seleccionadas
+          // Inicializar estructura para selecciones
           for (var subject in subjects) {
-            selectedGroupTypes[subject['code']] = {};
+            selectedGroups[subject['code']] = {};
           }
         });
       }
@@ -64,15 +63,40 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     }
   }
 
+  // Verifica si todas las asignaturas tienen todos los tipos requeridos seleccionados
+  bool get _allSelectionsComplete {
+    for (var subject in subjects) {
+      final groups = subject['classes'] as List;
+      final requiredTypes = groups.map((g) => g['type'][0]).toSet();
+      final selectedTypes = selectedGroups[subject['code']]?.keys.toSet() ?? {};
+
+      if (requiredTypes.length != selectedTypes.length) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   Future<void> _saveSelections() async {
+    if (!_allSelectionsComplete) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Debes seleccionar un grupo de cada tipo para todas las asignaturas'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     final String? username = Provider.of<AuthProvider>(context, listen: false).username;
     if (username == null) return;
 
     try {
-      List<Map<String, dynamic>> selectedSubjects = selectedGroupTypes.entries.map((entry) {
+      // Estructura modificada para coincidir con el backend
+      List<Map<String, dynamic>> selectedSubjects = selectedGroups.entries.map((entry) {
         return {
           'code': entry.key,
-          'types': entry.value.toList(),
+          'types': entry.value.values.toList(), // Cambiado de 'groups' a 'types'
         };
       }).toList();
 
@@ -80,8 +104,8 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Selecciones guardadas exitosamente'),
+          const SnackBar(
+            content: Text('Selecciones guardadas exitosamente'),
             backgroundColor: Colors.green,
           ),
         );
@@ -110,10 +134,21 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     }
   }
 
+  // Obtiene los tipos faltantes para una asignatura
+  List<String> _getMissingTypesForSubject(String subjectCode) {
+    final subject = subjects.firstWhere((s) => s['code'] == subjectCode);
+    final groups = subject['classes'] as List;
+    final requiredTypes = groups.map((g) => g['type'][0]).toSet();
+    final selectedTypes = selectedGroups[subjectCode]?.keys.toSet() ?? {};
+
+    return requiredTypes.difference(selectedTypes).map((type) => getGroupLabel(type)).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -140,20 +175,43 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
                     ),
                     const SizedBox(height: 20),
                   ],
+                  if (!_allSelectionsComplete)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Card(
+                        color: Colors.orange[50],
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              Icon(Icons.warning, color: Colors.orange),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Debes seleccionar un grupo de cada tipo para cada asignatura',
+                                  style: TextStyle(color: Colors.orange[800]),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   Expanded(
                     child: ListView.builder(
                       itemCount: subjects.length,
                       itemBuilder: (context, index) {
                         final subject = subjects[index];
-                        Map<String, List<String>> groupedTypes = {};
+                        final missingTypes = _getMissingTypesForSubject(subject['code']);
+                        Map<String, List<Map<String, dynamic>>> groupedClasses = {};
 
                         for (var group in subject['classes']) {
                           final type = group['type'];
                           final letter = type[0];
-                          if (!groupedTypes.containsKey(letter)) {
-                            groupedTypes[letter] = [];
+                          if (!groupedClasses.containsKey(letter)) {
+                            groupedClasses[letter] = [];
                           }
-                          groupedTypes[letter]?.add(type);
+                          groupedClasses[letter]?.add(group);
                         }
 
                         return Card(
@@ -199,57 +257,69 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 12),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: groupedTypes.keys.map<Widget>((letter) {
-                                      return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            getGroupLabel(letter),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: 16,
-                                              color: isDarkMode ? Colors.white : Colors.black,
-                                            ),
+                                  if (missingTypes.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: Text(
+                                        'Faltan: ${missingTypes.join(', ')}',
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
+                                    ),
+                                  ...groupedClasses.keys.map((letter) {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          getGroupLabel(letter),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: isDarkMode ? Colors.white : Colors.black,
                                           ),
-                                          const SizedBox(height: 8),
-                                          Wrap(
-                                            spacing: 8,
-                                            runSpacing: 8,
-                                            children: groupedTypes[letter]!.map<Widget>((type) {
-                                              return ChoiceChip(
-                                                label: Text(
-                                                  type,
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: groupedClasses[letter]!.map<Widget>((group) {
+                                            final isSelected = selectedGroups[subject['code']]?[letter] == group['type'];
+                                            return ChoiceChip(
+                                              label: Text(
+                                                group['type'],
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: isSelected 
+                                                    ? (isDarkMode ? Colors.black : Colors.indigo)
+                                                    : (isDarkMode ? Colors.yellow.shade700 : Colors.indigo),
+                                                  fontWeight: FontWeight.w500,
                                                 ),
-                                                selected: selectedGroupTypes[subject['code']]?.contains(type) ?? false,
-                                                onSelected: (bool selected) {
+                                              ),
+                                              selected: isSelected,
+                                              onSelected: (bool selected) {
+                                                if (selected) {
                                                   setState(() {
-                                                    if (selected) {
-                                                      selectedGroupTypes[subject['code']]!.removeWhere((t) => t.startsWith(letter));
-                                                      selectedGroupTypes[subject['code']]!.add(type);
-                                                    }
+                                                    selectedGroups[subject['code']]![letter] = group['type'];
                                                   });
-                                                },
-                                                selectedColor: isDarkMode ? Colors.black : Colors.indigo.shade100,
-                                                backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(12),
-                                                  side: BorderSide(color: isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade300),
+                                                }
+                                              },
+                                              selectedColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade100,
+                                              backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                                side: BorderSide(
+                                                  color: isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade300,
                                                 ),
-                                              );
-                                            }).toList(),
-                                          ),
-                                          const SizedBox(height: 10),
-                                        ],
-                                      );
-                                    }).toList(),
-                                  ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                        const SizedBox(height: 10),
+                                      ],
+                                    );
+                                  }).toList(),
                                 ],
                               ),
                             ),

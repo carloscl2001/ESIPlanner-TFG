@@ -226,7 +226,7 @@ class _MyAppState extends State<MyApp> {
         '/viewProfile': (context) => const ViewProfileScreen(),
         '/editPassWordProfile': (context) => const EditPasswordScreen(),
         '/viewSubjectsProfile': (context) => const ViewSubjectsProfileScreen(),
-        '/editSubjectsProfile': (context) => const SelectSubjectsScreen(),
+        '/editSubjectsProfile': (context) => const SubjectSelectionScreen(),
       },
     );
   }
