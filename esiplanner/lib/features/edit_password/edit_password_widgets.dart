@@ -4,11 +4,13 @@ import 'edit_password_logic.dart';
 class EditPasswordForm extends StatelessWidget {
   final EditPasswordLogic logic;
   final bool isDarkMode;
+  final VoidCallback onUpdate;
 
   const EditPasswordForm({
     super.key,
     required this.logic,
     required this.isDarkMode,
+    required this.onUpdate,
   });
 
   @override
@@ -31,16 +33,20 @@ class EditPasswordForm extends StatelessWidget {
               children: [
                 Text(
                   'Introduzca su nueva contraseña',
+                  textAlign: TextAlign.center, // Esta es la clave
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: isDarkMode ? Colors.white : Colors.indigo.shade900,
                   ),
                 ),
                 const SizedBox(height: 24),
-                PasswordField(controller: logic.newPasswordController, isDarkMode: isDarkMode),
+                PasswordField(
+                  controller: logic.newPasswordController,
+                  isDarkMode: isDarkMode,
+                ),
                 const SizedBox(height: 24),
-                UpdatePasswordButton(onPressed: logic.updatePassword),
+                UpdatePasswordButton(onPressed: onUpdate),
                 if (logic.errorMessage.isNotEmpty)
                   ErrorMessage(message: logic.errorMessage),
                 if (logic.successMessage.isNotEmpty)
@@ -54,7 +60,6 @@ class EditPasswordForm extends StatelessWidget {
   }
 }
 
-// Widgets reutilizables
 class PasswordField extends StatelessWidget {
   final TextEditingController controller;
   final bool isDarkMode;
@@ -119,7 +124,7 @@ class ErrorMessage extends StatelessWidget {
       padding: const EdgeInsets.only(top: 16.0),
       child: Text(
         message,
-        style: const TextStyle(color: Colors.red, fontSize: 14),
+        style: const TextStyle(color: Colors.red, fontSize: 20),
       ),
     );
   }

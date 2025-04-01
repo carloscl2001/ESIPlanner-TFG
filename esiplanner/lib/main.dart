@@ -1,3 +1,4 @@
+import 'package:esiplanner/features/edit_password/edit_password_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/providers/auth_provider.dart';
@@ -12,7 +13,6 @@ import 'navigation_menu_bar.dart';
 // import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/view_profile_screen.dart';
-import 'screens/edit_password_profile_screen.dart';
 import 'screens/edit_subjects_profile_screen.dart';
 import 'screens/view_subjects_profile_screen.dart';
 
@@ -20,6 +20,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'features/timetable/timetable_logic.dart';
+
+import 'features/edit_password/edit_password_logic.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -222,7 +224,7 @@ class _MyAppState extends State<MyApp> {
         '/home': (context) => const NavigationMenuBar(),
         '/profile': (context) => const ProfileScreen(),
         '/viewProfile': (context) => const ViewProfileScreen(),
-        '/editPassWordProfile': (context) => const EditPasswordProfileScreen(),
+        '/editPassWordProfile': (context) => const EditPasswordScreen(),
         '/viewSubjectsProfile': (context) => const ViewSubjectsProfileScreen(),
         '/editSubjectsProfile': (context) => const EditSubjectsProfileScreen(),
       },

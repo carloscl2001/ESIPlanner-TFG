@@ -1,31 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../providers/auth_provider.dart';
 import '../../services/profile_service.dart';
 
-
-// edit_password_logic.dart
 class EditPasswordLogic {
-  final BuildContext context;
   final TextEditingController newPasswordController = TextEditingController();
   String errorMessage = '';
   String successMessage = '';
   late ProfileService profileService;
-  final VoidCallback onStateChanged; // Callback para notificar cambios
 
-  EditPasswordLogic(this.context, {required this.onStateChanged}) {
+  EditPasswordLogic() {
     profileService = ProfileService();
   }
 
-  Future<void> updatePassword() async {
+  Future<void> updatePassword(BuildContext context) async {
     final String newPassword = newPasswordController.text;
-    // ... validaciones previas ...
+
+    if (newPassword.isEmpty) {
+      errorMessage = 'Por favor, ingrese una nueva contraseña';
+      return;
+    } else if (newPassword.length < 8) {
+      errorMessage = 'La contraseña debe tener al menos 8 caracteres';
+      return;
+    } else if (!_isValidPassword(newPassword)) {
+      errorMessage = 'La contraseña debe contener letras y números';
+      return;
+    }
+
+    errorMessage = '';
+    successMessage = '';
 
     final String? username = Provider.of<AuthProvider>(context, listen: false).username;
     if (username == null) {
       errorMessage = 'El nombre de usuario no está disponible';
-      onStateChanged(); // Notifica a la UI que debe actualizarse
       return;
     }
 
@@ -41,6 +48,14 @@ class EditPasswordLogic {
     } else {
       errorMessage = response['message'];
     }
-    onStateChanged(); // Notifica a la UI que debe actualizarse
+  }
+
+  bool _isValidPassword(String password) {
+    final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
+    return passwordRegex.hasMatch(password);
+  }
+
+  void dispose() {
+    newPasswordController.dispose();
   }
 }

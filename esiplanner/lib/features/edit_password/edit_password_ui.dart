@@ -4,25 +4,31 @@ import '../../providers/theme_provider.dart';
 import 'edit_password_widgets.dart';
 import 'edit_password_logic.dart';
 
-class EditPasswordUI extends StatefulWidget {
-  const EditPasswordUI({super.key});
+class EditPasswordScreen extends StatefulWidget {
+  const EditPasswordScreen({super.key});
 
   @override
-  State<EditPasswordUI> createState() => _EditPasswordUIState();
+  State<EditPasswordScreen> createState() => _EditPasswordScreenState();
 }
 
-class _EditPasswordUIState extends State<EditPasswordUI> {
+class _EditPasswordScreenState extends State<EditPasswordScreen> {
   late final EditPasswordLogic logic;
 
   @override
   void initState() {
     super.initState();
-    logic = EditPasswordLogic(context, onStateChanged: () => setState(() {}));
+    logic = EditPasswordLogic();
   }
 
   @override
   void dispose() {
+    logic.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleUpdate() async {
+    await logic.updatePassword(context);
+    setState(() {});
   }
 
   @override
@@ -39,7 +45,11 @@ class _EditPasswordUIState extends State<EditPasswordUI> {
         centerTitle: true,
       ),
       body: Center(
-        child: EditPasswordForm(logic: logic, isDarkMode: isDarkMode),
+        child: EditPasswordForm(
+          logic: logic,
+          isDarkMode: isDarkMode,
+          onUpdate: _handleUpdate,
+        ),
       ),
     );
   }
