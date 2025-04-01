@@ -52,10 +52,10 @@ class SelectSubjectsCards {
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         onTap: () {}, // Puedes añadir funcionalidad si es necesario
         child: Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 2),
+          padding: const EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
           child: Row(
             children: [
               Icon(
@@ -80,7 +80,7 @@ class SelectSubjectsCards {
                     Text(
                       code,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                       ),
                     ),
                     const SizedBox(height: 4),

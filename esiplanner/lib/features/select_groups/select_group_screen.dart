@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/subject_service.dart';
+import '../../services/subject_service.dart';
 import 'package:esiplanner/services/profile_service.dart';
-import '../providers/auth_provider.dart';
-import '../providers/theme_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/theme_provider.dart';
 
 class SelectGroupsScreen extends StatefulWidget {
   final List<String> selectedSubjectCodes;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/subject_service.dart';
-import '../widgets/degree_subjects_cards.dart'; // Importa el nuevo archivo
+import '../../services/subject_service.dart';
+import '../../widgets/degree_subjects_cards.dart'; // Importa el nuevo archivo
 
 class DegreeSubjectsScreen extends StatefulWidget {
   final String degreeName;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/subject_service.dart';
-import 'degree_subjects_screen.dart';
-import 'select_group_screen.dart';
+import '../../services/subject_service.dart';
+import '../select_subjects_degree/select_subjects_degree_screen.dart';
+import '../select_groups/select_group_screen.dart';
 import 'package:esiplanner/widgets/select_subjects_cards.dart'; // Importa el nuevo archivo
 
 class SubjectSelectionScreen extends StatefulWidget {
@@ -128,7 +128,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Selección de Asignaturas'),
+        title: const Text('Selección de asignaturas'),
         actions: [
           if (selectedSubjects.isNotEmpty)
             IconButton(
@@ -152,7 +152,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                     children: [
                       SelectSubjectsCards.buildSectionTitle(
                         context,
-                        'Asignaturas Seleccionadas (${selectedSubjects.length})',
+                        'Asignaturas seleccionadas (${selectedSubjects.length})',
                       ),
                       Expanded(
                         child: ListView.builder(
