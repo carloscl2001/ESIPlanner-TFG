@@ -17,7 +17,7 @@ import 'screens/profile_screen.dart';
 import 'screens/view_profile_screen.dart';
 import 'screens/view_subjects_profile_screen.dart';
 
-import 'screens/select_subjects_scree.dart';
+import 'screens/select_subjects_screen.dart';
 
 // Screens of features
 import 'features/timetable/timetable_logic.dart';
