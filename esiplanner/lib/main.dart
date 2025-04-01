@@ -1,6 +1,9 @@
-import 'package:esiplanner/features/edit_password/edit_password_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+// Providers
 import '/providers/auth_provider.dart';
 import '/providers/theme_provider.dart';
 
@@ -10,18 +13,14 @@ import 'features/register/register_ui.dart';
 import 'navigation_menu_bar.dart';
 
 // Screens
-// import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/view_profile_screen.dart';
 import 'screens/edit_subjects_profile_screen.dart';
 import 'screens/view_subjects_profile_screen.dart';
 
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:google_fonts/google_fonts.dart';
-
+// Screens of features
 import 'features/timetable/timetable_logic.dart';
-
-import 'features/edit_password/edit_password_logic.dart';
+import 'features/edit_password/edit_password_ui.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -32,22 +32,25 @@ class _TimetableScreenState extends State<TimetableScreen> {
               ? const Center(child: CircularProgressIndicator())
               : Column(
                   children: [
-                    if (timetableLogic.errorMessage.isNotEmpty) ...[
-                      const SizedBox(height: 20),
-                      Text(
-                        timetableLogic.errorMessage,
-                        style: const TextStyle(color: Colors.red, fontSize: 20),
-                        textAlign: TextAlign.center,
+                    if (timetableLogic.errorMessage.isNotEmpty)
+                      Expanded( // Ocupa todo el espacio restante
+                        child: Center( // Centrado vertical y horizontal
+                          child: Text(
+                            timetableLogic.errorMessage,
+                            style: const TextStyle(color: Colors.red, fontSize: 20),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    else ...[
+                      WeekDaysHeader(isDarkMode: isDarkMode),
+                      Expanded(
+                        child: WeekSelector(
+                          timetableLogic: timetableLogic,
+                          isDarkMode: isDarkMode,
+                        ),
                       ),
-                      const SizedBox(height: 20),
                     ],
-                    WeekDaysHeader(isDarkMode: isDarkMode),
-                    Expanded(
-                      child: WeekSelector(
-                        timetableLogic: timetableLogic,
-                        isDarkMode: isDarkMode,
-                      ),
-                    ),
                   ],
                 ),
         );
