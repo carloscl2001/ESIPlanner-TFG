@@ -148,7 +148,6 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -319,7 +318,7 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
                                         const SizedBox(height: 10),
                                       ],
                                     );
-                                  }).toList(),
+                                  })
                                 ],
                               ),
                             ),

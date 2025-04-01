@@ -71,9 +71,9 @@ class SubjectDegreeCards {
               Checkbox(
                 value: isSelected,
                 onChanged: (_) => onTap(),
-                fillColor: MaterialStateProperty.resolveWith<Color>(
+                fillColor: WidgetStateProperty.resolveWith<Color>(
                   (states) {
-                    if (states.contains(MaterialState.selected)) {
+                    if (states.contains(WidgetState.selected)) {
                       return Theme.of(context).colorScheme.primary;
                     }
                     return Theme.of(context).colorScheme.surface;
