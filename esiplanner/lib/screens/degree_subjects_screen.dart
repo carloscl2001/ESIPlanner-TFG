@@ -35,6 +35,8 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
         degreeName: widget.degreeName,
       );
 
+      if (!mounted) return; // Verifica si el widget sigue montado
+
       if (degreeData['subjects'] != null) {
         List<Map<String, dynamic>> loadedSubjects = [];
 
@@ -42,30 +44,37 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
           final subjectData = await subjectService.getSubjectData(
             codeSubject: subject['code'],
           );
+          
+          if (!mounted) return; // Verifica nuevamente después de cada await
+          
           loadedSubjects.add({
             'name': subjectData['name'] ?? 'Sin nombre',
             'code': subject['code'],
           });
         }
 
+        if (!mounted) return; // Última verificación antes de setState
+        
         setState(() {
           subjects = loadedSubjects;
           isLoading = false;
         });
       } else {
+        if (!mounted) return;
         setState(() {
           isLoading = false;
         });
         _showError('No se encontraron asignaturas');
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         isLoading = false;
       });
       _showError('Error al cargar asignaturas: $e');
     }
   }
-
+  
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
