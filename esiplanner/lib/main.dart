@@ -14,6 +14,7 @@ import 'navigation_menu_bar.dart';
 
 // Screens
 import 'screens/profile_screen.dart';
+import 'screens/select_subjects_scree.dart';
 import 'screens/view_profile_screen.dart';
 import 'screens/edit_subjects_profile_screen.dart';
 import 'screens/view_subjects_profile_screen.dart';
@@ -225,7 +226,7 @@ class _MyAppState extends State<MyApp> {
         '/viewProfile': (context) => const ViewProfileScreen(),
         '/editPassWordProfile': (context) => const EditPasswordScreen(),
         '/viewSubjectsProfile': (context) => const ViewSubjectsProfileScreen(),
-        '/editSubjectsProfile': (context) => const EditSubjectsProfileScreen(),
+        '/editSubjectsProfile': (context) => const SelectSubjectsScreen(),
       },
     );
   }

@@ -110,7 +110,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
         };
       }).toList();
 
-      await subjectService.updateSubjects(username: username, subjects: selectedSubjects);
+      await profileService.updateSubjects(username: username, subjects: selectedSubjects);
 
       // Muestra una notificación de éxito con un SnackBar
       if (mounted) {
