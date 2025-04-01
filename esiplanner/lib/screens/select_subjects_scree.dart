@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../services/subject_service.dart';
+import '../providers/theme_provider.dart';
 import 'degree_subjects_screen.dart';
 import 'select_group_screen.dart';
 
@@ -16,7 +18,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   List<String> availableDegrees = [];
   Set<String> selectedSubjects = {};
   Map<String, String> subjectNames = {};
-  Map<String, String> subjectDegrees = {}; // Para guardar el grado de cada asignatura
+  Map<String, bool> groupsSelected = {}; // Track if groups are selected for each subject
 
   @override
   void initState() {
@@ -61,27 +63,26 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     );
 
     if (result != null) {
-      _updateSelections(result, degree);
+      _updateSelections(result);
     }
   }
 
-  void _updateSelections(List<String> newSelections, String degree) {
+  void _updateSelections(List<String> newSelections) {
     setState(() {
-      // Primero eliminamos asignaturas de este grado que ya no estén seleccionadas
-      selectedSubjects.removeWhere((code) => 
-        subjectDegrees[code] == degree && !newSelections.contains(code));
-      
-      // Luego agregamos las nuevas selecciones
-      selectedSubjects.addAll(newSelections);
-      
-      // Actualizamos los grados de las asignaturas
-      for (var code in newSelections) {
-        subjectDegrees[code] = degree;
+      selectedSubjects = Set.from(newSelections);
+      // Initialize group selection status
+      for (var code in selectedSubjects) {
+        if (!groupsSelected.containsKey(code)) {
+          groupsSelected[code] = false;
+        }
         if (!subjectNames.containsKey(code)) {
           subjectNames[code] = "Cargando...";
           _loadSubjectName(code);
         }
       }
+      // Remove deselected subjects
+      subjectNames.removeWhere((key, _) => !selectedSubjects.contains(key));
+      groupsSelected.removeWhere((key, _) => !selectedSubjects.contains(key));
     });
   }
 
@@ -102,13 +103,13 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     }
   }
 
-  void _navigateToGroupSelection() {
+  void _navigateToGroupSelection() async {
     if (selectedSubjects.isEmpty) {
       _showError('Selecciona al menos una asignatura');
       return;
     }
 
-    Navigator.push(
+    final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (context) => SelectGroupsScreen(
@@ -116,6 +117,15 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         ),
       ),
     );
+
+    if (result == true && mounted) {
+      setState(() {
+        // Update group selection status
+        for (var code in selectedSubjects) {
+          groupsSelected[code] = true;
+        }
+      });
+    }
   }
 
   @override
@@ -129,28 +139,9 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         actions: [
           if (selectedSubjects.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.info_outline),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Asignaturas Seleccionadas'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: selectedSubjects.map((code) => 
-                        Text('${subjectNames[code]} ($code) - ${subjectDegrees[code]}')
-                      ).toList(),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
-                );
-              },
+              icon: const Icon(Icons.group),
+              onPressed: _navigateToGroupSelection,
+              tooltip: 'Seleccionar grupos',
             ),
         ],
       ),
@@ -159,60 +150,29 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
           // Selector de grados
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                labelText: 'Seleccionar grado',
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.school),
-                filled: true,
-                fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+              child: DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  labelText: 'Seleccionar grado',
+                  border: InputBorder.none,
+                  prefixIcon: Icon(Icons.school),
+                ),
+                items: availableDegrees.map((degree) {
+                  return DropdownMenuItem(
+                    value: degree,
+                    child: Text(degree),
+                  );
+                }).toList(),
+                onChanged: (degree) => _navigateToDegreeSubjects(degree!),
               ),
-              items: availableDegrees.map((degree) {
-                return DropdownMenuItem(
-                  value: degree,
-                  child: Text(degree),
-                );
-              }).toList(),
-              onChanged: (degree) => _navigateToDegreeSubjects(degree!),
             ),
           ),
 
-          // Resumen y botón
+          // Resumen de selección
           Expanded(
-            child: Stack(
-              children: [
-                // Lista de asignaturas seleccionadas
-                if (selectedSubjects.isNotEmpty)
-                  ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 80),
-                    itemCount: selectedSubjects.length,
-                    itemBuilder: (context, index) {
-                      final code = selectedSubjects.elementAt(index);
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: ListTile(
-                          leading: const Icon(Icons.book),
-                          title: Text(subjectNames[code] ?? 'Cargando...'),
-                          subtitle: Text('$code • ${subjectDegrees[code]}'),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              setState(() {
-                                selectedSubjects.remove(code);
-                                subjectNames.remove(code);
-                                subjectDegrees.remove(code);
-                              });
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                // Mensaje cuando no hay selecciones
-                if (selectedSubjects.isEmpty)
-                  Center(
+            child: selectedSubjects.isEmpty
+                ? Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -230,25 +190,75 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                         ),
                       ],
                     ),
+                  )
+                : Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          'Asignaturas Seleccionadas (${selectedSubjects.length})',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: selectedSubjects.length,
+                          itemBuilder: (context, index) {
+                            final code = selectedSubjects.elementAt(index);
+                            return Card(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: ListTile(
+                                leading: const Icon(Icons.book),
+                                title: Text(subjectNames[code] ?? 'Cargando...'),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(code),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      groupsSelected[code] == true
+                                          ? 'Grupos seleccionados ✓'
+                                          : 'Grupos pendientes de selección',
+                                      style: TextStyle(
+                                        color: groupsSelected[code] == true
+                                            ? Colors.green
+                                            : Colors.orange,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedSubjects.remove(code);
+                                      subjectNames.remove(code);
+                                      groupsSelected.remove(code);
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.group),
+                          label: const Text('Gestionar Grupos'),
+                          onPressed: _navigateToGroupSelection,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 50),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-
-                // Botón flotante para grupos
-                if (selectedSubjects.isNotEmpty)
-                  Positioned(
-                    bottom: 16,
-                    left: 16,
-                    right: 16,
-                    child: FloatingActionButton.extended(
-                      icon: const Icon(Icons.group),
-                      label: const Text('SELECCIONAR GRUPOS'),
-                      onPressed: _navigateToGroupSelection,
-                      backgroundColor: theme.primaryColor,
-                      foregroundColor: theme.colorScheme.onPrimary,
-                      elevation: 4,
-                    ),
-                  ),
-              ],
-            ),
           ),
         ],
       ),
