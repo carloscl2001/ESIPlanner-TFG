@@ -1,42 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SelectSubjectsCards {
   static Widget buildDegreeDropdown({
-    required BuildContext context,
-    required List<String> availableDegrees,
-    required Function(String) onDegreeSelected,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+  required BuildContext context,
+  required List<String> availableDegrees,
+  required Function(String) onDegreeSelected,
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+    child: Material(
+      elevation: 2,
+      borderRadius: BorderRadius.circular(12),
+      color: Theme.of(context).colorScheme.surface,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {}, // Feedback táctil (opcional)
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
           child: DropdownButtonFormField<String>(
+            isExpanded: true,
+            dropdownColor: Theme.of(context).colorScheme.surface,
+            icon: Icon(Icons.arrow_drop_down, 
+                     color: Theme.of(context).primaryColor),
+            iconSize: 28,
             decoration: InputDecoration(
               labelText: 'Seleccionar grado',
+              labelStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                fontSize: 16,
+              ),
               border: InputBorder.none,
-              prefixIcon: Icon(Icons.school, color: Theme.of(context).primaryColor),
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              prefixIcon: Icon(Icons.school, 
+                             color: Theme.of(context).primaryColor),
             ),
             items: availableDegrees.map((degree) {
               return DropdownMenuItem(
                 value: degree,
                 child: Text(
                   degree,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               );
             }).toList(),
-            onChanged: (degree) => onDegreeSelected(degree!),
-            style: Theme.of(context).textTheme.titleMedium,
+            onChanged: (degree) {
+              if (degree != null) {
+                onDegreeSelected(degree);
+                // Feedback de selección (opcional)
+                HapticFeedback.lightImpact();
+              }
+            },
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            elevation: 4,
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   static Widget buildSelectedSubjectCard({
     required BuildContext context,
