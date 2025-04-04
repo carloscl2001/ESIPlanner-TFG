@@ -7,8 +7,13 @@ import '../../providers/theme_provider.dart';
 
 class SelectGroupsScreen extends StatefulWidget {
   final List<String> selectedSubjectCodes;
+  final Map<String, String> subjectDegrees;
 
-  const SelectGroupsScreen({super.key, required this.selectedSubjectCodes});
+  const SelectGroupsScreen({
+    super.key, 
+    required this.selectedSubjectCodes,
+    required this.subjectDegrees,
+  });
 
   @override
   State<SelectGroupsScreen> createState() => _SelectGroupsScreenState();
@@ -16,17 +21,15 @@ class SelectGroupsScreen extends StatefulWidget {
 
 class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
   late SubjectService subjectService;
-  late ProfileService profileService;
   bool isLoading = true;
   String errorMessage = '';
   List<Map<String, dynamic>> subjects = [];
-  Map<String, Map<String, String>> selectedGroups = {}; // {subjectCode: {typePrefix: groupType}}
+  Map<String, Map<String, String>> selectedGroups = {};
 
   @override
   void initState() {
     super.initState();
     subjectService = SubjectService();
-    profileService = ProfileService();
     _loadSubjectsData();
   }
 
@@ -47,7 +50,6 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
         setState(() {
           subjects = loadedSubjects;
           isLoading = false;
-          // Inicializar estructura para selecciones
           for (var subject in subjects) {
             selectedGroups[subject['code']] = {};
           }
@@ -56,14 +58,13 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          errorMessage = 'Error al cargar los datos de las asignaturas: $e';
+          errorMessage = 'Error al cargar los datos: $e';
           isLoading = false;
         });
       }
     }
   }
 
-  // Verifica si todas las asignaturas tienen todos los tipos requeridos seleccionados
   bool get _allSelectionsComplete {
     for (var subject in subjects) {
       final groups = subject['classes'] as List;
@@ -77,12 +78,11 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     return true;
   }
 
-  // En SelectGroupsScreen, cambia el método _saveSelections a:
   Future<void> _saveSelections() async {
     if (!_allSelectionsComplete) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Debes seleccionar un grupo de cada tipo para todas las asignaturas'),
+          content: Text('Selecciona un grupo de cada tipo para cada asignatura'),
           backgroundColor: Colors.orange,
         ),
       );
@@ -90,24 +90,22 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     }
 
     if (mounted) {
-      Navigator.pop(context, selectedGroups); // Devuelve las selecciones directamente
+      Navigator.pop(context, selectedGroups);
     }
   }
-
 
   String getGroupLabel(String letter) {
     switch (letter) {
       case 'A': return 'Grupo de teoría';
       case 'B': return 'Grupo de problemas';
-      case 'C': return 'Grupo de prácticas informáticas';
-      case 'D': return 'Prácticas de laboratorio';
-      case 'X': return 'Grupo de teoría-prácticas';
+      case 'C': return 'Grupo de prácticas';
+      case 'D': return 'Laboratorio';
+      case 'X': return 'Teoría-Prácticas';
       case 'E': return 'Salidas de campo';
       default: return 'Grupo $letter';
     }
   }
 
-  // Obtiene los tipos faltantes para una asignatura
   List<String> _getMissingTypesForSubject(String subjectCode) {
     final subject = subjects.firstWhere((s) => s['code'] == subjectCode);
     final groups = subject['classes'] as List;
@@ -124,7 +122,7 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Selecciona tus grupos', style: TextStyle(color: Colors.white)),
+        title: const Text('Selección de grupos', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         actions: [
           IconButton(
@@ -208,25 +206,20 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.book,
-                                        size: 24,
-                                        color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Flexible(
-                                        child: Text(
-                                          subject['name'] ?? 'No Name',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: isDarkMode ? Colors.white : Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                  // Nombre de la asignatura
+                                  _buildInfoRow(
+                                    icon: Icons.book,
+                                    text: subject['name'] ?? 'No Name',
+                                    isDarkMode: isDarkMode,
+                                    isTitle: true,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  // Grado académico
+                                  _buildInfoRow(
+                                    icon: Icons.school,
+                                    text: widget.subjectDegrees[subject['code']] ?? 'Grado no disponible',
+                                    isDarkMode: isDarkMode,
+                                    isTitle: false,
                                   ),
                                   const SizedBox(height: 12),
                                   if (missingTypes.isNotEmpty)
@@ -303,6 +296,35 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String text,
+    required bool isDarkMode,
+    required bool isTitle,
+  }) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: isTitle ? 24 : 20,
+          color: isDarkMode 
+              ? Colors.yellow.shade700 : Colors.indigo.shade700,
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: isTitle ? 18 : 14,
+              fontWeight: isTitle ? FontWeight.bold : FontWeight.normal,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

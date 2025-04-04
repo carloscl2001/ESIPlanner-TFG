@@ -169,6 +169,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       MaterialPageRoute(
         builder: (context) => SelectGroupsScreen(
           selectedSubjectCodes: selectedSubjects.toList(),
+          subjectDegrees: subjectDegrees,
         ),
       ),
     );
