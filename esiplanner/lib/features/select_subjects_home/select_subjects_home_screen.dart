@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/subject_service.dart';
 import '../select_subjects_degree/select_subjects_degree_screen.dart';
 import '../select_groups/select_group_screen.dart';
-import 'package:esiplanner/widgets/select_subjects_cards.dart'; // Importa el nuevo archivo
+import 'package:esiplanner/widgets/select_subjects_cards.dart';
 
 class SubjectSelectionScreen extends StatefulWidget {
   const SubjectSelectionScreen({super.key});
@@ -17,6 +17,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   List<String> availableDegrees = [];
   Set<String> selectedSubjects = {};
   Map<String, String> subjectNames = {};
+  Map<String, String> subjectDegrees = {};
   Map<String, bool> groupsSelected = {};
 
   @override
@@ -62,11 +63,11 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     );
 
     if (result != null) {
-      _updateSelections(result);
+      _updateSelections(result, degree);
     }
   }
 
-  void _updateSelections(List<String> newSelections) {
+  void _updateSelections(List<String> newSelections, String degree) {
     setState(() {
       selectedSubjects = Set.from(newSelections);
       for (var code in selectedSubjects) {
@@ -75,10 +76,12 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         }
         if (!subjectNames.containsKey(code)) {
           subjectNames[code] = "Cargando...";
+          subjectDegrees[code] = degree;
           _loadSubjectName(code);
         }
       }
       subjectNames.removeWhere((key, _) => !selectedSubjects.contains(key));
+      subjectDegrees.removeWhere((key, _) => !selectedSubjects.contains(key));
       groupsSelected.removeWhere((key, _) => !selectedSubjects.contains(key));
     });
   }
@@ -100,13 +103,26 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     }
   }
 
+  void _showSelectionInstructions() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Pasos: 1. Elegir grado → 2. Seleccionar asignaturas → 3. Elegir grupos'),
+        duration: const Duration(seconds: 5),
+        action: SnackBarAction(
+          label: 'OK',
+          onPressed: () {},
+        ),
+      ),
+    );
+  }
+
   void _navigateToGroupSelection() async {
     if (selectedSubjects.isEmpty) {
       _showError('Selecciona al menos una asignatura');
       return;
     }
 
-    final result = await Navigator.push<bool>(
+    final result = await Navigator.push<Map<String, bool>>(
       context,
       MaterialPageRoute(
         builder: (context) => SelectGroupsScreen(
@@ -115,11 +131,11 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       ),
     );
 
-    if (result == true && mounted) {
+    if (result != null && mounted) {
       setState(() {
-        for (var code in selectedSubjects) {
-          groupsSelected[code] = true;
-        }
+        result.forEach((code, hasGroups) {
+          groupsSelected[code] = hasGroups;
+        });
       });
     }
   }
@@ -130,12 +146,11 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       appBar: AppBar(
         title: const Text('Selección de asignaturas'),
         actions: [
-          if (selectedSubjects.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.group),
-              onPressed: _navigateToGroupSelection,
-              tooltip: 'Seleccionar grupos',
-            ),
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: _showSelectionInstructions,
+            tooltip: 'Instrucciones',
+          ),
         ],
       ),
       body: Column(
@@ -163,11 +178,13 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                               context: context,
                               code: code,
                               name: subjectNames[code] ?? 'Cargando...',
+                              degree: subjectDegrees[code] ?? 'Grado no disponible',
                               hasGroupsSelected: groupsSelected[code] ?? false,
                               onDelete: () {
                                 setState(() {
                                   selectedSubjects.remove(code);
                                   subjectNames.remove(code);
+                                  subjectDegrees.remove(code);
                                   groupsSelected.remove(code);
                                 });
                               },
@@ -175,11 +192,12 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                           },
                         ),
                       ),
-                      SelectSubjectsCards.buildManageGroupsButton(
-                        context: context,
-                        onPressed: _navigateToGroupSelection,
-                        hasSelectedSubjects: selectedSubjects.isNotEmpty,
-                      ),
+                      if (groupsSelected.values.any((selected) => !selected))
+                        SelectSubjectsCards.buildManageGroupsButton(
+                          context: context,
+                          onPressed: _navigateToGroupSelection,
+                          hasSelectedSubjects: selectedSubjects.isNotEmpty,
+                        ),
                     ],
                   ),
           ),

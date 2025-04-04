@@ -8,9 +8,9 @@ class SelectSubjectsCards {
   required Function(String) onDegreeSelected,
 }) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     child: Material(
-      elevation: 2,
+      elevation: 4,
       borderRadius: BorderRadius.circular(12),
       color: Theme.of(context).colorScheme.surface,
       child: InkWell(
@@ -22,7 +22,7 @@ class SelectSubjectsCards {
             isExpanded: true,
             dropdownColor: Theme.of(context).colorScheme.surface,
             icon: Icon(Icons.arrow_drop_down, 
-                     color: Theme.of(context).primaryColor),
+                     color: Colors.indigo),
             iconSize: 28,
             decoration: InputDecoration(
               labelText: 'Seleccionar grado',
@@ -34,7 +34,7 @@ class SelectSubjectsCards {
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
               prefixIcon: Icon(Icons.school, 
-                             color: Theme.of(context).primaryColor),
+                             color: Colors.indigo),
             ),
             items: availableDegrees.map((degree) {
               return DropdownMenuItem(
@@ -68,71 +68,83 @@ class SelectSubjectsCards {
 }
 
   static Widget buildSelectedSubjectCard({
-    required BuildContext context,
-    required String code,
-    required String name,
-    required bool hasGroupsSelected,
-    required VoidCallback onDelete,
-  }) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () {}, // Puedes añadir funcionalidad si es necesario
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
-          child: Row(
-            children: [
-              Icon(
-                Icons.book,
-                color: Theme.of(context).primaryColor,
-                size: 32,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                      
+  required BuildContext context,
+  required String code,
+  required String name,
+  required String degree,
+  required bool hasGroupsSelected,
+  required VoidCallback onDelete,
+}) {
+  return Card(
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    elevation: 2,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () {}, // Puedes añadir funcionalidad si es necesario
+      child: Padding(
+        padding: const EdgeInsets.only(top:10, bottom: 10, left: 14, right: 2),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$code • $degree',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                      fontSize: 13,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      code,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        hasGroupsSelected ? Icons.check_circle : Icons.warning,
+                        color: hasGroupsSelected 
+                            ? Colors.green
+                            : Theme.of(context).colorScheme.error,
+                        size: 18,
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      hasGroupsSelected ? 'Grupos seleccionados ✓' : 'Grupos pendientes de selección',
-                      style: TextStyle(
-                        color: hasGroupsSelected ? Colors.green : Colors.orange,
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(width: 6),
+                      Text(
+                        hasGroupsSelected 
+                            ? 'Grupos seleccionados' 
+                            : 'No hay grupos seleccionados',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: hasGroupsSelected
+                              ? Colors.green
+                              : Theme.of(context).colorScheme.error,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
-              IconButton(
-                icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
-                onPressed: onDelete,
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Theme.of(context).colorScheme.error,
               ),
-            ],
-          ),
+              onPressed: onDelete,
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   static Widget buildEmptySelectionCard(BuildContext context) {
     return Center(
@@ -173,19 +185,30 @@ class SelectSubjectsCards {
     required bool hasSelectedSubjects,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton.icon(
-        icon: const Icon(Icons.group),
-        label: const Text('Gestionar Grupos'),
-        onPressed: hasSelectedSubjects ? onPressed : null,
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+    padding: const EdgeInsets.all(16.0),
+    child: ElevatedButton.icon(
+      icon: const Icon(Icons.group, color: Colors.white), // Color del icono
+      label: const Text(
+        'Seleccionar Grupos',
+        style: TextStyle(
+          color: Colors.white, // Color del texto
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
         ),
       ),
-    );
+      onPressed: hasSelectedSubjects ? onPressed : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.indigo, // Color de fondo del botón
+        foregroundColor: Colors.white, // Color del texto e icono (afecta cuando no se especifica en el Text/Icon)
+        minimumSize: const Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 2,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      ),
+    ),
+  );
   }
 
   static Widget buildSectionTitle(BuildContext context, String title) {
@@ -199,4 +222,5 @@ class SelectSubjectsCards {
       ),
     );
   }
+
 }

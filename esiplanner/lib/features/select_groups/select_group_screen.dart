@@ -77,6 +77,7 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     return true;
   }
 
+  // En el método _saveSelections del SelectGroupsScreen
   Future<void> _saveSelections() async {
     if (!_allSelectionsComplete) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -92,11 +93,10 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     if (username == null) return;
 
     try {
-      // Estructura modificada para coincidir con el backend
       List<Map<String, dynamic>> selectedSubjects = selectedGroups.entries.map((entry) {
         return {
           'code': entry.key,
-          'types': entry.value.values.toList(), // Cambiado de 'groups' a 'types'
+          'types': entry.value.values.toList(),
         };
       }).toList();
 
@@ -109,7 +109,9 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context);
+        // Devuelve un mapa con el estado de selección por asignatura
+        Navigator.pop(context, selectedGroups.map((key, value) => 
+          MapEntry(key, value.isNotEmpty)));
       }
     } catch (e) {
       if (mounted) {
