@@ -95,7 +95,7 @@ class _MyAppState extends State<MyApp> {
           labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
             if (states.contains(WidgetState.selected)) {
               return GoogleFonts.inter( // Usar Inter
-                color: Colors.indigo,
+                color: Colors.blue.shade900,
                 fontWeight: FontWeight.bold,
               );
             }
