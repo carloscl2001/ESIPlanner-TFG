@@ -81,6 +81,7 @@ class TimetableWeekLogic {
       case 'B': return 'Clase de problemas';
       case 'C': return 'Clase de prácticas informáticas';
       case 'D': return 'Clase de laboratorio';
+      case 'E': return 'Salida de campo';
       case 'X': return 'Clase de teoría-práctica';
       default: return 'Clase de teoría-práctica';
     }
