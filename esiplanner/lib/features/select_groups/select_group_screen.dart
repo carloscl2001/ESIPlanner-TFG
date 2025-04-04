@@ -77,7 +77,7 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     return true;
   }
 
-  // En el método _saveSelections del SelectGroupsScreen
+  // En SelectGroupsScreen, cambia el método _saveSelections a:
   Future<void> _saveSelections() async {
     if (!_allSelectionsComplete) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -89,41 +89,11 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
       return;
     }
 
-    final String? username = Provider.of<AuthProvider>(context, listen: false).username;
-    if (username == null) return;
-
-    try {
-      List<Map<String, dynamic>> selectedSubjects = selectedGroups.entries.map((entry) {
-        return {
-          'code': entry.key,
-          'types': entry.value.values.toList(),
-        };
-      }).toList();
-
-      await profileService.updateSubjects(username: username, subjects: selectedSubjects);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Selecciones guardadas exitosamente'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        // Devuelve un mapa con el estado de selección por asignatura
-        Navigator.pop(context, selectedGroups.map((key, value) => 
-          MapEntry(key, value.isNotEmpty)));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error al guardar: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+    if (mounted) {
+      Navigator.pop(context, selectedGroups); // Devuelve las selecciones directamente
     }
   }
+
 
   String getGroupLabel(String letter) {
     switch (letter) {

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../services/subject_service.dart';
+import '../../services/profile_service.dart';
+import '../../providers/auth_provider.dart';
 import '../select_subjects_degree/select_subjects_degree_screen.dart';
 import '../select_groups/select_group_screen.dart';
 import 'package:esiplanner/widgets/select_subjects_cards.dart';
@@ -19,6 +22,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   Map<String, String> subjectNames = {};
   Map<String, String> subjectDegrees = {};
   Map<String, bool> groupsSelected = {};
+  Map<String, Map<String, String>> selectedGroupsMap = {};
 
   @override
   void initState() {
@@ -108,17 +112,17 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Guía de selección de asignaturas'),
-        contentPadding: const EdgeInsets.all(16),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildInstructionStep(1, 'Selecciona un grado académico de la lista desplegable'),
-              _buildInstructionStep(2, 'Marca las asignaturas que deseas cursar de ese grado'),
-              _buildInstructionStep(3, 'Asigna grupos específicos para cada asignatura '),
+              _buildInstructionStep(2, 'Marca las asignaturas que deseas cursar'),
+              _buildInstructionStep(3, 'Asigna grupos específicos para cada asignatura'),
+              _buildInstructionStep(4, 'Confirma tu selección de asignaturas'),
               const SizedBox(height: 16),
-              Text('* Repite los puntos 1 y 2, en caso de cursar asignaturas de grados diferentes', 
+              Text('* Repite los pasos 1 y 2 para asignaturas de otros grados', 
                   style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
@@ -136,23 +140,23 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     );
   }
 
-Widget _buildInstructionStep(int step, String text) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CircleAvatar(
-          radius: 12,
-          backgroundColor: Colors.indigo,
-          child: Text('$step', style: const TextStyle(color: Colors.white, fontSize: 12)),
-        ),
-        const SizedBox(width: 12),
-        Expanded(child: Text(text)),
-      ],
-    ),
-  );
-}
+  Widget _buildInstructionStep(int step, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 12,
+            backgroundColor: Theme.of(context).primaryColor,
+            child: Text('$step', style: const TextStyle(color: Colors.white, fontSize: 12)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text)),
+        ],
+      ),
+    );
+  }
 
   void _navigateToGroupSelection() async {
     if (selectedSubjects.isEmpty) {
@@ -160,7 +164,7 @@ Widget _buildInstructionStep(int step, String text) {
       return;
     }
 
-    final result = await Navigator.push<Map<String, bool>>(
+    final result = await Navigator.push<Map<String, Map<String, String>>>(
       context,
       MaterialPageRoute(
         builder: (context) => SelectGroupsScreen(
@@ -171,11 +175,84 @@ Widget _buildInstructionStep(int step, String text) {
 
     if (result != null && mounted) {
       setState(() {
-        result.forEach((code, hasGroups) {
-          groupsSelected[code] = hasGroups;
+        selectedGroupsMap = result;
+        result.forEach((code, groups) {
+          groupsSelected[code] = groups.isNotEmpty;
         });
       });
     }
+  }
+
+  Future<void> _confirmSelections() async {
+    if (selectedSubjects.isEmpty) {
+      _showError('No hay asignaturas seleccionadas');
+      return;
+    }
+
+    if (groupsSelected.values.any((selected) => !selected)) {
+      _showError('Algunas asignaturas no tienen grupos asignados');
+      return;
+    }
+
+    final String? username = Provider.of<AuthProvider>(context, listen: false).username;
+    if (username == null) return;
+
+    try {
+      List<Map<String, dynamic>> selectedSubjectsData = selectedGroupsMap.entries.map((entry) {
+        return {
+          'code': entry.key,
+          'types': entry.value.values.toList(),
+        };
+      }).toList();
+
+      await ProfileService().updateSubjects(
+        username: username,
+        subjects: selectedSubjectsData,
+      );
+
+      if (mounted) {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            icon: const Icon(Icons.check_circle, color: Colors.green, size: 48),
+            title: const Text('¡Asignaturas confirmadas!'),
+            content: const Text('Tus asignaturas han sido guardadas exitosamente.'),
+            actions: [
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _resetSelection();
+                },
+                child: const Text('Continuar'),
+              ),
+            ],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al confirmar: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _resetSelection() {
+    setState(() {
+      selectedSubjects.clear();
+      subjectNames.clear();
+      subjectDegrees.clear();
+      groupsSelected.clear();
+      selectedGroupsMap.clear();
+    });
   }
 
   @override
@@ -199,45 +276,65 @@ Widget _buildInstructionStep(int step, String text) {
             onDegreeSelected: _navigateToDegreeSubjects,
           ),
           Expanded(
-            child: selectedSubjects.isEmpty
-                ? SelectSubjectsCards.buildEmptySelectionCard(context)
-                : Column(
-                    children: [
-                      SelectSubjectsCards.buildSectionTitle(
-                        context,
-                        'Asignaturas seleccionadas (${selectedSubjects.length})',
-                      ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: selectedSubjects.length,
-                          itemBuilder: (context, index) {
-                            final code = selectedSubjects.elementAt(index);
-                            return SelectSubjectsCards.buildSelectedSubjectCard(
-                              context: context,
-                              code: code,
-                              name: subjectNames[code] ?? 'Cargando...',
-                              degree: subjectDegrees[code] ?? 'Grado no disponible',
-                              hasGroupsSelected: groupsSelected[code] ?? false,
-                              onDelete: () {
-                                setState(() {
-                                  selectedSubjects.remove(code);
-                                  subjectNames.remove(code);
-                                  subjectDegrees.remove(code);
-                                  groupsSelected.remove(code);
-                                });
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : selectedSubjects.isEmpty
+                    ? SelectSubjectsCards.buildEmptySelectionCard(context)
+                    : Column(
+                        children: [
+                          SelectSubjectsCards.buildSectionTitle(
+                            context,
+                            'Asignaturas seleccionadas (${selectedSubjects.length})',
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: selectedSubjects.length,
+                              itemBuilder: (context, index) {
+                                final code = selectedSubjects.elementAt(index);
+                                return SelectSubjectsCards.buildSelectedSubjectCard(
+                                  context: context,
+                                  code: code,
+                                  name: subjectNames[code] ?? 'Cargando...',
+                                  degree: subjectDegrees[code] ?? 'Grado no disponible',
+                                  hasGroupsSelected: groupsSelected[code] ?? false,
+                                  onDelete: () {
+                                    setState(() {
+                                      selectedSubjects.remove(code);
+                                      subjectNames.remove(code);
+                                      subjectDegrees.remove(code);
+                                      groupsSelected.remove(code);
+                                      selectedGroupsMap.remove(code);
+                                    });
+                                  },
+                                );
                               },
-                            );
-                          },
-                        ),
+                            ),
+                          ),
+                          if (groupsSelected.values.any((selected) => !selected))
+                            SelectSubjectsCards.buildManageGroupsButton(
+                              context: context,
+                              onPressed: _navigateToGroupSelection,
+                              hasSelectedSubjects: selectedSubjects.isNotEmpty,
+                            ),
+                          if (groupsSelected.values.every((selected) => selected))
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.check_circle_outline),
+                                label: const Text('Confirmar Asignaturas'),
+                                onPressed: _confirmSelections,
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 50),
+                                  backgroundColor: Colors.green,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                      if (groupsSelected.values.any((selected) => !selected))
-                        SelectSubjectsCards.buildManageGroupsButton(
-                          context: context,
-                          onPressed: _navigateToGroupSelection,
-                          hasSelectedSubjects: selectedSubjects.isNotEmpty,
-                        ),
-                    ],
-                  ),
           ),
         ],
       ),
