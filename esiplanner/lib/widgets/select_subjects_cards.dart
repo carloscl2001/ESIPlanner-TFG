@@ -119,8 +119,8 @@ class SelectSubjectsCards {
                       const SizedBox(width: 6),
                       Text(
                         hasGroupsSelected 
-                            ? 'Grupos seleccionados' 
-                            : 'No hay grupos seleccionados',
+                            ? 'Grupos asignados' 
+                            : 'No hay grupos asignados',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: hasGroupsSelected
                               ? Colors.green

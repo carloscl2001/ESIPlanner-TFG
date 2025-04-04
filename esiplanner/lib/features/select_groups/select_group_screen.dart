@@ -132,6 +132,7 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
       case 'C': return 'Grupo de prácticas informáticas';
       case 'D': return 'Prácticas de laboratorio';
       case 'X': return 'Grupo de teoría-prácticas';
+      case 'E': return 'Salidas de campo';
       default: return 'Grupo $letter';
     }
   }

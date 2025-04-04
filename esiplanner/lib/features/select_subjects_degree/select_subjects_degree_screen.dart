@@ -102,7 +102,7 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
         title: Text(widget.degreeName),
         actions: [
           IconButton(
-            icon: const Icon(Icons.check),
+            icon: const Icon(Icons.save),
             onPressed: () => Navigator.pop(context, selectedSubjects.toList()),
             tooltip: 'Guardar selecciones',
           ),

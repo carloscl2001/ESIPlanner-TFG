@@ -104,17 +104,55 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   }
 
   void _showSelectionInstructions() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Pasos: 1. Elegir grado → 2. Seleccionar asignaturas → 3. Elegir grupos'),
-        duration: const Duration(seconds: 5),
-        action: SnackBarAction(
-          label: 'OK',
-          onPressed: () {},
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Guía de selección de asignaturas'),
+        contentPadding: const EdgeInsets.all(16),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInstructionStep(1, 'Selecciona un grado académico de la lista desplegable'),
+              _buildInstructionStep(2, 'Marca las asignaturas que deseas cursar de ese grado'),
+              _buildInstructionStep(3, 'Asigna grupos específicos para cada asignatura '),
+              const SizedBox(height: 16),
+              Text('* Repite los puntos 1 y 2, en caso de cursar asignaturas de grados diferentes', 
+                  style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Entendido'),
+          ),
+        ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
     );
   }
+
+Widget _buildInstructionStep(int step, String text) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          radius: 12,
+          backgroundColor: Colors.indigo,
+          child: Text('$step', style: const TextStyle(color: Colors.white, fontSize: 12)),
+        ),
+        const SizedBox(width: 12),
+        Expanded(child: Text(text)),
+      ],
+    ),
+  );
+}
 
   void _navigateToGroupSelection() async {
     if (selectedSubjects.isEmpty) {
