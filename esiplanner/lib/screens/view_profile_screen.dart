@@ -56,11 +56,31 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Tu perfil',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          'Mi perfil',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
+        elevation: 10,
+        flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: isDarkMode 
+              ? null
+              : LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.indigo.shade900,
+                    Colors.blue.shade900,
+                    Colors.blueAccent.shade400,
+                  ],
+                ),
+          color: isDarkMode ? Colors.black : null,
+        ),
+      ),
       ),
       body: Center(
         child: Padding(
@@ -179,7 +199,7 @@ class ProfileField extends StatelessWidget {
           Icon(
             icon,
             size: 24,
-            color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
+            color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
           ),
           const SizedBox(width: 12),
           Text(

@@ -63,7 +63,7 @@ class ProfileCard extends StatelessWidget {
                   color:
                       isDarkMode
                           ? Colors.yellow.shade700
-                          : Colors.indigo.shade700, // Color del icono
+                          : Colors.blue.shade900, // Color del icono
                 ),
                 const SizedBox(
                   height: 12,

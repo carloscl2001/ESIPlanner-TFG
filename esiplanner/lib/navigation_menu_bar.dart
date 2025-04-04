@@ -105,10 +105,21 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
         ),
         elevation: 10,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            color: isDarkMode ? Colors.black : Colors.indigo,
-          ),
+        decoration: BoxDecoration(
+          gradient: isDarkMode 
+              ? null
+              : LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.indigo.shade900,
+                    Colors.blue.shade900,
+                    Colors.blueAccent.shade400,
+                  ],
+                ),
+          color: isDarkMode ? Colors.black : null,
         ),
+      ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -140,7 +151,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             NavigationDestination(
               selectedIcon: Icon(
                 Icons.view_week,
-                color: isDarkMode ? Colors.black : Colors.indigo,
+                color: isDarkMode ? Colors.black : Colors.blue.shade900,
               ),
               icon: const Icon(Icons.view_week_outlined, color: Colors.grey),
               label: 'Mi semana',
@@ -148,7 +159,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             NavigationDestination(
               selectedIcon: Icon(
                 Icons.calendar_month_rounded,
-                color: isDarkMode ? Colors.black : Colors.indigo,
+                color: isDarkMode ? Colors.black : Colors.blue.shade900,
               ),
               icon: const Icon(
                 Icons.calendar_month_outlined,
@@ -170,7 +181,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             NavigationDestination(
               selectedIcon: Icon(
                 Icons.person,
-                color: isDarkMode ? Colors.black : Colors.indigo,
+                color: isDarkMode ? Colors.black : Colors.blue.shade900,
               ),
               icon: const Icon(Icons.person_outline, color: Colors.grey),
               label: 'Perfil',

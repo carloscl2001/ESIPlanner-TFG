@@ -86,7 +86,7 @@ class SelectedDayRow extends StatelessWidget {
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
@@ -145,7 +145,7 @@ class DayButtonRow extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     decoration: BoxDecoration(
                       color: selectedDay == day
-                          ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo)
+                          ? (isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900)
                           : null,
                       gradient: selectedDay != day
                           ? (isDarkMode

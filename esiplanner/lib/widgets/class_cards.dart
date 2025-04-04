@@ -69,21 +69,21 @@ class ClassCards extends StatelessWidget {
               _buildRow(
                 Icons.school,
                 classType,
-                isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
+                isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                 isDarkMode ? Colors.white : Colors.black,
               ),
               const SizedBox(height: 8),
               _buildRow(
                 Icons.access_time,
                 '${event['start_hour']} - ${event['end_hour']}',
-                isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
+                isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                 isDarkMode ? Colors.white : Colors.black,
               ),
               const SizedBox(height: 8),
               _buildRow(
                 Icons.location_on,
                 event['location'].toString(),
-                isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
+                isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                 isDarkMode ? Colors.white : Colors.black,
               ),
               if (isOverlap)
