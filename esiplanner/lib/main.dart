@@ -8,8 +8,8 @@ import '/providers/auth_provider.dart';
 import '/providers/theme_provider.dart';
 
 // Navigation menu
-import 'features/login/login_ui.dart';
-import 'features/register/register_ui.dart';
+import 'features/login/login_screen.dart';
+import 'features/register/register_screen.dart';
 import 'navigation_menu_bar.dart';
 
 // Screens
@@ -21,7 +21,7 @@ import 'features/select_subjects_home/select_subjects_home_screen.dart';
 
 // Screens of features
 import 'features/timetable/timetable_logic.dart';
-import 'features/edit_password/edit_password_ui.dart';
+import 'features/edit_password/edit_password_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
