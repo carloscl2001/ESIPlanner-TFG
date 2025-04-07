@@ -115,7 +115,6 @@ class _MyAppState extends State<MyApp> {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.indigo.shade700,
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -123,7 +122,6 @@ class _MyAppState extends State<MyApp> {
             textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
             ),
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
@@ -176,7 +174,7 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: Colors.black,
         ),
         cardTheme: CardTheme(
-          color: Colors.grey[800],
+          color: Colors.black,
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -186,7 +184,6 @@ class _MyAppState extends State<MyApp> {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
@@ -195,7 +192,6 @@ class _MyAppState extends State<MyApp> {
             textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
             ),
           ),
         ),

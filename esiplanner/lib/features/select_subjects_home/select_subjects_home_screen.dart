@@ -1,12 +1,9 @@
-import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../services/subject_service.dart';
-import '../../services/profile_service.dart';
-import '../../providers/auth_provider.dart';
 import '../select_subjects_degree/select_subjects_degree_screen.dart';
 import '../select_groups/select_group_screen.dart';
-import 'package:esiplanner/widgets/select_subjects_cards.dart';
+import 'package:esiplanner/features/select_subjects_home/select_subjects_home_widgets.dart';
+import 'select_subjects_home_logic.dart';
 
 class SubjectSelectionScreen extends StatefulWidget {
   const SubjectSelectionScreen({super.key});
@@ -16,44 +13,17 @@ class SubjectSelectionScreen extends StatefulWidget {
 }
 
 class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
-  late SubjectService subjectService;
-  bool isLoading = true;
-  List<String> availableDegrees = [];
-  Set<String> selectedSubjects = {};
-  Map<String, String> subjectNames = {};
-  Map<String, String> subjectDegrees = {};
-  Map<String, bool> groupsSelected = {};
-  Map<String, Map<String, String>> selectedGroupsMap = {};
+  late SubjectSelectionHomeLogic logic;
 
   @override
   void initState() {
     super.initState();
-    subjectService = SubjectService();
-    _loadDegrees();
-  }
-
-  Future<void> _loadDegrees() async {
-    try {
-      final degrees = await subjectService.getAllDegrees();
-      setState(() {
-        availableDegrees = degrees;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      _showError('Error al cargar grados: $e');
-    }
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Theme.of(context).colorScheme.error,
-      ),
+    logic = SubjectSelectionHomeLogic(
+      context: context,
+      subjectService: SubjectService(),
+      refreshUI: () => setState(() {}),
     );
+    logic.loadDegrees();
   }
 
   void _navigateToDegreeSubjects(String degree) async {
@@ -62,49 +32,13 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       MaterialPageRoute(
         builder: (context) => DegreeSubjectsScreen(
           degreeName: degree,
-          initiallySelected: selectedSubjects.toList(),
+          initiallySelected: logic.selectedSubjects.toList(),
         ),
       ),
     );
 
     if (result != null) {
-      _updateSelections(result, degree);
-    }
-  }
-
-  void _updateSelections(List<String> newSelections, String degree) {
-    setState(() {
-      selectedSubjects = Set.from(newSelections);
-      for (var code in selectedSubjects) {
-        if (!groupsSelected.containsKey(code)) {
-          groupsSelected[code] = false;
-        }
-        if (!subjectNames.containsKey(code)) {
-          subjectNames[code] = "Cargando...";
-          subjectDegrees[code] = degree;
-          _loadSubjectName(code);
-        }
-      }
-      subjectNames.removeWhere((key, _) => !selectedSubjects.contains(key));
-      subjectDegrees.removeWhere((key, _) => !selectedSubjects.contains(key));
-      groupsSelected.removeWhere((key, _) => !selectedSubjects.contains(key));
-    });
-  }
-
-  Future<void> _loadSubjectName(String code) async {
-    try {
-      final data = await subjectService.getSubjectData(codeSubject: code);
-      if (mounted) {
-        setState(() {
-          subjectNames[code] = data['name'] ?? 'Sin nombre';
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          subjectNames[code] = 'Error al cargar';
-        });
-      }
+      logic.updateSelections(result, degree);
     }
   }
 
@@ -160,8 +94,8 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   }
 
   void _navigateToGroupSelection() async {
-    if (selectedSubjects.isEmpty) {
-      _showError('Selecciona al menos una asignatura');
+    if (logic.selectedSubjects.isEmpty) {
+      logic.showError('Selecciona al menos una asignatura');
       return;
     }
 
@@ -169,101 +103,55 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => SelectGroupsScreen(
-          selectedSubjectCodes: selectedSubjects.toList(),
-          subjectDegrees: subjectDegrees,
+          selectedSubjectCodes: logic.selectedSubjects.toList(),
+          subjectDegrees: logic.subjectDegrees,
         ),
       ),
     );
 
-    if (result != null && mounted) {
+    if (result != null) {
       setState(() {
-        selectedGroupsMap = result;
+        logic.selectedGroupsMap = result;
         result.forEach((code, groups) {
-          groupsSelected[code] = groups.isNotEmpty;
+          logic.groupsSelected[code] = groups.isNotEmpty;
         });
       });
     }
   }
 
-  Future<void> _confirmSelections() async {
-    if (selectedSubjects.isEmpty) {
-      _showError('No hay asignaturas seleccionadas');
-      return;
-    }
-
-    if (groupsSelected.values.any((selected) => !selected)) {
-      _showError('Algunas asignaturas no tienen grupos asignados');
-      return;
-    }
-
-    final String? username = Provider.of<AuthProvider>(context, listen: false).username;
-    if (username == null) return;
-
-    try {
-      List<Map<String, dynamic>> selectedSubjectsData = selectedGroupsMap.entries.map((entry) {
-        return {
-          'code': entry.key,
-          'types': entry.value.values.toList(),
-        };
-      }).toList();
-
-      await ProfileService().updateSubjects(
-        username: username,
-        subjects: selectedSubjectsData,
-      );
-
-      if (mounted) {
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            icon: const Icon(Icons.check_circle, color: Colors.green, size: 48),
-            title: const Text('¡Asignaturas confirmadas!'),
-            content: const Text('Tus asignaturas han sido guardadas exitosamente.'),
-            actions: [
-              FilledButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _resetSelection();
-                },
-                child: const Text('Continuar'),
-              ),
-            ],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+  Future<void> _showConfirmationDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.check_circle, color: Colors.green, size: 48),
+        title: const Text('¡Asignaturas confirmadas!'),
+        content: const Text('Tus asignaturas han sido guardadas exitosamente.'),
+        actions: [
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context);
+              logic.resetSelection();
+            },
+            child: const Text('Continuar'),
           ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error al confirmar: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+        ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+    );
   }
 
-  void _resetSelection() {
-    setState(() {
-      selectedSubjects.clear();
-      subjectNames.clear();
-      subjectDegrees.clear();
-      groupsSelected.clear();
-      selectedGroupsMap.clear();
-    });
+  Future<void> _confirmSelections() async {
+    await logic.confirmSelections();
+    if (mounted && logic.groupsSelected.values.every((selected) => selected)) {
+      await _showConfirmationDialog();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(
-      context,
-    );
-    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Selección de asignaturas'),
@@ -277,54 +165,55 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       ),
       body: Column(
         children: [
-          SelectSubjectsCards.buildDegreeDropdown(
+          SelectSubjectsHomeWidgets.buildDegreeDropdown(
             context: context,
-            availableDegrees: availableDegrees,
+            availableDegrees: logic.availableDegrees,
             onDegreeSelected: _navigateToDegreeSubjects,
-            isDarkMode: isDarkMode,
+            isDarkMode: logic.isDarkMode,
           ),
           Expanded(
-            child: isLoading
+            child: logic.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : selectedSubjects.isEmpty
-                    ? SelectSubjectsCards.buildEmptySelectionCard(context)
+                : logic.selectedSubjects.isEmpty
+                    ? SelectSubjectsHomeWidgets.buildEmptySelectionCard(context)
                     : Column(
                         children: [
-                          SelectSubjectsCards.buildSectionTitle(
+                          SelectSubjectsHomeWidgets.buildSectionTitle(
                             context,
-                            'Asignaturas seleccionadas (${selectedSubjects.length})',
+                            'Asignaturas seleccionadas (${logic.selectedSubjects.length})',
                           ),
                           Expanded(
                             child: ListView.builder(
-                              itemCount: selectedSubjects.length,
+                              itemCount: logic.selectedSubjects.length,
                               itemBuilder: (context, index) {
-                                final code = selectedSubjects.elementAt(index);
-                                return SelectSubjectsCards.buildSelectedSubjectCard(
+                                final code = logic.selectedSubjects.elementAt(index);
+                                return SelectSubjectsHomeWidgets.buildSelectedSubjectCard(
                                   context: context,
                                   code: code,
-                                  name: subjectNames[code] ?? 'Cargando...',
-                                  degree: subjectDegrees[code] ?? 'Grado no disponible',
-                                  hasGroupsSelected: groupsSelected[code] ?? false,
+                                  name: logic.subjectNames[code] ?? 'Cargando...',
+                                  degree: logic.subjectDegrees[code] ?? 'Grado no disponible',
+                                  hasGroupsSelected: logic.groupsSelected[code] ?? false,
                                   onDelete: () {
                                     setState(() {
-                                      selectedSubjects.remove(code);
-                                      subjectNames.remove(code);
-                                      subjectDegrees.remove(code);
-                                      groupsSelected.remove(code);
-                                      selectedGroupsMap.remove(code);
+                                      logic.selectedSubjects.remove(code);
+                                      logic.subjectNames.remove(code);
+                                      logic.subjectDegrees.remove(code);
+                                      logic.groupsSelected.remove(code);
+                                      logic.selectedGroupsMap.remove(code);
                                     });
                                   },
                                 );
                               },
                             ),
                           ),
-                          if (groupsSelected.values.any((selected) => !selected))
-                            SelectSubjectsCards.buildManageGroupsButton(
+                          if (logic.groupsSelected.values.any((selected) => !selected))
+                            SelectSubjectsHomeWidgets.buildManageGroupsButton(
                               context: context,
                               onPressed: _navigateToGroupSelection,
-                              hasSelectedSubjects: selectedSubjects.isNotEmpty,
+                              hasSelectedSubjects: logic.selectedSubjects.isNotEmpty,
+                              isDarkMode: logic.isDarkMode
                             ),
-                          if (groupsSelected.values.every((selected) => selected))
+                          if (logic.groupsSelected.values.every((selected) => selected))
                             Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: ElevatedButton.icon(
