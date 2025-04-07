@@ -37,7 +37,6 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: logic.isDarkMode ? Colors.black : Colors.blue.shade900,
         title: Text(widget.degreeName),
         actions: [
           IconButton(

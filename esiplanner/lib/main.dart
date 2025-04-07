@@ -128,7 +128,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.indigo.shade700,
+          backgroundColor: Colors.blue.shade900,
           titleTextStyle: GoogleFonts.inter( // Usar Inter
             color: Colors.white,
             fontSize: 20,
