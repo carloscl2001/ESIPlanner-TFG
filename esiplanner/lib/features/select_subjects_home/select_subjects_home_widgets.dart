@@ -40,16 +40,12 @@ class SelectSubjectsHomeWidgets {
               items: availableDegrees.map((degree) {
                 return DropdownMenuItem(
                   value: degree,
-                  child: Column(
-                    children: [
-                      Text(
-                        degree,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                  child: Text(
+                    degree,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 );
               }).toList(),
