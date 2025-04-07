@@ -91,11 +91,25 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Mis asignaturas',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+        title: const Text('Mis asignaturas'),
         centerTitle: true,
+        elevation: 10,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: isDarkMode 
+                ? null
+                : LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.indigo.shade900,
+                      Colors.blue.shade900,
+                      Colors.blueAccent.shade400,
+                    ],
+                  ),
+            color: isDarkMode ? Colors.black : null,
+          ),
+        ),
       ),
       body:
           isLoading
