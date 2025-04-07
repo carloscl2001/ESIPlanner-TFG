@@ -90,7 +90,7 @@ class LoginCard extends StatelessWidget {
                 const SizedBox(height: 20),
                 PasswordField(controller: logic.passwordController, isDarkMode: isDarkMode),
                 const SizedBox(height: 24),
-                LoginButton(onPressed: onLoginPressed),
+                LoginButton(onPressed: onLoginPressed, isDarkMode: isDarkMode),
                 if (logic.errorMessage.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   ErrorMessage(message: logic.errorMessage),
@@ -159,22 +159,24 @@ class PasswordField extends StatelessWidget {
 
 class LoginButton extends StatelessWidget {
   final VoidCallback onPressed;
+  final bool isDarkMode;
 
   const LoginButton({
     super.key,
     required this.onPressed,
+    required this.isDarkMode,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      child: const Text(
+      child: Text(
         'Iniciar sesión',
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: Colors.black,
+          color: isDarkMode ? Colors.black : Colors.white,
         ),
       ),
     );

@@ -162,6 +162,24 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
             tooltip: 'Instrucciones',
           ),
         ],
+        centerTitle: true,
+        elevation: 10,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: logic.isDarkMode 
+                ? null
+                : LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.indigo.shade900,
+                      Colors.blue.shade900,
+                      Colors.blueAccent.shade400,
+                    ],
+                  ),
+            color: logic.isDarkMode ? Colors.black : null,
+          ),
+        ),
       ),
       body: Column(
         children: [

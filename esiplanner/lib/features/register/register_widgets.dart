@@ -160,11 +160,13 @@ class DegreeDropdown extends StatelessWidget {
 class RegisterButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isLoading;
+  final bool isDarkMode;
 
   const RegisterButton({
     super.key,
     required this.onPressed,
     required this.isLoading,
+    required this.isDarkMode,
   });
 
   @override
@@ -173,12 +175,12 @@ class RegisterButton extends StatelessWidget {
       onPressed: isLoading ? null : onPressed,
       child: isLoading
           ? const CircularProgressIndicator(color: Colors.white)
-          : const Text(
+          :  Text(
               'Registrarse',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: isDarkMode ?Colors.black : Colors.white,
               ),
             ),
     );
@@ -343,6 +345,7 @@ class RegisterCard extends StatelessWidget {
                 RegisterButton(
                   onPressed: onRegisterPressed,
                   isLoading: isLoading,
+                  isDarkMode: isDarkMode,
                 ),
                 if (logic.errorMessage.isNotEmpty) ...[
                   const SizedBox(height: 16),

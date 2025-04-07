@@ -122,6 +122,7 @@ class _MyAppState extends State<MyApp> {
             textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
