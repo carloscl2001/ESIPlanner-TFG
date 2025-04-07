@@ -59,14 +59,14 @@ class ProfileCard extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  size: 40,
+                  size: 50, // Tamaño del icono
                   color:
                       isDarkMode
                           ? Colors.yellow.shade700
                           : Colors.blue.shade900, // Color del icono
                 ),
                 const SizedBox(
-                  height: 12,
+                  height: 5,
                 ), // Espaciado entre el icono y el texto
                 Text(
                   text,

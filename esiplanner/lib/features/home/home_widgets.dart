@@ -329,3 +329,52 @@ class EventListView extends StatelessWidget {
     );
   }
 }
+
+class BuildEmptyCard extends StatelessWidget {
+  const BuildEmptyCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Card(
+        margin: const EdgeInsets.all(16),
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.person,
+                    size: 64,
+                    color: Theme.of(context).disabledColor,
+                  ),
+                  Icon(Icons.arrow_right_rounded, size: 64, color: Theme.of(context).disabledColor),
+                  Icon(
+                    Icons.edit_note_outlined,
+                    size: 64,
+                    color: Theme.of(context).disabledColor,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Selecciona asignaturas en perfil',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Theme.of(context).disabledColor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

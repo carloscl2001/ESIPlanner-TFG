@@ -53,6 +53,10 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
+    if (_logic.subjects.isEmpty) {
+      return BuildEmptyCard();
+    }
+
     if (_logic.errorMessage.isNotEmpty) {
       return Center(
         child: Padding(
