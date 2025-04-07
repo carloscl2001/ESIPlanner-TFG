@@ -130,8 +130,9 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         actions: [
           FilledButton(
             onPressed: () {
-              Navigator.pop(context);
-              logic.resetSelection();
+              Navigator.pop(context); // Cierra el diálogo
+              logic.resetSelection(); // Limpia la seleccion
+              Navigator.pop(context); // Navega hacia atrás
             },
             child: const Text('Continuar'),
           ),

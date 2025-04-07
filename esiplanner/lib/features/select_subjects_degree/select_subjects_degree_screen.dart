@@ -65,7 +65,7 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
     return ListView.separated(
       padding: const EdgeInsets.only(bottom: 16),
       itemCount: logic.subjects.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 10),
+      separatorBuilder: (context, index) => const SizedBox(height: 2),
       itemBuilder: (context, index) {
         final subject = logic.subjects[index];
         return SelectSubjectsDegreeWdigets.buildSubjectCard(
@@ -74,6 +74,7 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
           code: subject['code'],
           isSelected: logic.selectedSubjects.contains(subject['code']),
           onTap: () => logic.toggleSelection(subject['code']),
+          isDarkMode: logic.isDarkMode,
         );
       },
     );

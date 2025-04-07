@@ -189,26 +189,43 @@ class SelectSubjectsHomeWidgets {
   }) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton.icon(
-        icon: Icon(Icons.group, 
-          color: isDarkMode ? Colors.black : Colors.white), // Color del icono
-        label: const Text(
-          'Seleccionar Grupos',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
+      child: Container(
+        decoration: isDarkMode
+            ? null // En modo oscuro, sin gradiente (fondo amarillo)
+            : BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.indigo.shade900,
+                    Colors.blue.shade900,
+                    Colors.blueAccent.shade400,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+        child: ElevatedButton(
+          onPressed: hasSelectedSubjects ? onPressed : null,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: isDarkMode ? Colors.black : Colors.white,
+            backgroundColor: isDarkMode ? Colors.yellow : Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 2,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // Ajustamos el padding
           ),
-        ),
-        onPressed: hasSelectedSubjects ? onPressed : null,
-        style: ElevatedButton.styleFrom(
-          foregroundColor: isDarkMode ? Colors.black : Colors.white, 
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          child: Row(
+            mainAxisSize: MainAxisSize.min, // Para que el Row no ocupe todo el ancho
+            children: [
+              const Text('Asignar grupos'), // Texto del botón
+              const SizedBox(width: 10), // Espacio entre el icono y el texto
+              Icon(Icons.group, size: 20), // Icono de grupo
+            ],
           ),
-          elevation: 2,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
       ),
+
     );
   }
 

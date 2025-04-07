@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../services/subject_service.dart';
 
 class SelectSubjectsDegreeLogic {
@@ -83,5 +85,10 @@ class SelectSubjectsDegreeLogic {
 
   bool _isMounted() {
     return context.mounted;
+  }
+
+  bool get isDarkMode {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    return themeProvider.themeMode == ThemeMode.dark;
   }
 }

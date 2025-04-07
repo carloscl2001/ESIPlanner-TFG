@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class SelectSubjectsDegreeWdigets {
+  
   static Card buildSubjectCard({
     required BuildContext context,
     required String name,
     required String code,
     required bool isSelected,
     required VoidCallback onTap,
+    required bool isDarkMode,
   }) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -30,7 +32,7 @@ class SelectSubjectsDegreeWdigets {
                     end: Alignment.bottomRight,
                   )
                 : null,
-            color: isSelected ? null : Theme.of(context).cardColor,
+            color: isSelected ? null : isDarkMode ? Colors.black : Theme.of(context).cardColor,
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
