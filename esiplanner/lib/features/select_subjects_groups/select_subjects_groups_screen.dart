@@ -58,6 +58,7 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Selección de grupos', style: TextStyle(color: Colors.white)),
+              backgroundColor: isDarkMode ? Colors.black : Colors.blue.shade900,
               centerTitle: true,
               actions: [
                 IconButton(
