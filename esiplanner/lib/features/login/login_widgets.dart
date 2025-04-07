@@ -63,7 +63,7 @@ class LoginCard extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: isDarkMode
-              ? [Colors.grey.shade800, Colors.grey.shade800]
+              ? [const Color.fromARGB(255, 24, 24, 24), const Color.fromARGB(255, 24, 24, 24)]
               : [Colors.indigo.shade50, Colors.white],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -174,7 +174,7 @@ class LoginButton extends StatelessWidget {
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: Colors.black,
         ),
       ),
     );

@@ -67,13 +67,12 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'ESIP', // Título de la aplicación
       // TEMA CLARO
       theme: ThemeData.light().copyWith(
         // Usar la fuente Inter para el tema claro
         textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
+          seedColor: Colors.blue.shade900,
           brightness: Brightness.light,
         ),
         inputDecorationTheme: InputDecorationTheme(
@@ -119,6 +118,7 @@ class _MyAppState extends State<MyApp> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            backgroundColor: Colors.indigo.shade700,
             textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -142,21 +142,21 @@ class _MyAppState extends State<MyApp> {
         // Usar la fuente Inter para el tema oscuro
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.white,
+          seedColor: Colors.yellow.shade700,
           brightness: Brightness.dark,
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.grey.shade900,
+          fillColor: Colors.black,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
           labelStyle: GoogleFonts.inter(color: Colors.white), // Usar Inter
           hintStyle: GoogleFonts.inter(color: Colors.white), // Usar Inter
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.white, width: 1.5),
+            borderSide: BorderSide(color: Colors.yellow.shade700, width: 1.5),
             borderRadius: BorderRadius.circular(12.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.white, width: 2.0),
+            borderSide: BorderSide(color: Colors.yellow.shade700, width: 2.5),
             borderRadius: BorderRadius.circular(12.0),
           ),
         ),
@@ -185,12 +185,14 @@ class _MyAppState extends State<MyApp> {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            backgroundColor: Colors.yellow.shade700,
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
             ),
           ),

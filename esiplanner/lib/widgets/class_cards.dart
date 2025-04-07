@@ -41,7 +41,7 @@ class ClassCards extends StatelessWidget {
                 isDarkMode
                     ? [
                       Colors.black,
-                      const Color.fromARGB(177, 19, 19, 19),
+                      const Color.fromARGB(173, 44, 43, 43),
                     ] // Degradado oscuro
                     : [
                       Colors.indigo.shade50,
