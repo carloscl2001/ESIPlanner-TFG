@@ -13,7 +13,7 @@ import 'features/register/register_screen.dart';
 import 'navigation_menu_bar.dart';
 
 // Screens
-import 'screens/profile_screen.dart';
+import 'screens/profile_menu_screen.dart';
 import 'screens/view_profile_screen.dart';
 import 'screens/view_subjects_profile_screen.dart';
 

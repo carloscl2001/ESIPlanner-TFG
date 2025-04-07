@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
-import 'home_logic.dart';
-import 'home_widgets.dart';
+import 'my_week_logic.dart';
+import 'my_week_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
