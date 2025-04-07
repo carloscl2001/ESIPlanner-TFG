@@ -50,10 +50,8 @@ class HomeLogic {
       final degree = profileData["degree"];
       final userSubjects = profileData["subjects"] ?? [];
 
-      if (degree == null || userSubjects.isEmpty) {
-        _errorMessage = degree == null
-            ? 'No se encontró el grado en los datos del perfil'
-            : 'El usuario no tiene asignaturas, seleccionalas en su perfil';
+      if (degree == null) {
+        _errorMessage = 'No se encontró el grado en los datos del perfil';
         _isLoading = false;
         _notifyListeners();
         return;

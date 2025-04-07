@@ -32,7 +32,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
               ? const Center(child: CircularProgressIndicator())
               : Column(
                   children: [
-                    if (timetableLogic.errorMessage.isNotEmpty)
+                    if (timetableLogic.userSubjects.isEmpty)...[
+                      Expanded(child: BuildEmptyCard()),
+                    ]
+                    else if (timetableLogic.errorMessage.isNotEmpty)
                       Expanded( // Ocupa todo el espacio restante
                         child: Center( // Centrado vertical y horizontal
                           child: Text(

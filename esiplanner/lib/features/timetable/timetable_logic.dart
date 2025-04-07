@@ -31,6 +31,7 @@ class TimetableLogic with ChangeNotifier {
   List<String> get weekDays => _weekDays;
   List<DateTimeRange> get weekRanges => _weekRanges;
   List<String> get weekLabels => _weekLabels;
+  List <Map<String, dynamic>> get userSubjects => _subjects;
 
   Future<void> loadSubjects() async {
     try {
@@ -51,10 +52,8 @@ class TimetableLogic with ChangeNotifier {
       final degree = profileData["degree"];
       final userSubjects = profileData["subjects"] ?? [];
 
-      if (degree == null || userSubjects.isEmpty) {
-        _errorMessage = degree == null
-            ? 'No se encontró el grado en los datos del perfil'
-            : 'El usuario no tiene asignaturas, seleccionalas en su perfil';
+      if (degree == null) {
+        _errorMessage = 'No se encontró el grado en los datos del perfil';
         _isLoading = false;
         notifyListeners();
         return;

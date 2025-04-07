@@ -35,7 +35,7 @@ class SelectSubjectsHomeWidgets {
                     color: isDarkMode ? Colors.yellow.shade700 : Colors.black,
                     fontSize: 14,
                   ),
-                  prefixIcon: Icon(Icons.school, color: isDarkMode? Colors.yellow.shade700 : Colors.indigo),
+                  prefixIcon: Icon(Icons.school_rounded, color: isDarkMode? Colors.yellow.shade700 : Colors.indigo),
                 ),
                 items: availableDegrees.map((degree) {
                   return DropdownMenuItem(
@@ -162,7 +162,7 @@ class SelectSubjectsHomeWidgets {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.bookmark_add,
+                Icons.school_rounded,
                 size: 64,
                 color: Theme.of(context).disabledColor,
               ),

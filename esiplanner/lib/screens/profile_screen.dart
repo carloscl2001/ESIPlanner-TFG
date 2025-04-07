@@ -29,12 +29,12 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 ProfileCard(
                   text: 'Cambiar mi contraseña',
-                  icon: Icons.lock,
+                  icon: Icons.password_rounded,
                   route: '/editPassWordProfile',
                 ),
                 ProfileCard(
                   text: 'Mis asignaturas',
-                  icon: Icons.school,
+                  icon: Icons.school_rounded,
                   route: '/viewSubjectsProfile',
                 ),
                 ProfileCard(
