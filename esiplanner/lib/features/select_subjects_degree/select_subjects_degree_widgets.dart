@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SubjectDegreeCards {
+class SelectSubjectsDegreeWdigets {
   static Card buildSubjectCard({
     required BuildContext context,
     required String name,

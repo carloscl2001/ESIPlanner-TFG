@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/subject_service.dart';
-import '../../widgets/degree_subjects_cards.dart'; // Importa el nuevo archivo
+import 'select_subjects_degree_logic.dart';
+import 'select_subjects_degree_widgets.dart';
 
 class DegreeSubjectsScreen extends StatefulWidget {
   final String degreeName;
@@ -17,82 +18,19 @@ class DegreeSubjectsScreen extends StatefulWidget {
 }
 
 class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
-  late SubjectService subjectService;
-  bool isLoading = true;
-  List<Map<String, dynamic>> subjects = [];
-  Set<String> selectedSubjects = {};
+  late SelectSubjectsDegreeLogic logic;
 
   @override
   void initState() {
     super.initState();
-    subjectService = SubjectService();
-    selectedSubjects = Set.from(widget.initiallySelected);
-    _loadSubjects();
-  }
-
-  Future<void> _loadSubjects() async {
-    try {
-      final degreeData = await subjectService.getDegreeData(
-        degreeName: widget.degreeName,
-      );
-
-      if (!mounted) return;
-
-      if (degreeData['subjects'] != null) {
-        List<Map<String, dynamic>> loadedSubjects = [];
-
-        for (var subject in degreeData['subjects']) {
-          final subjectData = await subjectService.getSubjectData(
-            codeSubject: subject['code'],
-          );
-          
-          if (!mounted) return;
-          
-          loadedSubjects.add({
-            'name': subjectData['name'] ?? 'Sin nombre',
-            'code': subject['code'],
-          });
-        }
-        
-        if (!mounted) return;
-        
-        setState(() {
-          subjects = loadedSubjects;
-          isLoading = false;
-        });
-      } else {
-        if (!mounted) return;
-        setState(() {
-          isLoading = false;
-        });
-        _showError('No se encontraron asignaturas');
-      }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        isLoading = false;
-      });
-      _showError('Error al cargar asignaturas: $e');
-    }
-  }
-  
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Theme.of(context).colorScheme.error,
-      ),
+    logic = SelectSubjectsDegreeLogic(
+      context: context,
+      subjectService: SubjectService(),
+      degreeName: widget.degreeName,
+      initiallySelected: widget.initiallySelected,
+      refreshUI: () => setState(() {}),
     );
-  }
-
-  void _toggleSelection(String code) {
-    setState(() {
-      if (selectedSubjects.contains(code)) {
-        selectedSubjects.remove(code);
-      } else {
-        selectedSubjects.add(code);
-      }
-    });
+    logic.loadSubjects();
   }
 
   @override
@@ -103,32 +41,41 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () => Navigator.pop(context, selectedSubjects.toList()),
+            onPressed: () => Navigator.pop(context, logic.selectedSubjects.toList()),
             tooltip: 'Guardar selecciones',
           ),
         ],
       ),
-      body: isLoading
-          ? SubjectDegreeCards.buildLoadingIndicator()
-          : subjects.isEmpty
-              ? SubjectDegreeCards.buildErrorWidget(
-                  'No hay asignaturas disponibles', 
-                  context,
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  itemCount: subjects.length,
-                  itemBuilder: (context, index) {
-                    final subject = subjects[index];
-                    return SubjectDegreeCards.buildSubjectCard(
-                      context: context,
-                      name: subject['name'],
-                      code: subject['code'],
-                      isSelected: selectedSubjects.contains(subject['code']),
-                      onTap: () => _toggleSelection(subject['code']),
-                    );
-                  },
-                ),
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    if (logic.isLoading) {
+      return SelectSubjectsDegreeWdigets.buildLoadingIndicator();
+    }
+
+    if (logic.subjects.isEmpty) {
+      return SelectSubjectsDegreeWdigets.buildErrorWidget(
+        'No hay asignaturas disponibles', 
+        context,
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.only(bottom: 16),
+      itemCount: logic.subjects.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 10),
+      itemBuilder: (context, index) {
+        final subject = logic.subjects[index];
+        return SelectSubjectsDegreeWdigets.buildSubjectCard(
+          context: context,
+          name: subject['name'],
+          code: subject['code'],
+          isSelected: logic.selectedSubjects.contains(subject['code']),
+          onTap: () => logic.toggleSelection(subject['code']),
+        );
+      },
     );
   }
 }
