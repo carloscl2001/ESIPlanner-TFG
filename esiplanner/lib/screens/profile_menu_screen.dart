@@ -34,12 +34,12 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 ProfileCard(
                   text: 'Mis asignaturas',
-                  icon: Icons.school_rounded,
+                  icon: Icons.book_rounded,
                   route: '/viewSubjectsProfile',
                 ),
                 ProfileCard(
                   text: 'Seleccionar asignaturas',
-                  icon: Icons.edit_note_outlined,
+                  icon: Icons.edit_note_rounded,
                   route: '/editSubjectsProfile',
                 ),
               ],
