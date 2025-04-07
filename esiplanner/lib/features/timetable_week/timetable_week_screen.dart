@@ -27,6 +27,24 @@ class TimetableWeekScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        centerTitle: true,
+        elevation: 10,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: isDarkMode 
+                ? null
+                : LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.indigo.shade900,
+                      Colors.blue.shade900,
+                      Colors.blueAccent.shade400,
+                    ],
+                  ),
+            color: isDarkMode ? Colors.black : null,
+          ),
+        ),
       ),
       body: Column(
         children: [
