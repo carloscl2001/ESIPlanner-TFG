@@ -1,3 +1,4 @@
+import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/subject_service.dart';
@@ -258,6 +259,11 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(
+      context,
+    );
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Selección de asignaturas'),
@@ -275,6 +281,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
             context: context,
             availableDegrees: availableDegrees,
             onDegreeSelected: _navigateToDegreeSubjects,
+            isDarkMode: isDarkMode,
           ),
           Expanded(
             child: isLoading

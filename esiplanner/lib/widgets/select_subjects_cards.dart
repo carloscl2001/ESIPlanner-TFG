@@ -6,6 +6,7 @@ class SelectSubjectsCards {
   required BuildContext context,
   required List<String> availableDegrees,
   required Function(String) onDegreeSelected,
+  required bool isDarkMode,
 }) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -21,8 +22,7 @@ class SelectSubjectsCards {
           child: DropdownButtonFormField<String>(
             isExpanded: true,
             dropdownColor: Theme.of(context).colorScheme.surface,
-            icon: Icon(Icons.arrow_drop_down, 
-                     color: Colors.indigo),
+            icon: Icon(Icons.arrow_drop_down, color: isDarkMode? Colors.yellow.shade700 : Colors.indigo),
             iconSize: 28,
             decoration: InputDecoration(
               labelText: 'Seleccionar grado',
@@ -33,8 +33,7 @@ class SelectSubjectsCards {
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
-              prefixIcon: Icon(Icons.school, 
-                             color: Colors.indigo),
+              prefixIcon: Icon(Icons.school, color: isDarkMode? Colors.yellow.shade700 : Colors.indigo),
             ),
             items: availableDegrees.map((degree) {
               return DropdownMenuItem(
