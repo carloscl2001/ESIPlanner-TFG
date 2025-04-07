@@ -27,7 +27,7 @@ class SelectSubjectsCards {
             decoration: InputDecoration(
               labelText: 'Seleccionar grado',
               labelStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 fontSize: 16,
               ),
               border: InputBorder.none,
@@ -102,7 +102,7 @@ class SelectSubjectsCards {
                   Text(
                     '$code • $degree',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                       fontSize: 13,
                     ),
                   ),
