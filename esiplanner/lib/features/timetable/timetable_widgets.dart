@@ -268,7 +268,7 @@ class BuildEmptyCard extends StatelessWidget {
                   ),
                   Icon(Icons.arrow_right_rounded, size: 64, color: Theme.of(context).disabledColor),
                   Icon(
-                    Icons.edit_note_outlined,
+                    Icons.edit_note_rounded,
                     size: 64,
                     color: Theme.of(context).disabledColor,
                   ),
