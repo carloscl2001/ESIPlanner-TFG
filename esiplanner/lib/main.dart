@@ -10,10 +10,10 @@ import '/providers/theme_provider.dart';
 // Navigation menu
 import 'features/login/login_screen.dart';
 import 'features/register/register_screen.dart';
-import 'navigation_menu_bar.dart';
+import 'shared/navigation_menu_bar.dart';
 
 // Screens
-import 'screens/profile_menu_screen.dart';
+import 'non_features/profile_menu_screen.dart';
 
 
 // Screens of features

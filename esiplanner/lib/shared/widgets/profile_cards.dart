@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart'; // Asegúrate de importar correctamente el provider
+import '../../providers/theme_provider.dart'; // Asegúrate de importar correctamente el provider
 
 class ProfileCard extends StatelessWidget {
   final String text;
