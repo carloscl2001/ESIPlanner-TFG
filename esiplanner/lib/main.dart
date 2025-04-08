@@ -17,10 +17,10 @@ import 'non_features/profile_menu_screen.dart';
 
 
 // Screens of features
-import 'features/timetable/timetable_logic.dart';
+import 'features/timetable/timetable_home/timetable_home_logic.dart';
 import 'features/edit_password/edit_password_screen.dart';
 import 'features/view_profile/view_profile_screen.dart';
-import 'features/select_subjects_home/select_subjects_home_screen.dart';
+import 'features/selection_subjects/select_subjects_home/select_subjects_home_screen.dart';
 import 'features/view_subjects/view_subjects_screen.dart';
 
 void main() async {
@@ -225,7 +225,7 @@ class _MyAppState extends State<MyApp> {
         '/viewProfile': (context) => const ViewProfileScreen(),
         '/editPassWord': (context) => const EditPasswordScreen(),
         '/viewSubjects': (context) => const ViewSubjectsScreen(),
-        '/selectSubjects': (context) => const SubjectSelectionScreen(),
+        '/selectionSubjects': (context) => const SubjectSelectionScreen(),
       },
     );
   }

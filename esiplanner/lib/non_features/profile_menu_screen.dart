@@ -22,7 +22,7 @@ class ProfileMenuScreen extends StatelessWidget {
               physics:
                   const NeverScrollableScrollPhysics(), // Desactiva el desplazamiento
               children: const [
-                ProfileCard(
+                ProfileCard( 
                   text: 'Mi perfil',
                   icon: Icons.person_pin,
                   route: '/viewProfile',
@@ -40,7 +40,7 @@ class ProfileMenuScreen extends StatelessWidget {
                 ProfileCard(
                   text: 'Seleccionar asignaturas',
                   icon: Icons.edit_note_rounded,
-                  route: '/selectSubjects',
+                  route: '/selectionSubjects',
                 ),
               ],
             ),

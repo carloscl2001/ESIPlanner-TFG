@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/theme_provider.dart';
-import 'timetable_logic.dart';
-import 'timetable_widgets.dart';
+import '../../../providers/theme_provider.dart';
+import 'timetable_home_logic.dart';
+import 'timetable_home_widgets.dart';
 
 class TimetableScreen extends StatefulWidget {
   const TimetableScreen({super.key});

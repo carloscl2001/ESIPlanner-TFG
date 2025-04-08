@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../features/my_week/my_week_screen.dart';
-import '../features/timetable/timetable_screen.dart';
+import '../features/timetable/timetable_home/timetable_home_screen.dart';
 // import 'screens/agenda_screen.dart';
 import '../non_features/profile_menu_screen.dart';
 import '../providers/theme_provider.dart'; // Importa el ThemeProvider

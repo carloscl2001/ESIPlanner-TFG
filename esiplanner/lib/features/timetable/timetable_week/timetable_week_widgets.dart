@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'timetable_week_logic.dart';
-import '../../shared/widgets/class_cards.dart';
+import '../../../shared/widgets/class_cards.dart';
 
 class WeekHeader extends StatelessWidget {
   final TimetableWeekLogic logic;

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../../services/profile_service.dart';
-import '../../services/subject_service.dart';
-import '../../providers/auth_provider.dart';
+import '../../../services/profile_service.dart';
+import '../../../services/subject_service.dart';
+import '../../../providers/auth_provider.dart';
 
 class TimetableLogic with ChangeNotifier {
   final BuildContext context;

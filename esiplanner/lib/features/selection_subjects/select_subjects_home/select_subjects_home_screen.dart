@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../services/subject_service.dart';
+import '../../../services/subject_service.dart';
 import '../select_subjects_degree/select_subjects_degree_screen.dart';
 import '../select_subjects_groups/select_subjects_groups_screen.dart';
-import 'package:esiplanner/features/select_subjects_home/select_subjects_home_widgets.dart';
+import 'package:esiplanner/features/selection_subjects/select_subjects_home/select_subjects_home_widgets.dart';
 import 'select_subjects_home_logic.dart';
 
 class SubjectSelectionScreen extends StatefulWidget {

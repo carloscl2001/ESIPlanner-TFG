@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../services/subject_service.dart';
+import '../../../services/subject_service.dart';
 import 'select_subjects_degree_logic.dart';
 import 'select_subjects_degree_widgets.dart';
 

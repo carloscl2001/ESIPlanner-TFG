@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../services/subject_service.dart';
+import '../../../services/subject_service.dart';
 
 class SelectGroupsLogic extends ChangeNotifier {
   final List<String> selectedSubjectCodes;
