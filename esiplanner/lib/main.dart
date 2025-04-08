@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // Providers
+import 'package:provider/provider.dart';
 import '/providers/auth_provider.dart';
 import '/providers/theme_provider.dart';
 
@@ -14,14 +14,15 @@ import 'navigation_menu_bar.dart';
 
 // Screens
 import 'screens/profile_menu_screen.dart';
-import 'screens/view_subjects_profile_screen.dart';
 
-import 'features/select_subjects_home/select_subjects_home_screen.dart';
 
 // Screens of features
 import 'features/timetable/timetable_logic.dart';
 import 'features/edit_password/edit_password_screen.dart';
 import 'features/view_profile/view_profile_screen.dart';
+import 'features/select_subjects_home/select_subjects_home_screen.dart';
+import 'features/view_subjects/view_subjects_screen.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -220,11 +221,11 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const NavigationMenuBar(),
-        '/profile': (context) => const ProfileMenuScreen(),
+        '/profileMenu': (context) => const ProfileMenuScreen(),
         '/viewProfile': (context) => const ViewProfileScreen(),
-        '/editPassWordProfile': (context) => const EditPasswordScreen(),
-        '/viewSubjectsProfile': (context) => const ViewSubjectsProfileScreen(),
-        '/editSubjectsProfile': (context) => const SubjectSelectionScreen(),
+        '/editPassWord': (context) => const EditPasswordScreen(),
+        '/viewSubjects': (context) => const ViewSubjectsScreen(),
+        '/selectSubjects': (context) => const SubjectSelectionScreen(),
       },
     );
   }

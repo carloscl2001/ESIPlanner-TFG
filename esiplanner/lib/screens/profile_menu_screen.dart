@@ -30,17 +30,17 @@ class ProfileMenuScreen extends StatelessWidget {
                 ProfileCard(
                   text: 'Cambiar mi contraseña',
                   icon: Icons.password_rounded,
-                  route: '/editPassWordProfile',
+                  route: '/editPassWord',
                 ),
                 ProfileCard(
                   text: 'Mis asignaturas',
                   icon: Icons.book_rounded,
-                  route: '/viewSubjectsProfile',
+                  route: '/viewSubjects',
                 ),
                 ProfileCard(
                   text: 'Seleccionar asignaturas',
                   icon: Icons.edit_note_rounded,
-                  route: '/editSubjectsProfile',
+                  route: '/selectSubjects',
                 ),
               ],
             ),
