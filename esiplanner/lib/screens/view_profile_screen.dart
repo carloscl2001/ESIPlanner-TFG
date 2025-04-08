@@ -4,14 +4,14 @@ import '../services/profile_service.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart'; // Importa el ThemeProvider
 
-class ViewProfileScreen extends StatefulWidget {
-  const ViewProfileScreen({super.key});
+class ViewProfileScreen2 extends StatefulWidget {
+  const ViewProfileScreen2({super.key});
 
   @override
-  State<ViewProfileScreen> createState() => _ViewProfileScreenState();
+  State<ViewProfileScreen2> createState() => _ViewProfileScreenState();
 }
 
-class _ViewProfileScreenState extends State<ViewProfileScreen> {
+class _ViewProfileScreenState extends State<ViewProfileScreen2> {
   late ProfileService profileService;
 
   Map<String, dynamic> userProfile = {};

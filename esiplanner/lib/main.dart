@@ -14,7 +14,6 @@ import 'navigation_menu_bar.dart';
 
 // Screens
 import 'screens/profile_menu_screen.dart';
-import 'screens/view_profile_screen.dart';
 import 'screens/view_subjects_profile_screen.dart';
 
 import 'features/select_subjects_home/select_subjects_home_screen.dart';
@@ -22,7 +21,7 @@ import 'features/select_subjects_home/select_subjects_home_screen.dart';
 // Screens of features
 import 'features/timetable/timetable_logic.dart';
 import 'features/edit_password/edit_password_screen.dart';
-
+import 'features/view_profile/view_profile_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -221,7 +220,7 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const NavigationMenuBar(),
-        '/profile': (context) => const ProfileScreen(),
+        '/profile': (context) => const ProfileMenuScreen(),
         '/viewProfile': (context) => const ViewProfileScreen(),
         '/editPassWordProfile': (context) => const EditPasswordScreen(),
         '/viewSubjectsProfile': (context) => const ViewSubjectsProfileScreen(),

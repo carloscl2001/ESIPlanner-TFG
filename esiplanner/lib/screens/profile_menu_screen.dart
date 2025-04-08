@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/profile_cards.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfileMenuScreen extends StatelessWidget {
+  const ProfileMenuScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

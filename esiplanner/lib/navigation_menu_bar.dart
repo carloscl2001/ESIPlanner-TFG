@@ -196,7 +196,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
               const HomeScreen(),
               const TimetableScreen(),
               //const AgendaScreen(),
-              const ProfileScreen(),
+              const ProfileMenuScreen(),
             ][currentPageIndex],
       ),
     );
