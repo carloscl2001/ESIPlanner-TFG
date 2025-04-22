@@ -3,11 +3,11 @@ import 'package:intl/intl.dart';
 import 'timetable_week_logic.dart';
 import '../../../shared/widgets/class_cards.dart';
 
-class WeekHeader extends StatelessWidget {
+class WeekHeaderMobile extends StatelessWidget {
   final TimetableWeekLogic logic;
   final bool isDarkMode;
 
-  const WeekHeader({super.key, required this.logic, required this.isDarkMode});
+  const WeekHeaderMobile({super.key, required this.logic, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class WeekHeader extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             child: Text(
@@ -40,7 +40,7 @@ class WeekHeader extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             child: Text(
@@ -60,11 +60,11 @@ class WeekHeader extends StatelessWidget {
   }
 }
 
-class WeekDaysHeader extends StatelessWidget {
+class WeekDaysHeaderMobile extends StatelessWidget {
   final TimetableWeekLogic logic;
   final bool isDarkMode;
 
-  const WeekDaysHeader({super.key, required this.logic, required this.isDarkMode});
+  const WeekDaysHeaderMobile({super.key, required this.logic, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +77,7 @@ class WeekDaysHeader extends StatelessWidget {
         color: isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.circular(12.0),
         border: Border.all(
-          color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+          color: isDarkMode ? Colors.transparent : Colors.blue.shade900,
           width: 2,
         ),
         boxShadow: [
@@ -85,8 +85,8 @@ class WeekDaysHeader extends StatelessWidget {
             color: isDarkMode 
                 ? Colors.grey.withValues(alpha: 0.45) 
                 : Colors.black.withValues(alpha: 0.45),
-            blurRadius: 6.0,
-            offset: const Offset(0, 3),
+            blurRadius: isDarkMode ? 0.0 : 6.0,
+            offset: const Offset(0, 0),
           ),
         ],
       ),
@@ -99,7 +99,7 @@ class WeekDaysHeader extends StatelessWidget {
               Text(
                 (logic.weekDays[index]),
                 style: TextStyle(
-                  color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                  color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
@@ -120,11 +120,11 @@ class WeekDaysHeader extends StatelessWidget {
   }
 }
 
-class EventList extends StatelessWidget {
+class EventListMobile extends StatelessWidget {
   final TimetableWeekLogic logic;
   final bool isDarkMode;
 
-  const EventList({super.key, required this.logic, required this.isDarkMode});
+  const EventListMobile({super.key, required this.logic, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +161,7 @@ class EventList extends StatelessWidget {
                 child: Text(
                   logic.formatDateToFullDate(DateTime.parse(date)),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                        color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),

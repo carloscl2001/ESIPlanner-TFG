@@ -1,14 +1,15 @@
-import 'package:esiplanner/providers/theme_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../services/subject_service.dart';
-import '../../../services/profile_service.dart';
-import '../../../providers/auth_provider.dart';
+import 'dart:ui';
+
+import 'package:esiplanner/services/subject_service.dart';
+import 'package:esiplanner/services/profile_service.dart';
+import 'package:esiplanner/providers/auth_provider.dart';
 
 class SubjectSelectionHomeLogic {
-  final BuildContext context;
-  final SubjectService subjectService;
   final VoidCallback refreshUI;
+  final Function(String) showError;
+  final SubjectService subjectService;
+  final AuthProvider authProvider;
+  bool _isDisposed = false;
 
   bool isLoading = true;
   List<String> availableDegrees = [];
@@ -19,63 +20,61 @@ class SubjectSelectionHomeLogic {
   Map<String, Map<String, String>> selectedGroupsMap = {};
 
   SubjectSelectionHomeLogic({
-    required this.context,
-    required this.subjectService,
     required this.refreshUI,
+    required this.showError,
+    required this.subjectService,
+    required this.authProvider,
   });
 
   Future<void> loadDegrees() async {
     try {
-      final degrees = await subjectService.getAllDegrees();
-      availableDegrees = degrees;
-      isLoading = false;
-      refreshUI();
+      final degrees = await subjectService.getNameAllDegrees();
+      if (!_isDisposed) {
+        availableDegrees = degrees;
+        isLoading = false;
+        refreshUI();
+      }
     } catch (e) {
-      isLoading = false;
-      refreshUI();
-      showError('Error al cargar grados: $e');
+      if (!_isDisposed) {
+        isLoading = false;
+        refreshUI();
+        showError('Error al cargar grados: $e');
+      }
     }
   }
 
-  void showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Theme.of(context).colorScheme.error,
-      ),
-    );
-  }
-
-  void updateSelections(List<String> newSelections, String degree) {
-    selectedSubjects = Set.from(newSelections);
-    for (var code in selectedSubjects) {
+  Future<void> updateSelections(Map<String, dynamic> selectionData) async {
+    if (_isDisposed) return;
+    
+    final codes = List<String>.from(selectionData['codes'] ?? []);
+    final names = List<String>.from(selectionData['names'] ?? []);
+    final degree = selectionData['degree'] as String;
+    
+    selectedSubjects = Set.from(codes);
+    
+    for (int i = 0; i < codes.length; i++) {
+      final code = codes[i];
+      final name = i < names.length ? names[i] : 'Cargando...';
+      
       if (!groupsSelected.containsKey(code)) {
         groupsSelected[code] = false;
       }
-      if (!subjectNames.containsKey(code)) {
-        subjectNames[code] = "Cargando...";
-        subjectDegrees[code] = degree;
-        loadSubjectName(code);
-      }
+      
+      subjectNames[code] = name;
+      subjectDegrees[code] = degree;
     }
+    
+    // Limpieza
     subjectNames.removeWhere((key, _) => !selectedSubjects.contains(key));
     subjectDegrees.removeWhere((key, _) => !selectedSubjects.contains(key));
     groupsSelected.removeWhere((key, _) => !selectedSubjects.contains(key));
+    
     refreshUI();
   }
 
-  Future<void> loadSubjectName(String code) async {
-    try {
-      final data = await subjectService.getSubjectData(codeSubject: code);
-      subjectNames[code] = data['name'] ?? 'Sin nombre';
-      refreshUI();
-    } catch (e) {
-      subjectNames[code] = 'Error al cargar';
-      refreshUI();
-    }
-  }
-
   Future<void> confirmSelections() async {
+    if (_isDisposed) return;
+    
     if (selectedSubjects.isEmpty) {
       showError('No hay asignaturas seleccionadas');
       return;
@@ -86,11 +85,14 @@ class SubjectSelectionHomeLogic {
       return;
     }
 
-    final String? username = Provider.of<AuthProvider>(context, listen: false).username;
-    if (username == null) return;
+    final username = authProvider.username;
+    if (username == null) {
+      showError('Usuario no autenticado');
+      return;
+    }
 
     try {
-      List<Map<String, dynamic>> selectedSubjectsData = selectedGroupsMap.entries.map((entry) {
+      final selectedSubjectsData = selectedGroupsMap.entries.map((entry) {
         return {
           'code': entry.key,
           'types': entry.value.values.toList(),
@@ -102,16 +104,14 @@ class SubjectSelectionHomeLogic {
         subjects: selectedSubjectsData,
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error al confirmar: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (!_isDisposed) {
+        showError('Error al confirmar: ${e.toString()}');
+      }
     }
   }
 
   void resetSelection() {
+    if (_isDisposed) return;
     selectedSubjects.clear();
     subjectNames.clear();
     subjectDegrees.clear();
@@ -120,8 +120,7 @@ class SubjectSelectionHomeLogic {
     refreshUI();
   }
 
-  bool get isDarkMode {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    return themeProvider.themeMode == ThemeMode.dark;
+  void dispose() {
+    _isDisposed = true;
   }
 }

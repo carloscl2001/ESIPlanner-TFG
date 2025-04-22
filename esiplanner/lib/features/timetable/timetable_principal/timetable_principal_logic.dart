@@ -5,7 +5,7 @@ import '../../../services/profile_service.dart';
 import '../../../services/subject_service.dart';
 import '../../../providers/auth_provider.dart';
 
-class TimetableLogic with ChangeNotifier {
+class TimetablePrincipalLogic with ChangeNotifier {
   final BuildContext context;
   final ProfileService _profileService;
   final SubjectService _subjectService;
@@ -14,12 +14,14 @@ class TimetableLogic with ChangeNotifier {
   List<Map<String, dynamic>> _subjects = [];
   String _errorMessage = '';
   int _selectedWeekIndex = 0;
+  Map<String, String> _subjectMapping = {}; // Map to store code -> code_ics mapping
   
   final List<String> _weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'];
+  final List<String> _weekFullDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
   List<DateTimeRange> _weekRanges = [];
   List<String> _weekLabels = [];
 
-  TimetableLogic(this.context)
+  TimetablePrincipalLogic(this.context)
       : _profileService = ProfileService(),
         _subjectService = SubjectService();
 
@@ -29,9 +31,10 @@ class TimetableLogic with ChangeNotifier {
   String get errorMessage => _errorMessage;
   int get selectedWeekIndex => _selectedWeekIndex;
   List<String> get weekDays => _weekDays;
+  List<String> get weekFullDays => _weekFullDays;
   List<DateTimeRange> get weekRanges => _weekRanges;
   List<String> get weekLabels => _weekLabels;
-  List <Map<String, dynamic>> get userSubjects => _subjects;
+  List<Map<String, dynamic>> get userSubjects => _subjects;
 
   Future<void> loadSubjects() async {
     try {
@@ -48,6 +51,7 @@ class TimetableLogic with ChangeNotifier {
         return;
       }
 
+      // First get the profile data
       final profileData = await _profileService.getProfileData(username: username);
       final degree = profileData["degree"];
       final userSubjects = profileData["subjects"] ?? [];
@@ -59,6 +63,11 @@ class TimetableLogic with ChangeNotifier {
         return;
       }
 
+      // Get the subject mapping
+      final mappingList = await _subjectService.getSubjectMapping();
+      _subjectMapping = _createSubjectMapping(mappingList);
+
+      // Now fetch and filter subjects using the mapping
       _subjects = await _fetchAndFilterSubjects(userSubjects);
       _isLoading = false;
       _calculateWeekRanges();
@@ -70,12 +79,35 @@ class TimetableLogic with ChangeNotifier {
     }
   }
 
+  Map<String, String> _createSubjectMapping(List<Map<String, dynamic>> mappingList) {
+    final mapping = <String, String>{};
+    for (var item in mappingList) {
+      final code = item['code']?.toString();
+      final codeIcs = item['code_ics']?.toString();
+      if (code != null && codeIcs != null) {
+        mapping[code] = codeIcs;
+      }
+    }
+    return mapping;
+  }
+
   Future<List<Map<String, dynamic>>> _fetchAndFilterSubjects(List<dynamic> userSubjects) async {
     List<Map<String, dynamic>> updatedSubjects = [];
 
     for (var subject in userSubjects) {
       try {
-        final subjectData = await _subjectService.getSubjectData(codeSubject: subject['code']);
+        final subjectCode = subject['code']?.toString();
+        if (subjectCode == null) continue;
+
+        // Get the corresponding code_ics from the mapping
+        final codeIcs = _subjectMapping[subjectCode];
+        if (codeIcs == null) {
+          debugPrint('No se encontró mapeo para la asignatura: $subjectCode');
+          continue;
+        }
+
+        // Get subject data using the code_ics
+        final subjectData = await _subjectService.getSubjectData(codeSubject: codeIcs);
         final filteredClasses = _filterClasses(subjectData['classes'], subject['types']);
 
         for (var classData in filteredClasses) {
@@ -87,6 +119,7 @@ class TimetableLogic with ChangeNotifier {
         updatedSubjects.add({
           'name': subjectData['name'] ?? subject['name'],
           'code': subject['code'],
+          'code_ics': codeIcs, // Store the code_ics for reference
           'classes': filteredClasses,
         });
       } catch (e) {
@@ -97,6 +130,7 @@ class TimetableLogic with ChangeNotifier {
     return updatedSubjects;
   }
 
+  // Rest of the methods remain the same...
   List<dynamic> _filterClasses(List<dynamic>? classes, List<dynamic>? userTypes) {
     if (classes == null) return [];
     return classes.where((classData) {

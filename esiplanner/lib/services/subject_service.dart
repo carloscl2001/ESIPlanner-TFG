@@ -29,7 +29,7 @@ class SubjectService {
     }
   }
 
-  //Funcion que hace la solictud HTTP para obtener los datos de un grado
+  //Funcion que hace la solictud HTTP para obtener los datos de un grado por su nombre
   Future<Map<String, dynamic>> getDegreeData({
     required String degreeName,
   }) async {
@@ -55,7 +55,8 @@ class SubjectService {
     }
   }
 
-  Future<List<String>> getAllDegrees() async {
+  //Funcion que hace la solictud HTTP para obtener los nombres de los grados
+  Future<List<String>> getNameAllDegrees() async {
     try {
       final response = await http.get(
         Uri.parse('${ApiServices.baseUrl}/degrees/names/'),
@@ -78,5 +79,33 @@ class SubjectService {
     }
   }
 
+  // Función que obtiene el mapeo completo de asignaturas
+  Future<List<Map<String, dynamic>>> getSubjectMapping() async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiServices.baseUrl}/mappings/'),
+      );
+
+      if (response.statusCode == 200) {
+        // Decodificar el cuerpo de la respuesta en UTF-8
+        String responseBody = utf8.decode(response.bodyBytes);
+        
+        // Decodificar el JSON
+        final List<dynamic> responseData = json.decode(responseBody);
+        
+        // Verificar que tenemos al menos un elemento y que tiene el campo 'mapping'
+        if (responseData.isNotEmpty && responseData[0]['mapping'] != null) {
+          // Devolver solo el array de mapeos
+          return List<Map<String, dynamic>>.from(responseData[0]['mapping']);
+        } else {
+          throw Exception('Formato de respuesta no válido: falta el campo mapping');
+        }
+      } else {
+        throw Exception('Error al obtener el mapeo: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error en la solicitud: $e');
+    }
+  }
 
 }

@@ -4,12 +4,13 @@ import '../../../services/subject_service.dart';
 class SelectGroupsLogic extends ChangeNotifier {
   final List<String> selectedSubjectCodes;
   final Map<String, String> subjectDegrees;
-  
   late SubjectService subjectService;
+  
   bool isLoading = true;
   String errorMessage = '';
   List<Map<String, dynamic>> subjects = [];
   Map<String, Map<String, String>> selectedGroups = {};
+  Map<String, String> codeToIcs = {}; // Mapeo de código original a code_ics
 
   SelectGroupsLogic({
     required this.selectedSubjectCodes,
@@ -20,27 +21,62 @@ class SelectGroupsLogic extends ChangeNotifier {
   }
 
   Future<void> _init() async {
+    await _loadCodeMappings();
     await loadSubjectsData();
+  }
+
+  Future<void> _loadCodeMappings() async {
+    try {
+      final mappings = await subjectService.getSubjectMapping();
+      codeToIcs = {
+        for (var mapping in mappings)
+          mapping['code'].toString(): mapping['code_ics'].toString()
+      };
+    } catch (e) {
+      debugPrint('Error loading code mappings: $e');
+    }
   }
 
   Future<void> loadSubjectsData() async {
     try {
       List<Map<String, dynamic>> loadedSubjects = [];
       
-      for (var code in selectedSubjectCodes) {
-        final subjectData = await subjectService.getSubjectData(codeSubject: code);
+      for (var originalCode in selectedSubjectCodes) {
+        // Usar code_ics si existe en el mapeo, sino usar el código original
+        final icsCode = codeToIcs[originalCode] ?? originalCode;
+        final subjectData = await subjectService.getSubjectData(codeSubject: icsCode);
+        
+        // Ordenamos los grupos por tipo y número
+        final classes = subjectData['classes'] ?? [];
+        classes.sort((a, b) {
+          final regExp = RegExp(r'([A-Z]+)(\d+)');
+          final matchA = regExp.firstMatch(a['type'])!;
+          final matchB = regExp.firstMatch(b['type'])!;
+
+          final letterA = matchA.group(1)!;
+          final letterB = matchB.group(1)!;
+          final numberA = int.parse(matchA.group(2)!);
+          final numberB = int.parse(matchB.group(2)!);
+
+          if (letterA != letterB) {
+            return letterA.compareTo(letterB);
+          } else {
+            return numberA.compareTo(numberB);
+          }
+        });
+        
         loadedSubjects.add({
           'name': subjectData['name'],
-          'code': code,
-          'classes': subjectData['classes'] ?? [],
+          'code': originalCode, // Mantener el código original para referencia
+          'code_ics': icsCode,  // Guardar el código ICS usado
+          'classes': classes,
         });
       }
 
       subjects = loadedSubjects;
-      // Inicializar selectedGroups para cada asignatura
       selectedGroups = {
         for (var subject in subjects) 
-          subject['code']: {}
+          subject['code']: {} // Usar el código original como clave
       };
       
       isLoading = false;
@@ -51,6 +87,12 @@ class SelectGroupsLogic extends ChangeNotifier {
       notifyListeners();
       rethrow;
     }
+  }
+
+  // Método para obtener los datos de una asignatura usando el code_ics correcto
+  Future<Map<String, dynamic>> getSubjectDetails(String originalCode) async {
+    final icsCode = codeToIcs[originalCode] ?? originalCode;
+    return await subjectService.getSubjectData(codeSubject: icsCode);
   }
 
   bool get allSelectionsComplete {
@@ -74,10 +116,13 @@ class SelectGroupsLogic extends ChangeNotifier {
   List<String> getMissingTypesForSubject(String subjectCode) {
     final subject = subjects.firstWhere((s) => s['code'] == subjectCode);
     final groups = subject['classes'] as List;
+    
     final requiredTypes = groups.map((g) => g['type'][0]).toSet();
     final selectedTypes = selectedGroups[subjectCode]?.keys.toSet() ?? {};
 
-    return requiredTypes.difference(selectedTypes).map((type) => getGroupLabel(type)).toList();
+    return requiredTypes.difference(selectedTypes)
+        .map((type) => getGroupLabel(type))
+        .toList();
   }
 
   String getGroupLabel(String letter) {

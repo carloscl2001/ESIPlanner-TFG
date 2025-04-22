@@ -17,7 +17,7 @@ import 'non_features/profile_menu_screen.dart';
 
 
 // Screens of features
-import 'features/timetable/timetable_home/timetable_home_logic.dart';
+import 'features/timetable/timetable_principal/timetable_principal_logic.dart';
 import 'features/edit_password/edit_password_screen.dart';
 import 'features/view_profile/view_profile_screen.dart';
 import 'features/selection_subjects/select_subjects_home/select_subjects_home_screen.dart';
@@ -34,7 +34,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
-        ChangeNotifierProvider(create: (context) => TimetableLogic(context)),
+        ChangeNotifierProvider(create: (context) => TimetablePrincipalLogic(context)),
       ],
       child: const MyApp(),
     ),
