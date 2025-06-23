@@ -1,3 +1,4 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
@@ -61,7 +62,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         title: const Text(
           'Mi perfil',
           style: TextStyle(
-            color: Colors.white,
+            color: AppColors.blanco,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -69,18 +70,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         elevation: 10,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: isDarkMode 
-                ? null
-                : LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Colors.indigo.shade900,
-                      Colors.blue.shade900,
-                      Colors.blueAccent.shade400,
-                    ],
-                  ),
-            color: isDarkMode ? Colors.black : null,
+            color: isDarkMode ? AppColors.negro : AppColors.azulUCA,
           ),
         ),
       ),
@@ -88,7 +78,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
-            child: ProfileCard(
+            child: ViewProfileWidgets(
               isDarkMode: isDarkMode,
               errorMessage: logic.errorMessage,
               userProfile: logic.userProfile,

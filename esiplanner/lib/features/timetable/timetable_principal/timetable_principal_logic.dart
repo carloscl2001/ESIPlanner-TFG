@@ -53,15 +53,7 @@ class TimetablePrincipalLogic with ChangeNotifier {
 
       // First get the profile data
       final profileData = await _profileService.getProfileData(username: username);
-      final degree = profileData["degree"];
       final userSubjects = profileData["subjects"] ?? [];
-
-      if (degree == null) {
-        _errorMessage = 'No se encontró el grado en los datos del perfil';
-        _isLoading = false;
-        notifyListeners();
-        return;
-      }
 
       // Get the subject mapping
       final mappingList = await _subjectService.getSubjectMapping();
@@ -108,7 +100,7 @@ class TimetablePrincipalLogic with ChangeNotifier {
 
         // Get subject data using the code_ics
         final subjectData = await _subjectService.getSubjectData(codeSubject: codeIcs);
-        final filteredClasses = _filterClasses(subjectData['classes'], subject['types']);
+        final filteredClasses = _filterClasses(subjectData['groups'], subject['groups_codes']);
 
         for (var classData in filteredClasses) {
           classData['events'].sort((a, b) => DateTime.parse(a['date']).compareTo(DateTime.parse(b['date'])));
@@ -120,7 +112,7 @@ class TimetablePrincipalLogic with ChangeNotifier {
           'name': subjectData['name'] ?? subject['name'],
           'code': subject['code'],
           'code_ics': codeIcs, // Store the code_ics for reference
-          'classes': filteredClasses,
+          'groups': filteredClasses,
         });
       } catch (e) {
         debugPrint('Error procesando asignatura ${subject['code']}: $e');
@@ -134,7 +126,7 @@ class TimetablePrincipalLogic with ChangeNotifier {
   List<dynamic> _filterClasses(List<dynamic>? classes, List<dynamic>? userTypes) {
     if (classes == null) return [];
     return classes.where((classData) {
-      final classType = classData['type']?.toString();
+      final classType = classData['group_code']?.toString();
       final types = (userTypes)?.cast<String>() ?? [];
       return classType != null && types.contains(classType);
     }).toList();
@@ -147,7 +139,7 @@ class TimetablePrincipalLogic with ChangeNotifier {
     DateTime? lastDate;
 
     for (var subject in _subjects) {
-      for (var classData in subject['classes']) {
+      for (var classData in subject['groups']) {
         for (var event in classData['events']) {
           final eventDate = DateTime.parse(event['date']);
           if (eventDate.weekday >= DateTime.monday && eventDate.weekday <= DateTime.friday) {
@@ -203,7 +195,7 @@ class TimetablePrincipalLogic with ChangeNotifier {
 
   bool dayHasClass(DateTime day) {
     for (var subject in _subjects) {
-      for (var classData in subject['classes']) {
+      for (var classData in subject['groups']) {
         for (var event in classData['events']) {
           final eventDate = DateTime.parse(event['date']);
           if (eventDate.year == day.year &&
@@ -221,14 +213,14 @@ class TimetablePrincipalLogic with ChangeNotifier {
     List<Map<String, dynamic>> allEvents = [];
 
     for (var subject in _subjects) {
-      for (var classData in subject['classes']) {
+      for (var classData in subject['groups']) {
         for (var event in classData['events']) {
           final eventDate = DateTime.parse(event['date']);
           if (eventDate.isAfter(weekRange.start.subtract(const Duration(days: 1))) &&
               eventDate.isBefore(weekRange.end.add(const Duration(days: 1)))) {
             allEvents.add({
               'subjectName': subject['name'] ?? 'No Name',
-              'classType': classData['type'] ?? 'No disponible',
+              'classType': classData['group_code'] ?? 'No disponible',
               'event': event,
             });
           }
@@ -246,7 +238,7 @@ class TimetablePrincipalLogic with ChangeNotifier {
     DateTime? lastDate;
 
     for (var subject in _subjects) {
-      for (var classData in subject['classes']) {
+      for (var classData in subject['groups']) {
         for (var event in classData['events']) {
           final eventDate = _parseDate(event['date']);
           if (firstDate == null || eventDate.isBefore(firstDate)) {

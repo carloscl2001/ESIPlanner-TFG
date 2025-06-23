@@ -1,29 +1,36 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'register_logic.dart';
 
-// Define all field widgets first
+// Campos del formulario
 class EmailField extends StatelessWidget {
   final TextEditingController controller;
   final bool isDarkMode;
+  final FormFieldValidator<String>? validator;
 
   const EmailField({
     super.key,
     required this.controller,
     required this.isDarkMode,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         labelText: 'Email',
         prefixIcon: Icon(
           Icons.email,
-          color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+          color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
-      validator: (value) => RegisterLogic(context).validateEmail(value),
+      validator: validator ?? (value) => RegisterLogic(context).validateEmail(value),
     );
   }
 }
@@ -46,7 +53,10 @@ class UsernameField extends StatelessWidget {
         labelText: 'Nombre de usuario',
         prefixIcon: Icon(
           Icons.person,
-          color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+          color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
       validator: (value) => RegisterLogic(context).validateUsername(value),
@@ -73,7 +83,10 @@ class PasswordField extends StatelessWidget {
         labelText: 'Contraseña',
         prefixIcon: Icon(
           Icons.lock,
-          color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+          color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
       validator: (value) => RegisterLogic(context).validatePassword(value),
@@ -101,7 +114,10 @@ class NameField extends StatelessWidget {
         labelText: label,
         prefixIcon: Icon(
           label == 'Nombre' ? Icons.badge : Icons.family_restroom,
-          color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+          color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
       validator: (value) => 
@@ -128,35 +144,102 @@ class DegreeDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return degrees.isNotEmpty
         ? DropdownButtonFormField<String>(
-            value: selectedDegree,
+            value: selectedDegree ?? degrees.first,
             onChanged: onChanged,
             decoration: InputDecoration(
               labelText: 'Grado',
               prefixIcon: Icon(
                 Icons.school,
-                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
               ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             ),
-            isExpanded: true,
-            items: degrees.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+            isExpanded: true, // Permite que el dropdown ocupe todo el ancho disponible
             selectedItemBuilder: (BuildContext context) {
               return degrees.map<Widget>((String value) {
-                return Text(
-                  value,
-                  overflow: TextOverflow.ellipsis,
+                final isDefaultValue = selectedDegree == null && value == degrees.first;
+                return SizedBox(
+                  width: MediaQuery.of(context).size.width - 100, // Ajusta según necesidad
+                  child: Text(
+                    value,
+                    overflow: TextOverflow.ellipsis, // Añade puntos suspensivos si el texto es muy largo
+                    style: TextStyle(
+                      color: isDefaultValue 
+                          ? Colors.grey.shade600
+                          : (isDarkMode ? AppColors.blanco : AppColors.negro),
+                    ),
+                  ),
                 );
               }).toList();
             },
+            items: degrees.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(
+                  value,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            }).toList(),
           )
         : const Center(child: CircularProgressIndicator());
   }
 }
 
+class DepartmentDropdown extends StatelessWidget {
+  final List<String> departments;
+  final String? selectedDepartment;
+  final bool isDarkMode;
+  final ValueChanged<String?> onChanged;
+
+  const DepartmentDropdown({
+    super.key,
+    required this.departments,
+    required this.selectedDepartment,
+    required this.isDarkMode,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Valor efectivo que se mostrará
+    final effectiveValue = (selectedDepartment != null && selectedDepartment!.isNotEmpty)
+        ? selectedDepartment
+        : (departments.isNotEmpty ? departments.first : null);
+
+    return departments.isNotEmpty
+        ? DropdownButtonFormField<String>(
+            value: effectiveValue, // Siempre tendrá un valor válido aquí
+            onChanged: (value) {
+              // Cuando cambia, actualiza el valor en el logic
+              onChanged(value ?? departments.first);
+            },
+            decoration: InputDecoration(
+              labelText: 'Departamento',
+              prefixIcon: Icon(
+                Icons.business,
+                color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            items: departments.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          )
+        : const Center(child: CircularProgressIndicator());
+  }
+}
+
+// Botones
 class RegisterButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isLoading;
@@ -171,18 +254,27 @@ class RegisterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      child: isLoading
-          ? const CircularProgressIndicator(color: Colors.white)
-          :  Text(
-              'Registrarse',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ?Colors.black : Colors.white,
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        onPressed: isLoading ? null : onPressed,
+        child: isLoading
+            ? const CircularProgressIndicator(color: AppColors.blanco)
+            : Text(
+                'Registrarse',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isDarkMode ? AppColors.negro : AppColors.blanco 
+                ),
               ),
-            ),
+      ),
     );
   }
 }
@@ -200,7 +292,7 @@ class LoginButton extends StatelessWidget {
     return TextButton(
       onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
       style: TextButton.styleFrom(
-        foregroundColor: isDarkMode ? Colors.white : Colors.indigo.shade700,
+        foregroundColor: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
       ),
       child: const Text(
         "¿Ya tienes una cuenta? Inicia sesión aquí",
@@ -210,6 +302,7 @@ class LoginButton extends StatelessWidget {
   }
 }
 
+// Mensajes de error
 class ErrorMessage extends StatelessWidget {
   final String message;
 
@@ -220,16 +313,18 @@ class ErrorMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      message,
-      style: const TextStyle(color: Colors.red, fontSize: 14),
-      textAlign: TextAlign.center,
-      softWrap: true,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        message,
+        style: const TextStyle(color: Colors.red, fontSize: 14),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }
 
-// Main form widgets
+// Formulario principal
 class RegisterForm extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final RegisterLogic logic;
@@ -248,45 +343,6 @@ class RegisterForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 40),
-          RegisterCard(
-            formKey: formKey,
-            logic: logic,
-            isDarkMode: isDarkMode,
-            onRegisterPressed: onRegisterPressed,
-            isLoading: isLoading,
-          ),
-          const SizedBox(height: 20),
-          LoginButton(isDarkMode: isDarkMode),
-        ],
-      ),
-    );
-  }
-}
-
-class RegisterCard extends StatelessWidget {
-  final GlobalKey<FormState> formKey;
-  final RegisterLogic logic;
-  final bool isDarkMode;
-  final VoidCallback onRegisterPressed;
-  final bool isLoading;
-
-  const RegisterCard({
-    super.key,
-    required this.formKey,
-    required this.logic,
-    required this.isDarkMode,
-    required this.onRegisterPressed,
-    required this.isLoading,
-  });
-
-  @override
-  Widget build(BuildContext context) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -295,7 +351,7 @@ class RegisterCard extends StatelessWidget {
           gradient: LinearGradient(
             colors: isDarkMode
                 ? [const Color.fromARGB(255, 24, 24, 24), const Color.fromARGB(255, 24, 24, 24)]
-                : [Colors.indigo.shade50, Colors.white],
+                : [AppColors.azulClaro2, AppColors.blanco],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -313,10 +369,10 @@ class RegisterCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.indigo.shade900,
+                    color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
                 EmailField(controller: logic.emailController, isDarkMode: isDarkMode),
                 const SizedBox(height: 20),
                 UsernameField(controller: logic.usernameController, isDarkMode: isDarkMode),
@@ -335,12 +391,28 @@ class RegisterCard extends StatelessWidget {
                   label: 'Apellido',
                 ),
                 const SizedBox(height: 20),
-                DegreeDropdown(
-                  degrees: logic.degrees,
-                  selectedDegree: logic.selectedDegree,
+                UserTypeSelector(
                   isDarkMode: isDarkMode,
-                  onChanged: (value) => logic.selectedDegree = value,
+                  selectedType: logic.userType,
+                  onChanged: (type) {
+                    logic.setUserType(type);
+                  },
                 ),
+                const SizedBox(height: 18),
+                if (logic.userType == 'student')
+                  DegreeDropdown(
+                    degrees: logic.degrees,
+                    selectedDegree: logic.selectedDegree,
+                    isDarkMode: isDarkMode,
+                    onChanged: (value) => logic.selectedDegree = value,
+                  ),
+                if (logic.userType == 'teacher')
+                  DepartmentDropdown(
+                    departments: logic.departments,
+                    selectedDepartment: logic.selectedDepartment,
+                    isDarkMode: isDarkMode,
+                    onChanged: (value) => logic.selectedDepartment = value,
+                  ),
                 const SizedBox(height: 24),
                 RegisterButton(
                   onPressed: onRegisterPressed,
@@ -354,6 +426,117 @@ class RegisterCard extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class UserTypeSelector extends StatelessWidget {
+  final bool isDarkMode;
+  final String selectedType;
+  final ValueChanged<String> onChanged;
+
+  const UserTypeSelector({
+    super.key,
+    required this.isDarkMode,
+    required this.selectedType,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0, bottom: 4),
+          child: Text(
+            'Tipo de usuario',
+            style: TextStyle(
+              color: isDarkMode? AppColors.blanco : AppColors.azulIntermedioUCA, // Texto azul como pediste
+              fontSize: 14,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: isDarkMode ? Colors.grey.shade900 : AppColors.blanco, // Fondo blanco/negro
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isDarkMode ? AppColors.amarillo : AppColors.azulIntermedioUCA, // Borde azul como pediste
+              width: 1.5,
+            ),
+          ),
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildOption(
+                  label: 'Estudiante',
+                  icon: Icons.school,
+                  selected: selectedType == 'student',
+                  onTap: () => onChanged('student'),
+                  isDarkMode: isDarkMode,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildOption(
+                  label: 'Docente',
+                  icon: Icons.person,
+                  selected: selectedType == 'teacher',
+                  onTap: () => onChanged('teacher'),
+                  isDarkMode: isDarkMode,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOption({
+    required String label,
+    required IconData icon,
+    required bool selected,
+    required VoidCallback onTap,
+    required bool isDarkMode,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: selected
+              ? (isDarkMode ? AppColors.amarillo : AppColors.azulUCA ) // Mantengo tus colores originales
+              : (isDarkMode ? AppColors.amarillo.withValues(alpha: 0.2) : Colors.indigo.shade100),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: selected 
+                  ? isDarkMode ? AppColors.negro : AppColors.blanco 
+                  : (isDarkMode ? AppColors.amarilloClaro  : AppColors.azulIntermedioUCA), // Mantengo tus colores originales
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: selected 
+                    ? isDarkMode ? AppColors.negro : AppColors.blanco 
+                    : (isDarkMode ? AppColors.amarilloClaro : AppColors.azulIntermedioUCA),// Mantengo tus colores originales
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );

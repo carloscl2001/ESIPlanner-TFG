@@ -51,7 +51,7 @@ async def get_user_subjects(username: str):
     user_data = db_client.users.find_one({"username": username})
 
     # Retornamos la información de las asignaturas
-    return [UserSubject(code=subject['code'], types=subject['types']) for subject in user_data.get("subjects", [])]
+    return [UserSubject(code=subject['code'], groups_codes=subject['groups_codes']) for subject in user_data.get("subjects", [])]
 
 
 # Crear un usuario

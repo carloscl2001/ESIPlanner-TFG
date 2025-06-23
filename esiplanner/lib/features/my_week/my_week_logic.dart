@@ -4,7 +4,7 @@ import '../../services/profile_service.dart';
 import '../../services/subject_service.dart';
 import '../../providers/auth_provider.dart';
 
-class HomeLogic {
+class MyWeekLogic {
   final BuildContext context;
   final ProfileService _profileService;
   final SubjectService _subjectService;
@@ -18,7 +18,7 @@ class HomeLogic {
   final List<String> _weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'];
   final List<String> _weekDaysFullName = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
-  HomeLogic(this.context)
+  MyWeekLogic(this.context)
       : _profileService = ProfileService(),
         _subjectService = SubjectService() {
     _selectedDay = _getCurrentWeekday();
@@ -49,15 +49,7 @@ class HomeLogic {
 
       // First get the profile data
       final profileData = await _profileService.getProfileData(username: username);
-      final degree = profileData["degree"];
       final userSubjects = profileData["subjects"] ?? [];
-
-      if (degree == null) {
-        _errorMessage = 'No se encontró el grado en los datos del perfil';
-        _isLoading = false;
-        _notifyListeners();
-        return;
-      }
 
       // Get the subject mapping
       final mappingList = await _subjectService.getSubjectMapping();
@@ -103,7 +95,7 @@ class HomeLogic {
 
         // Get subject data using the code_ics
         final subjectData = await _subjectService.getSubjectData(codeSubject: codeIcs);
-        final filteredClasses = _filterClasses(subjectData['classes'], subject['types']);
+        final filteredClasses = _filterClasses(subjectData['groups'], subject['groups_codes']);
 
         for (var classData in filteredClasses) {
           classData['events'].sort((a, b) => DateTime.parse(a['date']).compareTo(DateTime.parse(b['date'])));
@@ -115,7 +107,7 @@ class HomeLogic {
           'name': subjectData['name'] ?? subject['name'],
           'code': subject['code'],
           'code_ics': codeIcs, // Store the code_ics for reference
-          'classes': filteredClasses,
+          'groups': filteredClasses,
         });
       } catch (e) {
         debugPrint('Error procesando asignatura ${subject['code']}: $e');
@@ -128,7 +120,7 @@ class HomeLogic {
   List<dynamic> _filterClasses(List<dynamic>? classes, List<dynamic>? userTypes) {
     if (classes == null) return [];
     return classes.where((classData) {
-      final classType = classData['type']?.toString();
+      final classType = classData['group_code']?.toString();
       final types = (userTypes)?.cast<String>() ?? [];
       return classType != null && types.contains(classType);
     }).toList();
@@ -178,14 +170,14 @@ class HomeLogic {
 
     List<Map<String, dynamic>> allEvents = [];
     for (var subject in _subjects) {
-      for (var classData in subject['classes']) {
+      for (var classData in subject['groups']) {
         for (var event in classData['events']) {
           final eventDate = DateTime.parse(event['date']);
           if (eventDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
               eventDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
             allEvents.add({
               'subjectName': subject['name'] ?? 'No Name',
-              'classType': classData['type'] ?? 'No disponible',
+              'classType': classData['group_code'] ?? 'No disponible',
               'event': event,
             });
           }
@@ -218,12 +210,12 @@ class HomeLogic {
 
   String getGroupLabel(String letter) {
     switch (letter) {
-      case 'A': return 'Clase de teoría';
-      case 'B': return 'Clase de problemas';
-      case 'C': return 'Clase de prácticas informáticas';
-      case 'D': return 'Clase de laboratorio';
+      case 'A': return 'Teoría';
+      case 'B': return 'Problemas';
+      case 'C': return 'Prácticas informáticas';
+      case 'D': return 'Laboratorio';
       case 'E': return 'Salida de campo';
-      case 'X': return 'Clase de teória-práctica';
+      case 'X': return 'Tteória-práctica';
       default: return 'Clase de teória-práctica';
     }
   }

@@ -10,13 +10,12 @@ class Event(BaseModel):
     location: str
 
 #Modelo para los tipos de clases
-class Class(BaseModel):
-    type: str
+class Group(BaseModel):
+    group_code: str
     events: List[Event]
 
 # Modelo para la asignatura
 class Subject(BaseModel):
     code: str
     name: str
-    classes: List[Class]
-
+    groups: List[Group]

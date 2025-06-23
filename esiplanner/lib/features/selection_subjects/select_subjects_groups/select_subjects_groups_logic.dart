@@ -10,7 +10,9 @@ class SelectGroupsLogic extends ChangeNotifier {
   String errorMessage = '';
   List<Map<String, dynamic>> subjects = [];
   Map<String, Map<String, String>> selectedGroups = {};
-  Map<String, String> codeToIcs = {}; // Mapeo de código original a code_ics
+  Map<String, String> codeToIcs = {};
+  bool requireAllTypes = true;
+  bool oneGroupPerType = true;
 
   SelectGroupsLogic({
     required this.selectedSubjectCodes,
@@ -42,41 +44,39 @@ class SelectGroupsLogic extends ChangeNotifier {
       List<Map<String, dynamic>> loadedSubjects = [];
       
       for (var originalCode in selectedSubjectCodes) {
-        // Usar code_ics si existe en el mapeo, sino usar el código original
         final icsCode = codeToIcs[originalCode] ?? originalCode;
         final subjectData = await subjectService.getSubjectData(codeSubject: icsCode);
         
-        // Ordenamos los grupos por tipo y número
-        final classes = subjectData['classes'] ?? [];
-        classes.sort((a, b) {
+        // Cambia 'classes' por 'groups' para coincidir con el JSON
+        final groups = subjectData['groups'] ?? [];
+        
+        groups.sort((a, b) {
           final regExp = RegExp(r'([A-Z]+)(\d+)');
-          final matchA = regExp.firstMatch(a['type'])!;
-          final matchB = regExp.firstMatch(b['type'])!;
+          final matchA = regExp.firstMatch(a['group_code'])!; // Cambia 'type' por 'group_code'
+          final matchB = regExp.firstMatch(b['group_code'])!;
 
           final letterA = matchA.group(1)!;
           final letterB = matchB.group(1)!;
           final numberA = int.parse(matchA.group(2)!);
           final numberB = int.parse(matchB.group(2)!);
 
-          if (letterA != letterB) {
-            return letterA.compareTo(letterB);
-          } else {
-            return numberA.compareTo(numberB);
-          }
+          return letterA != letterB 
+              ? letterA.compareTo(letterB) 
+              : numberA.compareTo(numberB);
         });
         
         loadedSubjects.add({
           'name': subjectData['name'],
-          'code': originalCode, // Mantener el código original para referencia
-          'code_ics': icsCode,  // Guardar el código ICS usado
-          'classes': classes,
+          'code': originalCode,
+          'code_ics': icsCode,
+          'groups': groups, // Cambia 'classes' por 'groups'
         });
       }
 
       subjects = loadedSubjects;
       selectedGroups = {
         for (var subject in subjects) 
-          subject['code']: {} // Usar el código original como clave
+          subject['code']: {}
       };
       
       isLoading = false;
@@ -89,40 +89,120 @@ class SelectGroupsLogic extends ChangeNotifier {
     }
   }
 
-  // Método para obtener los datos de una asignatura usando el code_ics correcto
-  Future<Map<String, dynamic>> getSubjectDetails(String originalCode) async {
-    final icsCode = codeToIcs[originalCode] ?? originalCode;
-    return await subjectService.getSubjectData(codeSubject: icsCode);
+  void updateRestrictions(bool requireAll, bool onePerType, {bool forceClean = false}) {
+    if ((onePerType && !oneGroupPerType) || forceClean) {
+      _cleanMultipleSelections();
+    }
+    
+    requireAllTypes = requireAll;
+    oneGroupPerType = onePerType;
+    notifyListeners();
+  }
+
+  void _cleanMultipleSelections() {
+    for (final subjectCode in selectedGroups.keys) {
+      final Map<String, String> cleanedSelections = {};
+      final groupsByType = <String, List<String>>{};
+      
+      // Agrupar por tipo (C, D, etc.)
+      selectedGroups[subjectCode]?.keys.forEach((groupType) {
+        final letter = groupType[0];
+        groupsByType.putIfAbsent(letter, () => []).add(groupType);
+      });
+      
+      // Ordenar y conservar el primero de cada tipo
+      groupsByType.forEach((letter, groups) {
+        groups.sort(); // Orden alfabético (C1, C2, C3)
+        cleanedSelections[groups.first] = groups.first;
+      });
+      
+      selectedGroups[subjectCode] = cleanedSelections;
+    }
+    notifyListeners();
+  }
+
+
+  void selectGroup(String subjectCode, String groupTypeFull, String groupTypeToSet) {
+    // groupTypeFull viene como "C1", "C2", etc.
+    // La primera letra es el tipo (C)
+    final letter = groupTypeFull[0];
+    
+    final currentSelections = Map<String, String>.from(selectedGroups[subjectCode] ?? {});
+
+    if (oneGroupPerType) {
+      // Modo restrictivo: solo un grupo por tipo
+      if (groupTypeToSet.isNotEmpty) {
+        // Eliminar cualquier selección previa del mismo tipo
+        currentSelections.removeWhere((key, value) => key[0] == letter);
+        // Añadir la nueva selección
+        currentSelections[groupTypeFull] = groupTypeToSet;
+      } else {
+        // Deseleccionar
+        currentSelections.remove(groupTypeFull);
+      }
+    } else {
+      // Modo no restrictivo: permitir múltiples grupos del mismo tipo
+      if (groupTypeToSet.isNotEmpty) {
+        currentSelections[groupTypeFull] = groupTypeToSet;
+      } else {
+        currentSelections.remove(groupTypeFull);
+      }
+    }
+
+    selectedGroups[subjectCode] = currentSelections;
+    notifyListeners();
+  }
+
+  bool isGroupSelected(String subjectCode, String groupType) {
+    return selectedGroups[subjectCode]?.containsKey(groupType) ?? false;
+  }
+
+  void toggleGroupSelection(String subjectCode, String groupType) {
+    final currentSelections = Map<String, String>.from(
+      selectedGroups[subjectCode] ?? {}
+    );
+
+    final isSelected = currentSelections.containsKey(groupType);
+    final letter = groupType[0];
+
+    if (isSelected) {
+      currentSelections.remove(groupType);
+    } else {
+      if (oneGroupPerType) {
+        currentSelections.removeWhere((key, _) => key[0] == letter);
+      }
+      currentSelections[groupType] = groupType;
+    }
+
+    selectedGroups[subjectCode] = currentSelections;
+    notifyListeners();
   }
 
   bool get allSelectionsComplete {
-    for (var subject in subjects) {
-      final groups = subject['classes'] as List;
-      final requiredTypes = groups.map((g) => g['type'][0]).toSet();
-      final selectedTypes = selectedGroups[subject['code']]?.keys.toSet() ?? {};
+    if (!requireAllTypes) return true;
 
-      if (requiredTypes.length != selectedTypes.length) {
+    for (var subject in subjects) {
+      final groups = subject['groups'] as List;
+      final requiredTypes = groups.map((g) => g['group_code'][0]).toSet();
+      final selectedTypes = selectedGroups[subject['code']]?.keys.map((k) => k[0]).toSet() ?? {};
+
+      if (requiredTypes.difference(selectedTypes).isNotEmpty) {
         return false;
       }
     }
     return true;
   }
 
-  void selectGroup(String subjectCode, String letter, String groupType) {
-    selectedGroups[subjectCode]?[letter] = groupType;
-    notifyListeners();
-  }
-
   List<String> getMissingTypesForSubject(String subjectCode) {
     final subject = subjects.firstWhere((s) => s['code'] == subjectCode);
-    final groups = subject['classes'] as List;
+    final groups = subject['groups'] as List;
     
-    final requiredTypes = groups.map((g) => g['type'][0]).toSet();
-    final selectedTypes = selectedGroups[subjectCode]?.keys.toSet() ?? {};
+    final requiredTypes = groups.map((g) => g['group_code'][0]).toSet();
+    final selectedTypes = selectedGroups[subjectCode]?.keys.map((k) => k[0]).toSet() ?? {};
 
     return requiredTypes.difference(selectedTypes)
-        .map((type) => getGroupLabel(type))
-        .toList();
+      .map((type) => getGroupLabel(type.toString())) // Convertimos a String
+      .toList();
   }
 
   String getGroupLabel(String letter) {

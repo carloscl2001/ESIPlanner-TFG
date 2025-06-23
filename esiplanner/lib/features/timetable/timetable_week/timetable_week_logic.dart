@@ -4,7 +4,9 @@ class TimetableWeekLogic {
   final List<Map<String, dynamic>> events;
   final DateTime weekStartDate;
   List<String> get weekDays => _weekDays;
+  List<String> get weekDaysFullName => _weekDaysFullName;
   final List<String> _weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'];
+  final List<String> _weekDaysFullName = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
   TimetableWeekLogic({
     required this.events,
@@ -71,19 +73,25 @@ class TimetableWeekLogic {
     return List.generate(5, (index) => startOfWeek.add(Duration(days: index)));
   }
 
+  List<DateTime> getWeekDaysFullName() {
+    final startOfWeek = _getStartOfWeek(weekStartDate);
+    return List.generate(5, (index) => startOfWeek.add(Duration(days: index)));
+  }
+
+
   DateTime _getStartOfWeek(DateTime date) {
     return DateTime.utc(date.year, date.month, date.day).subtract(Duration(days: date.weekday - 1));
   }
 
   String getGroupLabel(String letter) {
     switch (letter) {
-      case 'A': return 'Clase de teoría';
-      case 'B': return 'Clase de problemas';
-      case 'C': return 'Clase de prácticas informáticas';
-      case 'D': return 'Clase de laboratorio';
+      case 'A': return 'Teoría';
+      case 'B': return 'Problemas';
+      case 'C': return 'Prácticas informáticas';
+      case 'D': return 'Laboratorio';
       case 'E': return 'Salida de campo';
-      case 'X': return 'Clase de teoría-práctica';
-      default: return 'Clase de teoría-práctica';
+      case 'X': return 'Teória-práctica';
+      default: return 'Clase de teória-práctica';
     }
   }
 }

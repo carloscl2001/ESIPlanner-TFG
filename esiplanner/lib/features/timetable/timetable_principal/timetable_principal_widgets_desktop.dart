@@ -1,3 +1,4 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'timetable_principal_logic.dart';
@@ -11,8 +12,8 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.white;
-    final bgColor = isDarkMode ? Colors.black : Colors.blue.shade900;
+    final accentColor = isDarkMode ? AppColors.amarillo : AppColors.blanco;
+    final bgColor = isDarkMode ? AppColors.negro : AppColors.azulUCA;
     
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -21,7 +22,7 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: AppColors.negro.withValues(alpha: 0.1),
             blurRadius: 10,
             spreadRadius: 2,
           ),
@@ -36,14 +37,6 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
             return Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
-                // decoration: BoxDecoration(
-                //   border: Border(
-                //     bottom: BorderSide(
-                //       color: accentColor,
-                //       width: 2,
-                //     ),
-                //   ),
-                // ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Center(
@@ -52,7 +45,7 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
                       style: TextStyle(
                         color: accentColor,
                         fontWeight: FontWeight.w600,
-                        fontSize: 18,
+                        fontSize: 22,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -111,7 +104,7 @@ class WeekSelectorDesktop extends StatelessWidget {
   }
 
   Widget _buildMonthHeader(DateTime startDate, bool isDarkMode) {
-    final bgColor = isDarkMode ? Colors.grey[800]! : Colors.grey[600]!;
+    final bgColor = isDarkMode ? Colors.grey[900]! : AppColors.azulClaro3;
     
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
@@ -130,7 +123,7 @@ class WeekSelectorDesktop extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppColors.blanco,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -149,7 +142,7 @@ class WeekSelectorDesktop extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppColors.blanco,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -161,7 +154,7 @@ class WeekSelectorDesktop extends StatelessWidget {
   }
 }
 
-class WeekRowDesktop extends StatelessWidget {
+class WeekRowDesktop extends StatefulWidget {
   final List<DateTime> weekDays;
   final int weekIndex;
   final bool isDarkMode;
@@ -178,35 +171,67 @@ class WeekRowDesktop extends StatelessWidget {
   });
 
   @override
+  State<WeekRowDesktop> createState() => _WeekRowDesktopState();
+}
+
+class _WeekRowDesktopState extends State<WeekRowDesktop> {
+  bool _isHovered = false;
+  final double _normalHeight = 72;
+  final double _hoverHeight = 86;
+
+  void setHover(bool isHovered) {
+    setState(() {
+      _isHovered = isHovered;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.indigo;
-    final bgColor = isDarkMode ? Colors.grey[850]! : Colors.white;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
-    
-    return GestureDetector(
+    final accentColor = widget.isDarkMode ? AppColors.amarillo : AppColors.azulUCA;
+    final textColor = widget.isDarkMode ? AppColors.blanco : AppColors.negro;
+
+    return AnimatedContainer(
+  duration: const Duration(milliseconds: 200),
+  curve: Curves.easeInOut,
+  margin: const EdgeInsets.symmetric(vertical: 6),
+  height: _isHovered ? _hoverHeight : _normalHeight,
+  decoration: BoxDecoration(
+    color: widget.isDarkMode
+        ? _isHovered 
+            ? AppColors.gris1 // Color más claro al hacer hover en modo oscuro
+            : AppColors.gris1_2 // Color normal en modo oscuro
+        : _isHovered 
+            ? AppColors.azulClaro2 // Color más claro al hacer hover en modo oscuro
+            : AppColors.blanco, // Color normal en modo oscuro
+    borderRadius: BorderRadius.circular(10),
+    border: widget.isCurrentWeek
+        ? Border.all(color: accentColor, width: 2)
+        : null,
+    boxShadow: [
+      BoxShadow(
+        color: AppColors.negro.withValues(alpha: 0.1),
+        blurRadius: 6,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  ),
+  child: Material(
+    color: Colors.transparent,
+    child: InkWell(
+      borderRadius: BorderRadius.circular(10),
       onTap: () => _navigateToWeekScreen(context),
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(20),
-          border: isCurrentWeek
-              ? Border.all(color: accentColor, width: 2)
-              : null,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: MouseRegion(
+        onEnter: (event) => setHover(true),
+        onExit: (event) => setHover(false),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: Row(
             children: List.generate(5, (index) {
-              final day = weekDays[index];
-              final hasClass = timetableLogic.dayHasClass(day);
+              final day = widget.weekDays[index];
+              final hasClass = widget.timetableLogic.dayHasClass(day);
               
               return Expanded(
                 child: _buildDayCell(day, hasClass, textColor, accentColor),
@@ -215,7 +240,9 @@ class WeekRowDesktop extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _buildDayCell(DateTime day, bool hasClass, Color textColor, Color accentColor) {
@@ -226,37 +253,38 @@ class WeekRowDesktop extends StatelessWidget {
           DateFormat('d').format(day),
           style: TextStyle(
             color: textColor,
-            fontSize: 28,
+            fontSize: _isHovered ? 30 : 28,
             fontWeight: FontWeight.w500,
           ),
         ),
         SizedBox(
-          height: 8, // Misma altura que el punto
+          height: 8,
           child: hasClass
               ? Container(
+                  width: 8,
                   decoration: BoxDecoration(
                     color: accentColor,
                     shape: BoxShape.circle,
                   ),
                 )
-              : const SizedBox.shrink(), // Widget vacío cuando no hay clase
+              : const SizedBox.shrink(),
         ),
       ],
     );
   }
 
   void _navigateToWeekScreen(BuildContext context) {
-    final weekRange = timetableLogic.weekRanges[weekIndex];
-    final allEvents = timetableLogic.getFilteredEvents(weekRange);
+    final weekRange = widget.timetableLogic.weekRanges[widget.weekIndex];
+    final allEvents = widget.timetableLogic.getFilteredEvents(weekRange);
 
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TimetableWeekScreen(
           events: allEvents,
-          selectedWeekIndex: weekIndex,
-          isDarkMode: isDarkMode,
-          weekStartDate: weekDays.first,
+          selectedWeekIndex: widget.weekIndex,
+          isDarkMode: widget.isDarkMode,
+          weekStartDate: widget.weekDays.first,
         ),
       ),
     );
@@ -269,7 +297,10 @@ class BuildEmptyCardDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDarkMode ? Colors.white70 : Colors.black54;
+    final textColor = isDarkMode ? AppColors.blanco70 : AppColors.negro54;
+    final textColorIcon = isDarkMode ? AppColors.blanco70 : AppColors.negro54;
+    final textColorButton = isDarkMode ? AppColors.negro : AppColors.blanco;
+    final backgroundColor = isDarkMode ? AppColors.amarillo : AppColors.azulUCA;
     
     return Center(
       child: Container(
@@ -278,21 +309,25 @@ class BuildEmptyCardDesktop extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.school_outlined,
-              size: 120,
-              color: textColor,
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(
+                  Icons.book_rounded,
+                  size: 100,
+                  color: textColorIcon,
+                ),
+                Transform.translate(
+                  offset: const Offset(20, 40),
+                  child: Icon(
+                    Icons.touch_app_rounded,
+                    size: 50,
+                    color: backgroundColor,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
-            Text(
-              'Planifica tu horario',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 50),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Text(
@@ -308,12 +343,20 @@ class BuildEmptyCardDesktop extends StatelessWidget {
             const SizedBox(height: 32),
             FilledButton.icon(
               onPressed: () {
-                // Navegar a la sección de perfil
+                Navigator.pushNamed(context, '/selectionSubjects');
               },
-              icon: const Icon(Icons.person),
-              label: const Text('Ir a Perfil'),
+              icon: const Icon(Icons.touch_app_rounded),
+              label: Text(
+                'Seleccionar asignaturas',
+                style: TextStyle(
+                  color: textColorButton,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
               style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 25),
+                backgroundColor: backgroundColor,
               ),
             ),
           ],

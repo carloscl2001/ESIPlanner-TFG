@@ -1,3 +1,4 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class SelectSubjectsDegreeWdigets {
@@ -32,7 +33,7 @@ class SelectSubjectsDegreeWdigets {
                     end: Alignment.bottomRight,
                   )
                 : null,
-            color: isSelected ? null : isDarkMode ? Colors.black : Theme.of(context).cardColor,
+            color: isSelected ? null : isDarkMode ? AppColors.negro : Theme.of(context).cardColor,
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(

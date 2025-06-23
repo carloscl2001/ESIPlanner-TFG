@@ -2,7 +2,7 @@ def subject_schema(subject) -> dict:
     return {
         "code": subject["code"],
         "name": subject["name"],
-        "classes": classes_schema(subject.get("classes", [])),  # Aplica el esquema de clases
+        "groups": groups_schema(subject.get("groups", [])),  # Aplica el esquema de clases
     }
 
 def subjects_schema(subjects) -> list:
@@ -11,14 +11,14 @@ def subjects_schema(subjects) -> list:
 
 
 
-def class_schema(class_) -> dict:
+def group_schema(group) -> dict:
     return {
-        "type": class_["type"],
-        "events": events_schema(class_.get("events", [])),  # Aplica el esquema de eventos
+        "group_code": group["group_code"],
+        "events": events_schema(group.get("events", [])),  # Aplica el esquema de eventos
     }
 
-def classes_schema(classes) -> list:
-    return [class_schema(class_) for class_ in classes]
+def groups_schema(groups) -> list:
+    return [group_schema(group) for group in groups]
 
 
 

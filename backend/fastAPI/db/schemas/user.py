@@ -1,7 +1,7 @@
 def user_subject_schema(subject) -> dict:
     return {
         "code": subject["code"],  # Código de la asignatura
-        "types": subject["types"],  # Lista de tipos de clase
+        "groups_codes": subject["groups_codes"],  # Lista de tipos de clase
     }
 
 def user_subjects_schema(subjects) -> list:
@@ -16,6 +16,7 @@ def user_schema(user) -> dict:
         "name": user["name"],
         "surname": user["surname"],
         "degree": user["degree"],
+        "department": user["department"],
         "subjects": user_subjects_schema(user.get("subjects", [])),  # Aplica el esquema de asignaturas con tipos de clase
     }
 

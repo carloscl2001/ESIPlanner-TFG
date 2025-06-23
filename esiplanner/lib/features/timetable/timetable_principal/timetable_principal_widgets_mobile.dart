@@ -1,3 +1,4 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'timetable_principal_logic.dart';
@@ -12,8 +13,8 @@ class WeekDaysHeaderMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.white;
-    final bgColor = isDarkMode ? Colors.black : Colors.blue.shade900;
+    final accentColor = isDarkMode ? AppColors.amarillo : AppColors.blanco;
+    final bgColor = isDarkMode ? AppColors.negro : AppColors.azulUCA;
     
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -22,7 +23,7 @@ class WeekDaysHeaderMobile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: AppColors.negro.withValues(alpha: 0.1),
             blurRadius: 10,
             spreadRadius: 2,
           ),
@@ -112,7 +113,7 @@ class WeekSelectorMobile extends StatelessWidget {
   }
 
   Widget _buildMonthHeader(DateTime startDate, bool isDarkMode) {
-    final bgColor = Colors.grey;
+    final bgColor = isDarkMode ? Colors.grey[800]! :  AppColors.azulClaro3;
     
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
@@ -129,9 +130,9 @@ class WeekSelectorMobile extends StatelessWidget {
               child: Text(
                 DateFormat('MMMM', 'es_ES').format(startDate),
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.black : Colors.white,
+                  color: AppColors.blanco,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -148,9 +149,9 @@ class WeekSelectorMobile extends StatelessWidget {
               child: Text(
                 DateFormat('y').format(startDate),
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.black : Colors.white,
+                  color: AppColors.blanco,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -180,9 +181,9 @@ class WeekRowMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900;
-    final bgColor = isDarkMode ? Colors.grey[900]! : Colors.white;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final accentColor = isDarkMode ? AppColors.amarillo : AppColors.azulUCA;
+    final bgColor = isDarkMode ? Colors.grey[900]! : AppColors.blanco;
+    final textColor = isDarkMode ? AppColors.blanco : AppColors.negro;
     
     return GestureDetector(
       onTap: () => _navigateToWeekScreen(context),
@@ -190,22 +191,20 @@ class WeekRowMobile extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           border: isCurrentWeek
               ? Border.all(color: accentColor, width: 2)
               : null,
           boxShadow: [
-          BoxShadow(
-            color: isDarkMode 
-                ? Colors.white.withValues(alpha: 0.25) 
-                : Colors.black.withValues(alpha: 0.35),
-            blurRadius: isDarkMode ? 3.0 : 6.0,
-            offset: const Offset(0, 0),
-          ),
-        ],
+            BoxShadow(
+              color: AppColors.negro.withValues(alpha: 0.15),
+              blurRadius: 6.0,
+              offset: const Offset(0, 0),
+            ),
+          ],
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             children: List.generate(5, (index) {
               final day = weekDays[index];
@@ -273,7 +272,11 @@ class BuildEmptyCardMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDarkMode ? Colors.white70 : Colors.black54;
+    final textColor = isDarkMode ? AppColors.blanco70 : AppColors.negro54;
+    final textColorIcon = isDarkMode ? AppColors.blanco70 : AppColors.negro54;
+    final textColorButton = isDarkMode ? AppColors.negro : AppColors.blanco;
+    final backgroundColor = isDarkMode ? AppColors.amarillo.withValues(alpha: 1): AppColors.azulUCA;
+    
     
     return Center(
       child: Container(
@@ -282,21 +285,25 @@ class BuildEmptyCardMobile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.school_outlined,
-              size: 120,
-              color: textColor,
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(
+                  Icons.book_rounded,
+                  size: 100,
+                  color: textColorIcon,
+                ),
+                Transform.translate(
+                  offset: const Offset(20, 40),
+                  child: Icon(
+                    Icons.touch_app_rounded,
+                    size: 50,
+                    color: backgroundColor,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
-            Text(
-              'Planifica tu horario',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 50),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Text(
@@ -312,12 +319,20 @@ class BuildEmptyCardMobile extends StatelessWidget {
             const SizedBox(height: 32),
             FilledButton.icon(
               onPressed: () {
-                // Navegar a la sección de perfil
+                Navigator.pushNamed(context, '/selectionSubjects');
               },
-              icon: const Icon(Icons.person),
-              label: const Text('Ir a Perfil'),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              icon: const Icon(Icons.touch_app_rounded),
+              label: Text(
+                'Seleccionar asignaturas',
+                style: TextStyle(
+                  color: textColorButton, // ¡Cambia este color al que necesites!
+                  fontWeight: FontWeight.bold, // Opcional: mantiene el negrita
+                  fontSize: 16, // Opcional: ajusta el tamaño de la fuente
+                ),
+              ),
+              style: FilledButton.styleFrom( // Color de icono/texto
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 25),
+                backgroundColor: isDarkMode ? AppColors.amarillo.withValues(alpha: 0.8) : AppColors.azulUCA,
               ),
             ),
           ],

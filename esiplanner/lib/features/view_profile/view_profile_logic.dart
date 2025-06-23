@@ -50,4 +50,6 @@ class ViewProfileLogic {
   void dispose() {
     _isDisposed = true;
   }
+
+  
 }

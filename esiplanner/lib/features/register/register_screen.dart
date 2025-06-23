@@ -1,3 +1,4 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
@@ -19,11 +20,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     logic = RegisterLogic(context);
-    _loadDegrees();
+    _loadData();
   }
 
-  Future<void> _loadDegrees() async {
-    await logic.loadDegrees();
+  Future<void> _loadData() async {
+    await logic.loadData();
     if (mounted) setState(() {});
   }
 
@@ -31,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_formKey.currentState!.validate()) {
       final success = await logic.register();
       if (!mounted) return;
-      
+
       if (success) {
         if (mounted) {
           Navigator.pushReplacementNamed(context, '/home');
@@ -54,16 +55,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return ChangeNotifierProvider<RegisterLogic>.value(
       value: logic,
       child: Scaffold(
-        backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
+        backgroundColor: isDarkMode ? Colors.grey.shade900 : AppColors.blanco,
         body: SingleChildScrollView(
           child: Consumer<RegisterLogic>(
             builder: (context, logic, child) {
-              return RegisterForm(
-                formKey: _formKey,
-                logic: logic,
-                isDarkMode: isDarkMode,
-                onRegisterPressed: _register,
-                isLoading: logic.isLoading,
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 40),
+                    RegisterForm(
+                      formKey: _formKey,
+                      logic: logic,
+                      isDarkMode: isDarkMode,
+                      onRegisterPressed: _register,
+                      isLoading: logic.isLoading,
+                    ),
+                    const SizedBox(height: 20),
+                    LoginButton(isDarkMode: isDarkMode),
+                  ],
+                ),
               );
             },
           ),

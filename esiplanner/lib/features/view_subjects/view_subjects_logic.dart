@@ -45,7 +45,7 @@ class ViewSubjectsProfileLogic {
         return;
       }
 
-      // Obtener el mapeo de asignaturas primero
+      // Get subject mapping first
       final mappingList = await subjectService.getSubjectMapping();
       subjectCodeMapping = _createSubjectMapping(mappingList);
 
@@ -58,7 +58,7 @@ class ViewSubjectsProfileLogic {
           subjects.map((subject) async {
             final code = subject['code'];
             
-            // Usar el mapping para obtener el code_ics correspondiente
+            // Use mapping to get corresponding code_ics
             final codeIcs = subjectCodeMapping[code] ?? code;
             
             final subjectDetails = await subjectService.getSubjectData(
@@ -71,7 +71,7 @@ class ViewSubjectsProfileLogic {
               'name': subjectDetails.isNotEmpty && subjectDetails.containsKey('name') 
                   ? subjectDetails['name']
                   : 'Información no disponible',
-              'types': subject['types'],
+              'groups': subject['groups_codes'] ?? [],
             };
           }).toList(),
         );
@@ -83,6 +83,20 @@ class ViewSubjectsProfileLogic {
     } finally {
       isLoading = false;
       refreshUI();
+    }
+  }
+
+  String getGroupType(String groupCode) {
+    if (groupCode.isEmpty) return '';
+    final typeLetter = groupCode[0];
+    switch (typeLetter) {
+      case 'A': return 'Teoría';
+      case 'B': return 'Problemas';
+      case 'C': return 'Prácticas informáticas';
+      case 'D': return 'Laboratorio';
+      case 'E': return 'Salida de campo';
+      case 'X': return 'Teoría-práctica';
+      default: return 'Clase';
     }
   }
 }

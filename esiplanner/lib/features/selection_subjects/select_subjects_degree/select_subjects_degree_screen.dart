@@ -9,7 +9,7 @@ import 'select_subjects_degree_widgets.dart';
 /// - Seleccionar/deseleccionar asignaturas
 /// - Guardar la selección final
 class DegreeSubjectsScreen extends StatefulWidget {
-  final String degreeName;         // Nombre del grado académico
+  final String degreeName; // Nombre del grado académico
   final List<String> initiallySelected; // Lista de asignaturas preseleccionadas
 
   const DegreeSubjectsScreen({
@@ -47,25 +47,33 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // print("DEGREE");
+    // print(widget.degreeName);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.degreeName),
         actions: [
           IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              final result = {
-                'codes': logic.selectedSubjects.toList(),
-                'names': logic.subjects
-                  .where((subject) => logic.selectedSubjects.contains(subject['code']))
-                  .map((subject) => subject['name'] as String)
-                  .toList(),
-                'degree': widget.degreeName,
-              };
-              Navigator.pop(context, result);
-            },
-            tooltip: 'Guardar selecciones',
-          ),
+  icon: const Icon(Icons.save),
+  onPressed: () {
+    // Asegurarnos que cada código tenga su nombre correspondiente
+    final namesForSelected = logic.selectedSubjects.map((code) {
+      final subject = logic.subjects.firstWhere(
+        (s) => s['code'] == code,
+        orElse: () => {'name': 'Nombre no disponible'}
+      );
+      return subject['name'] as String;
+    }).toList();
+
+    final result = {
+      'codes': logic.selectedSubjects.toList(),
+      'names': namesForSelected, // Usar la lista garantizada
+      'degree': widget.degreeName,
+    };
+    
+    Navigator.pop(context, result);
+  },
+)
         ],
       ),
       body: _buildBody(),
@@ -82,7 +90,7 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
     // Estado sin asignaturas - muestra mensaje de error
     if (logic.subjects.isEmpty) {
       return SelectSubjectsDegreeWdigets.buildErrorWidget(
-        'No hay asignaturas disponibles', 
+        'No hay asignaturas disponibles',
         context,
       );
     }

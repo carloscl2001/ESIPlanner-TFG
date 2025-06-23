@@ -1,13 +1,18 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'select_subjects_groups_logic.dart';
 
 class SelectGroupsContent extends StatelessWidget {
   final bool isDarkMode;
+  final bool requireAllTypes;
+  final bool oneGroupPerType;
 
   const SelectGroupsContent({
     super.key,
     required this.isDarkMode,
+    required this.requireAllTypes,
+    required this.oneGroupPerType,
   });
 
   @override
@@ -24,39 +29,22 @@ class SelectGroupsContent extends StatelessWidget {
           ),
           const SizedBox(height: 20),
         ],
-        if (!logic.allSelectionsComplete)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            child: Card(
-              color: isDarkMode ? Colors.yellow.shade700.withValues(alpha: 0.9) : Colors.orange[50],
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Icon(Icons.warning, color: isDarkMode ? Colors.white: Colors.orange[800]),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Debes seleccionar un grupo de cada tipo para cada asignatura',
-                        style: TextStyle(color: isDarkMode ? Colors.white : Colors.orange[800]),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        if (requireAllTypes && !logic.allSelectionsComplete)
+          SelectionWarning(isDarkMode: isDarkMode),
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: logic.subjects.length,
             itemBuilder: (context, index) {
               final subject = logic.subjects[index];
-              final missingTypes = logic.getMissingTypesForSubject(subject['code']);
+              final missingTypes = requireAllTypes 
+                  ? logic.getMissingTypesForSubject(subject['code']).cast<String>()
+                  : <String>[];
+              
               Map<String, List<Map<String, dynamic>>> groupedClasses = {};
     
-              for (var group in subject['classes']) {
-                final type = group['type'];
+              for (var group in subject['groups']) {
+                final type = group['group_code'];
                 final letter = type[0];
                 if (!groupedClasses.containsKey(letter)) {
                   groupedClasses[letter] = [];
@@ -70,11 +58,159 @@ class SelectGroupsContent extends StatelessWidget {
                 missingTypes: missingTypes,
                 isDarkMode: isDarkMode,
                 subjectDegrees: logic.subjectDegrees,
+                requireAllTypes: requireAllTypes,
+                oneGroupPerType: oneGroupPerType,
               );
             },
           ),
         ),
       ],
+    );
+  }
+}
+
+class SettingsDialog extends StatefulWidget {
+  final bool requireAllTypes;
+  final bool oneGroupPerType;
+  final Function(bool, bool, {bool forceClean}) onSettingsChanged;
+
+  const SettingsDialog({
+    super.key,
+    required this.requireAllTypes,
+    required this.oneGroupPerType,
+    required this.onSettingsChanged,
+  });
+
+  @override
+  State<SettingsDialog> createState() => _SettingsDialogState();
+}
+
+class _SettingsDialogState extends State<SettingsDialog> {
+  late bool tempRequireAll;
+  late bool tempOnePerType;
+
+  @override
+  void initState() {
+    super.initState();
+    tempRequireAll = widget.requireAllTypes;
+    tempOnePerType = widget.oneGroupPerType;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Configurar restricciones'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SwitchListTile(
+            title: const Text('Seleccionar todos los tipos de clases'),
+            value: tempRequireAll,
+            onChanged: (value) {
+              setState(() {
+                tempRequireAll = value;
+              });
+            },
+          ),
+          SwitchListTile(
+            title: const Text('Seleccionar solo un grupo por cada tipo de clase'), 
+            value: tempOnePerType,
+            onChanged: (value) {
+              setState(() {
+                tempOnePerType = value;
+              });
+            },
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          onPressed: () {
+            final wasDisabled = !widget.oneGroupPerType;
+            final enablingNow = tempOnePerType;
+            
+            widget.onSettingsChanged(
+              tempRequireAll, 
+              tempOnePerType,
+              forceClean: wasDisabled && enablingNow,
+            );
+            Navigator.pop(context);
+          },
+          child: const Text('Aplicar'),
+        ),
+      ],
+    );
+  }
+}
+
+class SaveButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final bool isDarkMode;
+
+  const SaveButton({
+    super.key,
+    required this.onPressed,
+    required this.isDarkMode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: onPressed,
+          icon: const Icon(Icons.save_rounded),
+          label: const Text('Guardar selecciones'),
+          iconAlignment: IconAlignment.end,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+            foregroundColor: isDarkMode ? AppColors.negro : AppColors.blanco,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SelectionWarning extends StatelessWidget {
+  final bool isDarkMode;
+
+  const SelectionWarning({
+    super.key,
+    required this.isDarkMode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      child: Card(
+        color: isDarkMode ? AppColors.amarillo.withAlpha(229) : Colors.orange[50],
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Icon(Icons.warning, color: isDarkMode ? AppColors.blanco: Colors.orange[800]),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  'No has completado todas las selecciones requeridas',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -85,6 +221,8 @@ class SubjectGroupCard extends StatelessWidget {
   final List<String> missingTypes;
   final bool isDarkMode;
   final Map<String, String> subjectDegrees;
+  final bool requireAllTypes;
+  final bool oneGroupPerType;
 
   const SubjectGroupCard({
     super.key,
@@ -93,7 +231,23 @@ class SubjectGroupCard extends StatelessWidget {
     required this.missingTypes,
     required this.isDarkMode,
     required this.subjectDegrees,
+    required this.requireAllTypes,
+    required this.oneGroupPerType,
   });
+
+  IconData _getGroupIcon(String groupCode) {
+    if (groupCode.isEmpty) return Icons.group;
+    final typeLetter = groupCode[0];
+    switch (typeLetter) {
+      case 'A': return Icons.menu_book; // Teoría
+      case 'B': return Icons.calculate; // Problemas
+      case 'C': return Icons.computer; // Prácticas informáticas
+      case 'D': return Icons.science; // Laboratorio
+      case 'E': return Icons.nature; // Salida de campo
+      case 'X': return Icons.auto_stories; // Teoría-práctica
+      default: return Icons.group;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,8 +263,8 @@ class SubjectGroupCard extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: isDarkMode
-                ? [Colors.black, Colors.grey.shade900]
-                : [Colors.indigo.shade50, Colors.white],
+                ? [AppColors.negro, Colors.grey.shade900]
+                : [AppColors.azulClaro2, AppColors.blanco],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -141,15 +295,15 @@ class SubjectGroupCard extends StatelessWidget {
                 isDarkMode: isDarkMode,
                 isTitle: false,
               ),
-              const SizedBox(height: 4),
-              InfoRow(
-              icon: Icons.code_rounded,
-              text: 'Código ICS: ${subject['code_ics'] ?? 'N/A'}',
-              isDarkMode: isDarkMode,
-              isTitle: false,
-            ),
+              // const SizedBox(height: 4),
+              // InfoRow(
+              //   icon: Icons.code_rounded,
+              //   text: 'Código ICS: ${subject['code_ics'] ?? 'N/A'}',
+              //   isDarkMode: isDarkMode,
+              //   isTitle: false,
+              // ),
               const SizedBox(height: 12),
-              if (missingTypes.isNotEmpty)
+              if (requireAllTypes && missingTypes.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
@@ -164,43 +318,74 @@ class SubjectGroupCard extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      logic.getGroupLabel(letter),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: isDarkMode ? Colors.white : Colors.black,
-                      ),
+                    Row(
+                      children: [
+                        Icon(
+                          _getGroupIcon(letter),
+                          color: isDarkMode ? AppColors.amarillo : AppColors.azulIntermedioUCA,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${logic.getGroupLabel(letter)}${requireAllTypes ? '' : ' (Opcional)'}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: isDarkMode ? AppColors.blanco : AppColors.negro,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: groupedClasses[letter]!.map<Widget>((group) {
-                        final isSelected = logic.selectedGroups[subject['code']]?[letter] == group['type'];
-                        return ChoiceChip(
-                          label: Text(
-                            group['type'],
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: isSelected 
-                                ? (isDarkMode ? Colors.black : Colors.indigo)
-                                : (isDarkMode ? Colors.yellow.shade700 : Colors.indigo),
-                              fontWeight: FontWeight.w500,
+                        final groupType = group['group_code'] as String;
+                        final isSelected = logic.isGroupSelected(subject['code'], groupType);
+                        
+                        return GestureDetector(
+                          onTap: () => logic.toggleGroupSelection(subject['code'], groupType),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? (isDarkMode ? AppColors.amarillo : AppColors.azulClaroUCA1)
+                                  : (isDarkMode ? Colors.grey.shade800 : AppColors.blanco),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isDarkMode ? Colors.grey.shade200 : AppColors.azulIntermedioUCA,
+                              ),
                             ),
-                          ),
-                          selected: isSelected,
-                          onSelected: (bool selected) {
-                            if (selected) {
-                              logic.selectGroup(subject['code'], letter, group['type']);
-                            }
-                          },
-                          selectedColor: isDarkMode ? Colors.yellow.shade700.withValues(alpha: 0.9) : Colors.indigo.shade100,
-                          backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
-                              color: isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade300,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  _getGroupIcon(groupType),
+                                  size: 16,
+                                  color: isSelected 
+                                      ? (isDarkMode ? AppColors.negro : AppColors.azulIntermedioUCA)
+                                      : (isDarkMode ? AppColors.blanco : AppColors.azulIntermedioUCA),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  groupType,
+                                  style: TextStyle(
+                                    color: isSelected 
+                                        ? (isDarkMode ? AppColors.negro : AppColors.azulIntermedioUCA)
+                                        : (isDarkMode ? AppColors.blanco : AppColors.azulIntermedioUCA),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (isSelected && logic.oneGroupPerType)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 4),
+                                    child: Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: isDarkMode ? AppColors.negro : AppColors.azulIntermedioUCA,
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         );
@@ -209,7 +394,7 @@ class SubjectGroupCard extends StatelessWidget {
                     const SizedBox(height: 10),
                   ],
                 );
-              })
+              }),
             ],
           ),
         ),
@@ -238,18 +423,19 @@ class InfoRow extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: isTitle ? 24 : 24,
+          size: isTitle ? 24 : 20,
           color: isDarkMode 
-              ? Colors.yellow.shade700 : Colors.indigo.shade700,
+              ? AppColors.amarillo 
+              : AppColors.azulIntermedioUCA,
         ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
             style: TextStyle(
-              fontSize: isTitle ? 18 : 14,
+              fontSize: isTitle ? 20 : 14,
               fontWeight: isTitle ? FontWeight.bold : FontWeight.normal,
-              color: isDarkMode ? Colors.white : Colors.black,
+              color: isDarkMode ? AppColors.blanco : AppColors.negro,
             ),
           ),
         ),

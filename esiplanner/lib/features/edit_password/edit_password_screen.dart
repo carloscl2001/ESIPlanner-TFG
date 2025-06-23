@@ -1,3 +1,4 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
@@ -38,26 +39,16 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Cambiar tu contraseña',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: const Text('Mis clases de la semana'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
         elevation: 10,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: isDarkMode 
-                ? null
-                : LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Colors.indigo.shade900,
-                      Colors.blue.shade900,
-                      Colors.blueAccent.shade400,
-                    ],
-                  ),
-            color: isDarkMode ? Colors.black : null,
+            color: isDarkMode ? AppColors.negro : AppColors.azulUCA,
           ),
         ),
       ),

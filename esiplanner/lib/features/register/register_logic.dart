@@ -1,3 +1,4 @@
+import 'package:esiplanner/services/data_register_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -13,27 +14,41 @@ class RegisterLogic with ChangeNotifier {
   
   String errorMessage = "";
   List<String> degrees = [];
+  List<String> departments = [];
   String? selectedDegree;
+  String? selectedDepartment;
+  String userType = 'student'; // 'student' or 'teacher'
   bool isLoading = false;
 
   RegisterLogic(this.context);
 
-  Future<void> loadDegrees() async {
+  Future<void> loadData() async {
     try {
       isLoading = true;
       notifyListeners();
       
-      final authService = AuthService();
-      degrees = await authService.getDegrees();
-      selectedDegree = degrees.isNotEmpty ? degrees[0] : null;
+      final dataRegisterService = DataRegisterService();
+      degrees = await dataRegisterService.getDegrees();
+      departments = await dataRegisterService.getDepartments();
+      
+      if (userType == 'student') {
+        selectedDegree = degrees.isNotEmpty ? degrees[0] : null;
+      } else { // teacher
+        selectedDepartment = departments.isNotEmpty ? departments.first : null;
+      }
       
       isLoading = false;
       notifyListeners();
     } catch (e) {
-      errorMessage = 'Error al cargar los grados';
+      errorMessage = 'Error al cargar los datos';
       isLoading = false;
       notifyListeners();
     }
+}
+
+  void setUserType(String type) {
+    userType = type;
+    notifyListeners();
   }
 
   Future<bool> register() async {
@@ -43,31 +58,50 @@ class RegisterLogic with ChangeNotifier {
       notifyListeners();
 
       final authService = AuthService();
-      final result = await authService.register(
-        email: emailController.text.trim(),
-        username: usernameController.text.trim(),
-        password: passwordController.text.trim(),
-        name: nameController.text.trim(),
-        surname: surnameController.text.trim(),
-        degree: selectedDegree ?? '',
-      );
+      dynamic result;
+
+      if (userType == 'student') {
+        result = await authService.register(
+          email: emailController.text.trim(),
+          username: usernameController.text.trim(),
+          password: passwordController.text.trim(),
+          name: nameController.text.trim(),
+          surname: surnameController.text.trim(),
+          degree: selectedDegree ?? '',
+        );
+      } else { // teacher
+        // Asegura que siempre haya un departamento seleccionado
+        final department = selectedDepartment?.isNotEmpty ?? false 
+            ? selectedDepartment!
+            : departments.isNotEmpty 
+                ? departments.first 
+                : '';
+
+        result = await authService.register(
+          email: emailController.text.trim(),
+          username: usernameController.text.trim(),
+          password: passwordController.text.trim(),
+          name: nameController.text.trim(),
+          surname: surnameController.text.trim(),
+          department: department,
+        );
+      }
 
       isLoading = false;
 
-      if(context.mounted){
+      if (context.mounted) {
         context.read<AuthProvider>().register(usernameController.text, result['token']);
       }
       
       notifyListeners();
       return result['success'];
     } catch (e) {
-      errorMessage = 'Error durante el registro';
+      errorMessage = 'Error durante el registro: ${e.toString()}';
       isLoading = false;
       notifyListeners();
       return false;
     }
   }
-
 
   // Validators
   String? validateEmail(String? value) {
@@ -84,12 +118,13 @@ class RegisterLogic with ChangeNotifier {
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'Por favor ingrese una contraseña';
+    if (value.length < 6) return 'La contraseña debe tener al menos 6 caracteres';
     return null;
   }
 
   String? validateName(String? value, String fieldName) {
     if (value == null || value.isEmpty) return 'Por favor ingrese su $fieldName';
-    if (value.length < 4) return 'Debe tener al menos 4 caracteres';
+    if (value.length < 2) return 'Debe tener al menos 2 caracteres';
     return null;
   }
 

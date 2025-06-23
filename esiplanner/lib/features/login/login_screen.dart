@@ -1,3 +1,4 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
@@ -40,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
+      backgroundColor: isDarkMode ? AppColors.gris1 : AppColors.blanco,
       body: Center(
         child: LoginForm(
           formKey: _formKey,

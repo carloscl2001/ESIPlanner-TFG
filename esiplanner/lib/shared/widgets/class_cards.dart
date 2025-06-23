@@ -1,3 +1,4 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
@@ -17,6 +18,20 @@ class ClassCards extends StatelessWidget {
     required this.isOverlap,
     this.isDesktop = false, // Valor por defecto false
   });
+
+  IconData _getGroupIcon(String groupCode) {
+    if (groupCode.isEmpty) return Icons.group;
+    final typeLetter = groupCode[0];
+    switch (typeLetter) {
+      case 'A': return Icons.menu_book; // Teoría
+      case 'B': return Icons.calculate; // Problemas
+      case 'C': return Icons.computer; // Prácticas informáticas
+      case 'D': return Icons.science; // Laboratorio
+      case 'E': return Icons.nature; // Salida de campo
+      case 'X': return Icons.auto_stories; // Teoría-práctica
+      default: return Icons.group;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +58,12 @@ class ClassCards extends StatelessWidget {
           gradient: LinearGradient(
             colors: isDarkMode
                 ? [
-                    Colors.black,
+                    AppColors.negro,
                     const Color.fromARGB(173, 44, 43, 43),
                   ]
                 : [
-                    Colors.indigo.shade50,
-                    Colors.white,
+                    AppColors.azulClaro2,
+                    AppColors.blanco,
                   ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -65,29 +80,29 @@ class ClassCards extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
-                  color: isDarkMode ? Colors.white : Colors.black,
+                  color: isDarkMode ? AppColors.blanco : AppColors.negro,
                 ),
               ),
               SizedBox(height: 12),
               _buildRow(
-                Icons.school,
+                _getGroupIcon(classType), // Usamos la nueva función aquí
                 classType,
-                isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
-                isDarkMode ? Colors.white : Colors.black,
+                isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                isDarkMode ? AppColors.blanco : AppColors.negro,
               ),
               SizedBox(height: 8),
               _buildRow(
                 Icons.access_time,
                 '${event['start_hour']} - ${event['end_hour']}',
-                isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
-                isDarkMode ? Colors.white : Colors.black,
+                isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                isDarkMode ? AppColors.blanco : AppColors.negro,
               ),
               SizedBox(height: 8),
               _buildRow(
                 Icons.location_on,
                 event['location'].toString(),
-                isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
-                isDarkMode ? Colors.white : Colors.black,
+                isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                isDarkMode ? AppColors.blanco : AppColors.negro,
               ),
               if (isOverlap)
                 Padding(

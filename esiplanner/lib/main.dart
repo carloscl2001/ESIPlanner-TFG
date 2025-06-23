@@ -1,3 +1,4 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,7 +21,7 @@ import 'non_features/profile_menu_screen.dart';
 import 'features/timetable/timetable_principal/timetable_principal_logic.dart';
 import 'features/edit_password/edit_password_screen.dart';
 import 'features/view_profile/view_profile_screen.dart';
-import 'features/selection_subjects/select_subjects_home/select_subjects_home_screen.dart';
+import 'features/selection_subjects/select_subjects_principal/select_subjects_principal_screen.dart';
 import 'features/view_subjects/view_subjects_screen.dart';
 
 void main() async {
@@ -72,21 +73,21 @@ class _MyAppState extends State<MyApp> {
         // Usar la fuente Inter para el tema claro
         textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue.shade900,
+          seedColor: AppColors.azulUCA,
           brightness: Brightness.light,
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppColors.blanco,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
-          labelStyle: GoogleFonts.inter(color: Colors.indigo), // Usar Inter
-          hintStyle: GoogleFonts.inter(color: Colors.grey[400]), // Usar Inter
+          labelStyle: GoogleFonts.inter(color: AppColors.azulUCA), // Usar Inter
+          hintStyle: GoogleFonts.inter(color: AppColors.negro), // Usar Inter
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.indigo, width: 1.5),
+            borderSide: const BorderSide(color: AppColors.azulUCA, width: 1.5),
             borderRadius: BorderRadius.circular(12.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.indigo, width: 2.0),
+            borderSide: const BorderSide(color: AppColors.azulUCA, width: 2.0),
             borderRadius: BorderRadius.circular(12.0),
           ),
         ),
@@ -94,23 +95,13 @@ class _MyAppState extends State<MyApp> {
           labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
             if (states.contains(WidgetState.selected)) {
               return GoogleFonts.inter( // Usar Inter
-                color: Colors.blue.shade900,
+                color: AppColors.azulUCA,
                 fontWeight: FontWeight.bold,
               );
             }
             return GoogleFonts.inter(color: Colors.grey); // Usar Inter
           }),
-          indicatorColor: Colors.indigo.shade100,
-          backgroundColor: Colors.white,
-        ),
-        cardTheme: CardTheme(
-          color: Colors.white,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Colors.indigo, width: 1.5),
-          ),
-          margin: const EdgeInsets.all(8),
+          backgroundColor: AppColors.blanco,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -118,23 +109,23 @@ class _MyAppState extends State<MyApp> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            backgroundColor: Colors.indigo.shade700,
+            backgroundColor: AppColors.azulUCA,
             textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: AppColors.blanco,
             ),
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.blue.shade900,
+          backgroundColor: AppColors.azulUCA,
           titleTextStyle: GoogleFonts.inter( // Usar Inter
-            color: Colors.white,
+            color: AppColors.blanco,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: AppColors.blanco),
         ),
       ),
 
@@ -143,21 +134,21 @@ class _MyAppState extends State<MyApp> {
         // Usar la fuente Inter para el tema oscuro
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.yellow.shade700,
+          seedColor: AppColors.amarillo,
           brightness: Brightness.dark,
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.black,
+          fillColor: AppColors.negro,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
-          labelStyle: GoogleFonts.inter(color: Colors.white), // Usar Inter
-          hintStyle: GoogleFonts.inter(color: Colors.white), // Usar Inter
+          labelStyle: GoogleFonts.inter(color: AppColors.blanco), // Usar Inter
+          hintStyle: GoogleFonts.inter(color: AppColors.blanco), // Usar Inter
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow.shade700, width: 1.5),
+            borderSide: BorderSide(color: AppColors.amarillo, width: 1.5),
             borderRadius: BorderRadius.circular(12.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow.shade700, width: 2.5),
+            borderSide: BorderSide(color: AppColors.amarillo, width: 2.5),
             borderRadius: BorderRadius.circular(12.0),
           ),
         ),
@@ -165,47 +156,37 @@ class _MyAppState extends State<MyApp> {
           labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
             if (states.contains(WidgetState.selected)) {
               return GoogleFonts.inter( // Usar Inter
-                color: Colors.yellow.shade700,
+                color: AppColors.amarillo,
                 fontWeight: FontWeight.bold,
               );
             }
             return GoogleFonts.inter(color: Colors.grey); // Usar Inter
           }),
-          indicatorColor: Colors.yellow.shade700,
-          backgroundColor: Colors.black,
-        ),
-        cardTheme: CardTheme(
-          color: Colors.black,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Colors.white, width: 1.5),
-          ),
-          margin: const EdgeInsets.all(8),
+          backgroundColor: AppColors.negro,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            backgroundColor: Colors.yellow.shade700,
+            backgroundColor: AppColors.amarillo,
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
-              color: Colors.black,
+              color: AppColors.negro,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.black,
+          backgroundColor: AppColors.negro,
           titleTextStyle: GoogleFonts.inter( // Usar Inter
-            color: Colors.white,
+            color: AppColors.blanco,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: AppColors.blanco),
         ),
       ),
       themeMode: themeProvider.themeMode, // Usa el tema actual del ThemeProvider

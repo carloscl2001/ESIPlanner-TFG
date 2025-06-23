@@ -1,3 +1,4 @@
+import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'login_logic.dart';
 
@@ -56,15 +57,17 @@ class LoginCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: isDarkMode
-              ? [const Color.fromARGB(255, 24, 24, 24), const Color.fromARGB(255, 24, 24, 24)]
-              : [Colors.indigo.shade50, Colors.white],
+            colors:
+                isDarkMode
+                    ? [
+                      const Color.fromARGB(255, 24, 24, 24),
+                      const Color.fromARGB(255, 24, 24, 24),
+                    ]
+                    : [AppColors.azulClaro2, AppColors.blanco],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -82,13 +85,19 @@ class LoginCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.indigo.shade900,
+                    color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
                   ),
                 ),
                 const SizedBox(height: 24),
-                UsernameField(controller: logic.usernameController, isDarkMode: isDarkMode),
+                UsernameField(
+                  controller: logic.usernameController,
+                  isDarkMode: isDarkMode,
+                ),
                 const SizedBox(height: 20),
-                PasswordField(controller: logic.passwordController, isDarkMode: isDarkMode),
+                PasswordField(
+                  controller: logic.passwordController,
+                  isDarkMode: isDarkMode,
+                ),
                 const SizedBox(height: 24),
                 LoginButton(onPressed: onLoginPressed, isDarkMode: isDarkMode),
                 if (logic.errorMessage.isNotEmpty) ...[
@@ -117,12 +126,13 @@ class UsernameField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: const Key('usernameField'),
       controller: controller,
       decoration: InputDecoration(
         labelText: 'Usuario',
         prefixIcon: Icon(
           Icons.person,
-          color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+          color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
         ),
       ),
       validator: (value) => LoginLogic(context).validateUsername(value),
@@ -143,13 +153,14 @@ class PasswordField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: const Key('passwordField'),
       controller: controller,
       obscureText: true,
       decoration: InputDecoration(
         labelText: 'Contraseña',
         prefixIcon: Icon(
           Icons.lock,
-          color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+          color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
         ),
       ),
       validator: (value) => LoginLogic(context).validatePassword(value),
@@ -170,13 +181,14 @@ class LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
+      key: const Key('loginButton'),
       onPressed: onPressed,
       child: Text(
         'Iniciar sesión',
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: isDarkMode ? Colors.black : Colors.white,
+          color: isDarkMode ? AppColors.negro : AppColors.blanco,
         ),
       ),
     );
@@ -186,10 +198,7 @@ class LoginButton extends StatelessWidget {
 class ErrorMessage extends StatelessWidget {
   final String message;
 
-  const ErrorMessage({
-    super.key,
-    required this.message,
-  });
+  const ErrorMessage({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -204,10 +213,7 @@ class ErrorMessage extends StatelessWidget {
 class RegisterButton extends StatelessWidget {
   final bool isDarkMode;
 
-  const RegisterButton({
-    super.key,
-    required this.isDarkMode,
-  });
+  const RegisterButton({super.key, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -216,14 +222,11 @@ class RegisterButton extends StatelessWidget {
         Navigator.pushReplacementNamed(context, '/register');
       },
       style: TextButton.styleFrom(
-        foregroundColor: isDarkMode ? Colors.white : Colors.indigo.shade700,
+        foregroundColor: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
       ),
       child: const Text(
         "¿No tienes una cuenta? Regístrate aquí",
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }

@@ -12,7 +12,8 @@ class AuthService {
     required String password,
     required String name,
     required String surname,
-    required String degree,
+    String? degree,
+    String? department,
   }) async {
     try {
       final response = await http.post(
@@ -25,6 +26,7 @@ class AuthService {
           'name': name,
           'surname': surname,
           'degree': degree,
+          'department': department // Cambia esto si es necesario
         }),
       );
 
@@ -95,19 +97,5 @@ class AuthService {
       return {'success': false, 'message': 'Error de conexión: $e'};
     }
   }
-
-  // Método para obtener los grados de la ESI y mostrarlos en el desplegable -> login_screen
-  Future<List<String>> getDegrees() async {
-    final url = Uri.parse('$baseUrl/degrees/');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final utf8DecodedBody = utf8.decode(response.bodyBytes);
-      final List<dynamic> data = json.decode(utf8DecodedBody);
-
-      return data.map<String>((degree) => degree['name'].toString()).toList();
-    } else {
-      throw Exception('Failed to load degrees');
-    }
-  }
+  
 }
