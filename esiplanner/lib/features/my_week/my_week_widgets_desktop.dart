@@ -501,7 +501,7 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                             DateFormat('HH:mm').format(currentTime),
                             style: TextStyle(
                               color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade900,
-                              fontSize: 12,
+                              fontSize: 18,
                             ),
                           ),
                         ),
