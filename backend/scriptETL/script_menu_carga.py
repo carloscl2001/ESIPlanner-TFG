@@ -17,7 +17,7 @@ loaded_files = {
     'subjects': set(),
     'degrees': set(),
     'mapping': set(),
-    'departments': set()  # Nueva colección para departamentos
+    'departments': set()
 }
 
 # Configuración de carpetas y colecciones
@@ -25,7 +25,7 @@ FOLDER_CONFIG = {
     'archivos_asignaturas': 'subjects',
     'archivos_grados': 'degrees',
     'archivos_mapeo': 'mapping',
-    'archivos_departamentos': 'departments'  # Nueva configuración
+    'archivos_departamentos': 'departments'
 }
 
 class ConsoleOutput:
@@ -93,7 +93,7 @@ def show_menu():
             'action': full_clean_load
         },
         '2': {
-            'label': 'Carga adicional de archivos específicos (sobreescribir o  insertar)',
+            'label': 'Carga adicional de archivos específicos (sobreescribir o insertar)',
             'action': additional_load_menu
         },
         '3': {
@@ -172,13 +172,13 @@ def full_clean_load():
                 with open(filepath, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     
-                    # Manejo especial para mapeo.json (insertar con estructura simplificada)
+                    # Manejo especial para mapeo.json
                     if filename == 'mapeo.json':
                         # Extraer el array de mapeo del objeto anidado
                         if isinstance(data, dict) and 'mapping' in data:
                             mapping_data = data['mapping']
                         else:
-                            mapping_data = data  # Por si acaso ya viene el array directamente
+                            mapping_data = data
                         
                         mapping_doc = {
                             'name': 'asignaturasInfo_mapping',
@@ -226,7 +226,7 @@ def additional_load_menu():
                 'action': lambda: process_custom_files('archivos_asignaturas', 'subjects')
             },
             '2': {
-                'label': 'Añadir/actualizargrados',
+                'label': 'Añadir/actualizar grados',
                 'action': lambda: process_custom_files('archivos_grados', 'degrees')
             },
             '3': {
@@ -311,7 +311,7 @@ def process_custom_files(folder_path: str, collection_name: str):
                         if isinstance(data, dict) and 'mapping' in data:
                             mapping_data = data['mapping']
                         else:
-                            mapping_data = data  # Por si acaso ya viene el array directamente
+                            mapping_data = data
                         
                         result = db_client[collection_name].update_one(
                             {'name': 'asignaturasInfo_mapping'},
@@ -351,8 +351,11 @@ def process_custom_files(folder_path: str, collection_name: str):
                     if isinstance(data, list):
                         for doc in data:
                             try:
-                                # Para departamentos, usamos 'code' como clave única
-                                filter_criteria = {'code': doc.get('code')} if collection_name == 'departments' else {'_id': doc.get('_id')}
+                                # Definir el criterio de filtro según la colección
+                                if collection_name == 'mapping':
+                                    filter_criteria = {'name': doc.get('name')}  # Para mapeo usar name
+                                else:
+                                    filter_criteria = {'code': doc.get('code')}  # Para todo lo demás usar code
                                 
                                 result = db_client[collection_name].update_one(
                                     filter_criteria,
@@ -378,7 +381,7 @@ def process_custom_files(folder_path: str, collection_name: str):
                                         operation="update",
                                         filename=filename,
                                         changes={
-                                            "document_id": str(doc.get('code', doc.get('_id'))),
+                                            "document_id": str(doc.get('code', doc.get('name', doc.get('_id')))),
                                             "operation": "upsert_update",
                                             "details": f"Documento actualizado desde {filename}"
                                         }
@@ -387,8 +390,11 @@ def process_custom_files(folder_path: str, collection_name: str):
                                 ConsoleOutput.print_warning(f"Error en documento: {str(e)}")
                     else:
                         try:
-                            # Para departamentos, usamos 'code' como clave única
-                            filter_criteria = {'code': data.get('code')} if collection_name == 'departments' else {'_id': data.get('_id')}
+                            # Definir el criterio de filtro según la colección
+                            if collection_name == 'mapping':
+                                filter_criteria = {'name': data.get('name')}  # Para mapeo usar name
+                            else:
+                                filter_criteria = {'code': data.get('code')}  # Para todo lo demás usar code
                             
                             result = db_client[collection_name].update_one(
                                 filter_criteria,
@@ -414,7 +420,7 @@ def process_custom_files(folder_path: str, collection_name: str):
                                     operation="update",
                                     filename=filename,
                                     changes={
-                                        "document_id": str(data.get('code', data.get('_id'))),
+                                        "document_id": str(data.get('code', data.get('name', data.get('_id')))),
                                         "operation": "upsert_update",
                                         "details": f"Documento actualizado desde {filename}"
                                     }
@@ -443,7 +449,7 @@ def show_detailed_stats():
         'subjects': 'Asignaturas',
         'degrees': 'Grados',
         'mapping': 'Mapeos',
-        'departments': 'Departamentos',  # Nueva colección
+        'departments': 'Departamentos',
         'logs': 'Registros de Cambios'
     }
     
@@ -467,12 +473,6 @@ def show_detailed_stats():
                     print(f"  Mapeo actualizado: {mapping_data.get('last_update', 'Desconocido')}")
                     print(f"  Entradas en el mapeo: {len(mapping_data.get('mapping', []))}")
             
-            # Mostrar info adicional para departamentos
-            if col == 'departments':
-                last_update = db_client[col].find_one(sort=[("_id", -1)])
-                if last_update:
-                    print(f"  Último departamento actualizado: {last_update.get('name', 'Desconocido')}")
-                
         except Exception as e:
             ConsoleOutput.print_warning(f"No se pudo acceder a la colección {col}: {str(e)}")
 
@@ -485,7 +485,6 @@ def show_detailed_stats():
             print(f"  Archivo: {log['source_file']}")
             print("  Detalles:")
             
-            # Mostrar de forma especial los logs consolidados
             if log['source_file'] in ["FULL_CLEAN_LOAD", "FULL_OVERWRITE_LOAD"]:
                 print(f"    Documentos afectados: {log['changes']['deleted_count']}")
                 print(f"    Operación: {log['changes']['operation']}")
@@ -511,14 +510,17 @@ def exit_program():
 
 if __name__ == "__main__":
     try:
-        # Verificar/crear índices para la colección de logs
+        # Crear índices únicos
+        db_client['subjects'].create_index([("code", 1)], unique=True)
+        db_client['degrees'].create_index([("code", 1)], unique=True)
+        db_client['departments'].create_index([("code", 1)], unique=True)
+        db_client['mapping'].create_index([("name", 1)], unique=True)  # Índice único para name en mapping
+        
+        # Índices para logs
         db_client['logs'].create_index([("timestamp", -1)])
         db_client['logs'].create_index([("collection", 1)])
         db_client['logs'].create_index([("operation", 1)])
         db_client['logs'].create_index([("source_file", 1)])
-        
-        # Crear índice para departamentos (por código)
-        db_client['departments'].create_index([("code", 1)], unique=True)
         
         show_menu()
     except KeyboardInterrupt:
