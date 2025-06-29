@@ -175,7 +175,7 @@ class ProfileField extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(isDesktop ? 8 : 0),
             decoration: BoxDecoration(
               color: isDarkMode ? Colors.grey.shade800 : AppColors.azulClaro2,
               shape: BoxShape.circle,

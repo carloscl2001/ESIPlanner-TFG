@@ -159,7 +159,7 @@ class BuildEmptyNotifications extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
-    final textColor = isDarkMode ? AppColors.blanco70 : AppColors.negro54;
+    final textColor = isDarkMode ? AppColors.blanco70 : Colors.black54;
 
     return Center(
       child: Column(
@@ -168,7 +168,7 @@ class BuildEmptyNotifications extends StatelessWidget {
           Icon(
             Icons.notifications_off_rounded,
             size: isMobile ? 80.0 : 100.0,
-            color: textColor.withValues(alpha:0.7),
+            color: textColor,
           ),
           const SizedBox(height: 24),
           Text(
@@ -185,11 +185,7 @@ class BuildEmptyNotifications extends StatelessWidget {
             child: Text(
               'Tus asignaturas no han sufrido modificaciones.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: isMobile ? 14.0 : 16.0,
-                color: textColor.withValues(alpha:0.8),
-                height: 1.5,
-              ),
+              style: TextStyle(fontSize: 16, color: textColor, height: 1.5),
             ),
           ),
         ],

@@ -25,21 +25,24 @@ class SelectedDayRowDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    
+
     final selectedDayLower = selectedDay.toLowerCase();
-    final safeIndex = weekDaysShort.indexWhere(
-      (day) => day.toLowerCase() == selectedDayLower.substring(0, 3),
-    ).clamp(0, weekDaysFullName.length - 1);
+    final safeIndex = weekDaysShort
+        .indexWhere(
+          (day) => day.toLowerCase() == selectedDayLower.substring(0, 3),
+        )
+        .clamp(0, weekDaysFullName.length - 1);
 
     final selectedDate = DateTime.utc(
-      now.year, 
-      now.month, 
-      now.day - (now.weekday - 1) + safeIndex
+      now.year,
+      now.month,
+      now.day - (now.weekday - 1) + safeIndex,
     );
-    
-    final isToday = selectedDate.year == now.year && 
-                   selectedDate.month == now.month && 
-                   selectedDate.day == now.day;
+
+    final isToday =
+        selectedDate.year == now.year &&
+        selectedDate.month == now.month &&
+        selectedDate.day == now.day;
 
     return Container(
       padding: const EdgeInsets.only(left: 52, top: 10, bottom: 10),
@@ -66,7 +69,7 @@ class SelectedDayRowDesktop extends StatelessWidget {
                   Text(
                     weekDaysFullName[safeIndex],
                     style: TextStyle(
-                      color: isDarkMode ? Colors.grey : AppColors.azulUCA ,
+                      color: isDarkMode ? Colors.grey : AppColors.azulUCA,
                       fontWeight: FontWeight.bold,
                       fontSize: 30,
                       letterSpacing: 1.2,
@@ -78,7 +81,7 @@ class SelectedDayRowDesktop extends StatelessWidget {
                     style: TextStyle(
                       color: isDarkMode ? Colors.grey : AppColors.azulUCA,
                       fontWeight: FontWeight.bold,
-                      fontSize:30,
+                      fontSize: 30,
                     ),
                   ),
                 ],
@@ -116,7 +119,6 @@ class DayButtonRowDesktop extends StatefulWidget {
   final List<Map<String, dynamic>> Function(String?) getFilteredEvents;
   final List<Map<String, dynamic>> subjects;
   final Function(String) onDaySelected;
-  
 
   const DayButtonRowDesktop({
     super.key,
@@ -127,7 +129,6 @@ class DayButtonRowDesktop extends StatefulWidget {
     required this.getFilteredEvents,
     required this.subjects,
     required this.onDaySelected,
-
   });
 
   @override
@@ -149,109 +150,138 @@ class _DayButtonRowDesktopState extends State<DayButtonRowDesktop> {
       padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: widget.weekDays.asMap().entries.map((entry) {
-          final index = entry.key;
-          final day = entry.value;
-          final date = widget.weekDates[index];
-          final hasEvents = widget.getFilteredEvents(day).isNotEmpty;
-          final isSelected = widget.selectedDay == day;
-          final selectedColor = widget.isDarkMode ? AppColors.amarillo : AppColors.azulUCA;
+        children:
+            widget.weekDays.asMap().entries.map((entry) {
+              final index = entry.key;
+              final day = entry.value;
+              final date = widget.weekDates[index];
+              final hasEvents = widget.getFilteredEvents(day).isNotEmpty;
+              final isSelected = widget.selectedDay == day;
+              final selectedColor =
+                  widget.isDarkMode ? AppColors.amarillo : AppColors.azulUCA;
 
-          return MouseRegion(
-            onEnter: (_) => setState(() => _isHovered[index] = true),
-            onExit: (_) => setState(() => _isHovered[index] = false),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              transform: Matrix4.identity()..scale(_isHovered[index] ? 1.05 : 1.0),
-              child: GestureDetector(
-                onTap: () => widget.onDaySelected(day),
-                child: Container(
-                  width: 80,
-                  height: 100,
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: isSelected 
-                        ? selectedColor 
-                        : null,
-                    gradient: !isSelected
-                        ? LinearGradient(
-                            colors: widget.isDarkMode
-                                ? [
-                                    _isHovered[index] ? AppColors.gris1 : AppColors.negro,
-                                    AppColors.negro,
-                                  ]
-                                : [
-                                    _isHovered[index] ? AppColors.azulClaroUCA1: AppColors.blanco,
-                                    AppColors.blanco
-                                  ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          )
-                        : null,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: !widget.isDarkMode
-                            ? AppColors.negro.withAlpha(_isHovered[index] ? 150 : 115)
-                            : Colors.grey.withAlpha(_isHovered[index] ? 150 : 115),
-                        blurRadius: _isHovered[index] ? 10.0 : 8.0,
-                        offset: const Offset(0, 0),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        day,
-                        style: TextStyle(
-                          color: isSelected
-                              ? (widget.isDarkMode ? AppColors.negro : AppColors.blanco)
-                              : (widget.isDarkMode ? Colors.grey : AppColors.azulUCA) ,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                        ),
-                      ),
-                      Text(
-                        date,
-                        style: TextStyle(
-                          color: isSelected
-                              ? (widget.isDarkMode ? AppColors.negro : AppColors.blanco)
-                              : (widget.isDarkMode ? AppColors.blanco : AppColors.negro ),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 28,
-                        ),
-                      ),
-                      if (hasEvents)
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? (widget.isDarkMode ? AppColors.negro : AppColors.blanco)
-                                : (widget.isDarkMode ? AppColors.amarillo : AppColors.azulUCA),
-                            shape: BoxShape.circle,
+              return MouseRegion(
+                onEnter: (_) => setState(() => _isHovered[index] = true),
+                onExit: (_) => setState(() => _isHovered[index] = false),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  transform:
+                      Matrix4.identity()..scale(_isHovered[index] ? 1.05 : 1.0),
+                  child: GestureDetector(
+                    onTap: () => widget.onDaySelected(day),
+                    child: Container(
+                      width: 80,
+                      height: 100,
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? selectedColor : null,
+                        gradient:
+                            !isSelected
+                                ? LinearGradient(
+                                  colors:
+                                      widget.isDarkMode
+                                          ? [
+                                            _isHovered[index]
+                                                ? AppColors.gris1
+                                                : AppColors.negro,
+                                            AppColors.negro,
+                                          ]
+                                          : [
+                                            _isHovered[index]
+                                                ? AppColors.azulClaroUCA1
+                                                : AppColors.blanco,
+                                            AppColors.blanco,
+                                          ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                )
+                                : null,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                !widget.isDarkMode
+                                    ? AppColors.negro.withAlpha(
+                                      _isHovered[index] ? 150 : 115,
+                                    )
+                                    : Colors.grey.withAlpha(
+                                      _isHovered[index] ? 150 : 115,
+                                    ),
+                            blurRadius: _isHovered[index] ? 10.0 : 8.0,
+                            offset: const Offset(0, 0),
                           ),
-                        ),
-                    ],
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            day,
+                            style: TextStyle(
+                              color:
+                                  isSelected
+                                      ? (widget.isDarkMode
+                                          ? AppColors.negro
+                                          : AppColors.blanco)
+                                      : (widget.isDarkMode
+                                          ? Colors.grey
+                                          : AppColors.azulUCA),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22,
+                            ),
+                          ),
+                          Text(
+                            date,
+                            style: TextStyle(
+                              color:
+                                  isSelected
+                                      ? (widget.isDarkMode
+                                          ? AppColors.negro
+                                          : AppColors.blanco)
+                                      : (widget.isDarkMode
+                                          ? AppColors.blanco
+                                          : AppColors.negro),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28,
+                            ),
+                          ),
+                          if (hasEvents)
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color:
+                                    isSelected
+                                        ? (widget.isDarkMode
+                                            ? AppColors.negro
+                                            : AppColors.blanco)
+                                        : (widget.isDarkMode
+                                            ? AppColors.amarillo
+                                            : AppColors.azulUCA),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
       ),
     );
   }
 }
-
 
 class EventListViewDesktopGoogle extends StatelessWidget {
   final PageController pageController;
   final List<String> weekDays;
   final List<Map<String, dynamic>> Function(String?) getFilteredEvents;
   final List<Map<String, dynamic>> subjects;
-  final Map<String, List<Map<String, dynamic>>> Function(List<Map<String, dynamic>>) groupEventsByDay;
+  final Map<String, List<Map<String, dynamic>>> Function(
+    List<Map<String, dynamic>>,
+  )
+  groupEventsByDay;
   final String Function(String) getGroupLabel;
   final Function(int) onPageChanged;
   final double sizeTramo = 65;
@@ -273,16 +303,18 @@ class EventListViewDesktopGoogle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
+    final isDarkMode =
+        Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
     final subjectColors = SubjectColors(isDarkMode);
-    final currentPage = pageController.hasClients ? pageController.page?.round() ?? 0 : 0;
+    final currentPage =
+        pageController.hasClients ? pageController.page?.round() ?? 0 : 0;
 
     return SizedBox(
       child: Stack(
         children: [
           // Contenedor principal del calendario
           Positioned.fill(
-            left: 56,  // Espacio para la flecha izquierda
+            left: 56, // Espacio para la flecha izquierda
             right: 56, // Espacio para la flecha derecha
             top: 0,
             bottom: 30,
@@ -300,17 +332,23 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                 child: PageView.builder(
                   controller: pageController,
                   onPageChanged: onPageChanged,
-                  physics: const PageScrollPhysics().applyTo(const BouncingScrollPhysics()),
+                  physics: const PageScrollPhysics().applyTo(
+                    const BouncingScrollPhysics(),
+                  ),
                   itemCount: weekDays.length,
                   itemBuilder: (context, index) {
                     final day = weekDays[index];
                     final dayEvents = getFilteredEvents(day);
-                    
+
                     if (dayEvents.isEmpty) {
                       return _buildEmptyState(isDarkMode);
                     }
-                    
-                    return _buildDayViewGoogleStyle(dayEvents, isDarkMode, subjectColors);
+
+                    return _buildDayViewGoogleStyle(
+                      dayEvents,
+                      isDarkMode,
+                      subjectColors,
+                    );
                   },
                 ),
               ),
@@ -357,9 +395,14 @@ class EventListViewDesktopGoogle extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationArrow(BuildContext context, IconData icon, VoidCallback onPressed) {
-    final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
-    
+  Widget _buildNavigationArrow(
+    BuildContext context,
+    IconData icon,
+    VoidCallback onPressed,
+  ) {
+    final isDarkMode =
+        Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
+
     return Material(
       shape: const CircleBorder(),
       color: Colors.transparent,
@@ -412,16 +455,21 @@ class EventListViewDesktopGoogle extends StatelessWidget {
     bool isDarkMode,
     SubjectColors subjectColors,
   ) {
-    final processedEvents = events.map((e) {
-      final start = DateTime.parse('${e['event']['date']} ${e['event']['start_hour']}');
-      final end = DateTime.parse('${e['event']['date']} ${e['event']['end_hour']}');
-      return {
-        'data': e,
-        'start': start,
-        'end': end,
-        'subject': e['subjectName'],
-      };
-    }).toList();
+    final processedEvents =
+        events.map((e) {
+          final start = DateTime.parse(
+            '${e['event']['date']} ${e['event']['start_hour']}',
+          );
+          final end = DateTime.parse(
+            '${e['event']['date']} ${e['event']['end_hour']}',
+          );
+          return {
+            'data': e,
+            'start': start,
+            'end': end,
+            'subject': e['subjectName'],
+          };
+        }).toList();
 
     processedEvents.sort((a, b) => a['start'].compareTo(b['start']));
 
@@ -458,7 +506,8 @@ class EventListViewDesktopGoogle extends StatelessWidget {
       for (int i = 0; i < lanes.length; i++) {
         bool canPlace = true;
         for (final existingEvent in lanes[i]) {
-          if (event['start'].isBefore(existingEvent['end']) && event['end'].isAfter(existingEvent['start'])) {
+          if (event['start'].isBefore(existingEvent['end']) &&
+              event['end'].isAfter(existingEvent['start'])) {
             canPlace = false;
             break;
           }
@@ -474,7 +523,10 @@ class EventListViewDesktopGoogle extends StatelessWidget {
         eventLanesPlacement[event] = {'start': bestLane, 'end': bestLane + 1};
       } else {
         lanes.add([event]);
-        eventLanesPlacement[event] = {'start': lanes.length - 1, 'end': lanes.length};
+        eventLanesPlacement[event] = {
+          'start': lanes.length - 1,
+          'end': lanes.length,
+        };
       }
     }
 
@@ -490,7 +542,9 @@ class EventListViewDesktopGoogle extends StatelessWidget {
               children: [
                 Column(
                   children: List.generate(totalHalfHours + 1, (index) {
-                    final currentTime = startTime.add(Duration(minutes: 30 * index));
+                    final currentTime = startTime.add(
+                      Duration(minutes: 30 * index),
+                    );
                     return SizedBox(
                       height: sizeTramo,
                       child: Align(
@@ -500,7 +554,10 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                           child: Text(
                             DateFormat('HH:mm').format(currentTime),
                             style: TextStyle(
-                              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade900,
+                              color:
+                                  isDarkMode
+                                      ? Colors.grey.shade400
+                                      : Colors.grey.shade900,
                               fontSize: 18,
                             ),
                           ),
@@ -516,13 +573,18 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                       return Stack(
                         children: [
                           Column(
-                            children: List.generate(totalHalfHours + 1, (index) {
+                            children: List.generate(totalHalfHours + 1, (
+                              index,
+                            ) {
                               return Container(
                                 height: sizeTramo,
                                 decoration: BoxDecoration(
                                   border: Border(
                                     bottom: BorderSide(
-                                      color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                      color:
+                                          isDarkMode
+                                              ? Colors.grey.shade800
+                                              : Colors.grey.shade300,
                                       width: 2,
                                     ),
                                   ),
@@ -534,19 +596,30 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                             final placement = eventLanesPlacement[event]!;
                             final laneStart = placement['start']!;
                             final laneEnd = placement['end']!;
-                            final startOffset = event['start'].difference(startTime).inMinutes;
-                            final duration = event['end'].difference(event['start']).inMinutes;
+                            final startOffset =
+                                event['start'].difference(startTime).inMinutes;
+                            final duration =
+                                event['end']
+                                    .difference(event['start'])
+                                    .inMinutes;
 
-                            final isOverlapping = lanes.any((lane) => 
-                                lane.any((e) => 
-                                    e != event && 
-                                    event['start'].isBefore(e['end']) && 
-                                    event['end'].isAfter(e['start']))
+                            final isOverlapping = lanes.any(
+                              (lane) => lane.any(
+                                (e) =>
+                                    e != event &&
+                                    event['start'].isBefore(e['end']) &&
+                                    event['end'].isAfter(e['start']),
+                              ),
                             );
 
-                            final laneWidth = availableWidth / (isOverlapping ? maxLanes : 1);
-                            final leftPosition = isOverlapping ? laneStart * laneWidth : 0;
-                            final eventWidth = isOverlapping ? (laneEnd - laneStart) * laneWidth : availableWidth;
+                            final laneWidth =
+                                availableWidth / (isOverlapping ? maxLanes : 1);
+                            final leftPosition =
+                                isOverlapping ? laneStart * laneWidth : 0;
+                            final eventWidth =
+                                isOverlapping
+                                    ? (laneEnd - laneStart) * laneWidth
+                                    : availableWidth;
 
                             return Positioned(
                               top: ((startOffset / 30) + 1) * sizeTramo + 2,
@@ -556,7 +629,9 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                               child: EventCardMyWeekDesktop(
                                 eventData: event['data'],
                                 getGroupLabel: getGroupLabel,
-                                subjectColor: subjectColors.getSubjectColor(event['subject']),
+                                subjectColor: subjectColors.getSubjectColor(
+                                  event['subject'],
+                                ),
                                 isDarkMode: isDarkMode,
                                 isDesktop: isDesktop,
                                 isMyWeek: true,
@@ -584,11 +659,7 @@ class BuildEmptyCardDesktop extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDarkMode ? AppColors.blanco70 : Colors.black54;
-    final textColorIcon = isDarkMode ? AppColors.blanco70 : Colors.black54;
-    final textColorButton = isDarkMode ? AppColors.negro : AppColors.blanco;
-    final backgroundColor = isDarkMode ? AppColors.amarillo.withValues(alpha: 1): AppColors.azulUCA;
-    
-    
+
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 600),
@@ -596,55 +667,94 @@ class BuildEmptyCardDesktop extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Icono con libro tachado (representando "no asignaturas")
             Stack(
-              alignment: Alignment.center,
               children: [
-                Icon(
-                  Icons.book_rounded,
-                  size: 100,
-                  color: textColorIcon,
-                ),
-                Transform.translate(
-                  offset: const Offset(20, 40),
-                  child: Icon(
-                    Icons.touch_app_rounded,
-                    size: 50,
-                    color: backgroundColor,
+                Icon(Icons.auto_stories_rounded, size: 120, color: textColor),
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.red[400],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.question_mark_rounded,
+                        size: 35,
+                        color: textColor,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 50),
+            // Título y mensaje
+            const SizedBox(height: 30),
+            Text(
+              'No has seleccionado niguna asignatura',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                'Selecciona tus asignaturas en la sección de perfil para comenzar a visualizar tu horario semanal',
+              child: RichText(
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: textColor,
-                  height: 1.5,
+                text: TextSpan(
+                  style: TextStyle(fontSize: 16, color: textColor, height: 1.5),
+                  children: [
+                    const TextSpan(text: 'Puedes seleccionar tus asignaturas '),
+                    const TextSpan(text: 'en la sección de '),
+                    TextSpan(
+                      text: 'Perfil',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color:
+                            isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                      ),
+                    ),
+                    const TextSpan(text: ' o '),
+                    TextSpan(
+                      text: 'desde aquí',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color:
+                            isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                      ),
+                    ),
+                    const TextSpan(text: '.'),
+                  ],
                 ),
               ),
             ),
             const SizedBox(height: 32),
+            // Botón principal
             FilledButton.icon(
               onPressed: () async {
                 await Navigator.pushNamed(context, '/selectionSubjects');
                 Navigator.pushNamed(context, '/home');
               },
               icon: const Icon(Icons.touch_app_rounded),
-              label: Text(
-                'Seleccionar asignaturas',
+              label: const Text(
+                'Seleccionar asignaturas ahora',
                 style: TextStyle(
-                  color: textColorButton, // ¡Cambia este color al que necesites!
-                  fontWeight: FontWeight.bold, // Opcional: mantiene el negrita
-                  fontSize: 16, // Opcional: ajusta el tamaño de la fuente
+                  fontSize: 18, // Ajusta este valor según necesites
                 ),
               ),
-              style: FilledButton.styleFrom( // Color de icono/texto
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 25),
-                backgroundColor: isDarkMode ? AppColors.amarillo.withValues(alpha: 0.8) : AppColors.azulUCA,
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 50,
+                  vertical: 25,
+                ),
+                backgroundColor:
+                    isDarkMode
+                        ? AppColors.amarillo.withValues(alpha: 0.8)
+                        : AppColors.azulUCA,
               ),
             ),
           ],
@@ -677,7 +787,7 @@ class NavigationArrows extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final arrowColor = isDarkMode ? AppColors.blanco : AppColors.azulUCA;
-    
+
     return Padding(
       padding: padding,
       child: Row(
@@ -692,7 +802,11 @@ class NavigationArrows extends StatelessWidget {
             SizedBox(width: iconSize),
           if (showNext)
             IconButton(
-              icon: Icon(Icons.chevron_right, size: iconSize, color: arrowColor),
+              icon: Icon(
+                Icons.chevron_right,
+                size: iconSize,
+                color: arrowColor,
+              ),
               onPressed: onNext,
             )
           else

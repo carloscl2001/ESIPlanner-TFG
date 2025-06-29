@@ -18,20 +18,17 @@ class SubjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
     final titleSize = isMobile ? 18.0 : 20.0; // Original: 20 (desktop)
-    final bodySize = isMobile ? 14.0 : 16.0;  // Original: 16 (desktop)
-    final iconSize = isMobile ? 24.0 : 30.0;  // Original: 30 (desktop)
-    
+    final bodySize = isMobile ? 14.0 : 16.0; // Original: 16 (desktop)
+    final iconSize = isMobile ? 24.0 : 30.0; // Original: 30 (desktop)
+
     return Container(
-      margin: EdgeInsets.symmetric(
-        vertical: 8,
-        horizontal: isMobile ? 16 : 24,
-      ),
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: isMobile ? 16 : 24),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.gris1 : AppColors.blanco,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -63,12 +60,14 @@ class SubjectCard extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 12), // Mantenemos igual
-            
             // Código de asignatura
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10), // Mantenemos igual
+              padding: const EdgeInsets.symmetric(
+                vertical: 6,
+                horizontal: 10,
+              ), // Mantenemos igual
               decoration: BoxDecoration(
                 color: isDarkMode ? AppColors.gris2 : AppColors.azulClaro2,
                 borderRadius: BorderRadius.circular(6),
@@ -80,33 +79,41 @@ class SubjectCard extends StatelessWidget {
               child: Text(
                 subject['code'] ?? 'COD',
                 style: TextStyle(
-                  color: isDarkMode ? AppColors.amarilloClaro : AppColors.azulUCA,
+                  color:
+                      isDarkMode ? AppColors.amarilloClaro : AppColors.azulUCA,
                   fontWeight: FontWeight.w600,
                   fontSize: bodySize, // Ajustado para mobile
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 12), // Mantenemos igual
-            
+
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: () {
                 // Primero obtenemos la lista de grupos como strings
-                final groups = (subject['groups'] as List<dynamic>).map((g) => g.toString()).toList();
+                final groups =
+                    (subject['groups'] as List<dynamic>)
+                        .map((g) => g.toString())
+                        .toList();
                 // Luego la ordenamos
                 groups.sort();
                 // Finalmente mapeamos a widgets
                 return groups.map((groupCode) {
                   final groupType = logic.getGroupType(groupCode);
-                  
+
                   return Container(
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 6,
+                      horizontal: 10,
+                    ),
                     decoration: BoxDecoration(
-                      color: isDarkMode 
-                          ? AppColors.amarillo.withValues(alpha: 0.1) 
-                          : AppColors.azulClaro2,
+                      color:
+                          isDarkMode
+                              ? AppColors.amarillo.withValues(alpha: 0.1)
+                              : AppColors.azulClaro2,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
@@ -119,7 +126,10 @@ class SubjectCard extends StatelessWidget {
                             Icon(
                               _getGroupIcon(groupCode),
                               size: isMobile ? 18.0 : 20.0,
-                              color: isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                              color:
+                                  isDarkMode
+                                      ? AppColors.amarillo
+                                      : AppColors.azulUCA,
                             ),
                             const SizedBox(width: 6),
                             Text(
@@ -127,7 +137,10 @@ class SubjectCard extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: isMobile ? 14.0 : 16.0,
-                                color: isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                                color:
+                                    isDarkMode
+                                        ? AppColors.amarillo
+                                        : AppColors.azulUCA,
                               ),
                             ),
                           ],
@@ -137,7 +150,10 @@ class SubjectCard extends StatelessWidget {
                           groupType,
                           style: TextStyle(
                             fontSize: isMobile ? 12.0 : 16.0,
-                            color: isDarkMode ? AppColors.blanco70 : AppColors.azulUCA,
+                            color:
+                                isDarkMode
+                                    ? AppColors.blanco70
+                                    : AppColors.azulUCA,
                           ),
                         ),
                       ],
@@ -156,13 +172,20 @@ class SubjectCard extends StatelessWidget {
     if (groupCode.isEmpty) return Icons.group;
     final typeLetter = groupCode[0];
     switch (typeLetter) {
-      case 'A': return Icons.menu_book; // Teoría
-      case 'B': return Icons.calculate; // Problemas
-      case 'C': return Icons.computer; // Prácticas informáticas
-      case 'D': return Icons.science; // Laboratorio
-      case 'E': return Icons.nature; // Salida de campo
-      case 'X': return Icons.auto_stories; // Teoría-práctica
-      default: return Icons.group;
+      case 'A':
+        return Icons.menu_book; // Teoría
+      case 'B':
+        return Icons.calculate; // Problemas
+      case 'C':
+        return Icons.computer; // Prácticas informáticas
+      case 'D':
+        return Icons.science; // Laboratorio
+      case 'E':
+        return Icons.nature; // Salida de campo
+      case 'X':
+        return Icons.auto_stories; // Teoría-práctica
+      default:
+        return Icons.group;
     }
   }
 }
@@ -172,72 +195,112 @@ class BuildEmptyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
+    final isDesktop = MediaQuery.of(context).size.width >= 1024;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDarkMode ? AppColors.blanco70 : AppColors.negro54;
-    final textColorButton = isDarkMode ? AppColors.negro : AppColors.blanco;
 
     return Center(
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 600), // Mantenemos igual
-        margin: const EdgeInsets.all(24), // Mantenemos igual
+        constraints: const BoxConstraints(maxWidth: 600),
+        margin: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.search_off_rounded,
-              size: isMobile ? 100.0 : 120.0, // Original desktop: 120
-              color: textColor,
+            // Icono con libro tachado (representando "no asignaturas")
+            Stack(
+              children: [
+                Icon(Icons.auto_stories_rounded, size: 120, color: textColor),
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.red[400],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.question_mark_rounded,
+                        size: 35,
+                        color: textColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 24), // Mantenemos igual
+            // Título y mensaje
+            const SizedBox(height: 30),
             Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40), // Añade el mismo padding que el texto inferior
-            child: Text(
-              'No has seleccionado asignaturas',
-              textAlign: TextAlign.center, // Asegúrate de que el texto esté centrado
-              style: TextStyle(
-                fontSize: isMobile ? 24.0 : 28.0,
-                fontWeight: FontWeight.w600,
-                color: textColor,
-              ),
-            ),
-            ),
-            const SizedBox(height: 16), // Mantenemos igual
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40), // Mantenemos igual
+              padding: const EdgeInsets.symmetric(
+                horizontal: 40,
+              ), // Mantenemos igual
               child: Text(
-                'Selecciona tus asignaturas en la sección de perfil para comenzar a visualizar tu horario semanal',
+                'No has seleccionado ninguna asignatura',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: isMobile ? 16.0 : 18.0, // Original desktop: 18
+                  fontSize: 24.0, // Original desktop: 18
+                  fontWeight: FontWeight.w600,
                   color: textColor,
                   height: 1.5,
                 ),
               ),
             ),
-            const SizedBox(height: 32), // Mantenemos igual
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: TextStyle(fontSize: 16, color: textColor, height: 1.5),
+                  children: [
+                    const TextSpan(text: 'Puedes seleccionar tus asignaturas '),
+                    const TextSpan(text: 'en la sección de '),
+                    TextSpan(
+                      text: 'Perfil',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color:
+                            isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                      ),
+                    ),
+                    const TextSpan(text: ' o '),
+                    TextSpan(
+                      text: 'desde aquí',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color:
+                            isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                      ),
+                    ),
+                    const TextSpan(text: '.'),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            // Botón principal
             FilledButton.icon(
               onPressed: () async {
                 await Navigator.pushNamed(context, '/selectionSubjects');
                 Navigator.pushNamed(context, '/home');
               },
-              icon: Icon(
-                Icons.edit_note_rounded,
-                size: isMobile ? 20.0 : 24.0, // Original desktop: 24
-              ),
+              icon: const Icon(Icons.touch_app_rounded),
               label: Text(
-                'Seleccionar asignaturas',
+                'Seleccionar asignaturas ahora',
                 style: TextStyle(
-                  color: textColorButton,
-                  fontWeight: FontWeight.bold,
-                  fontSize: isMobile ? 14.0 : 16.0, // Original desktop: 16
+                  fontSize: isDesktop ? 18 : null, // Ajusta este valor según necesites
                 ),
               ),
               style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 25), // Mantenemos igual
-                backgroundColor: isDarkMode 
-                    ? AppColors.amarillo.withValues(alpha: 0.8) 
-                    : AppColors.azulUCA,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 50,
+                  vertical: 25,
+                ),
+                backgroundColor:
+                    isDarkMode
+                        ? AppColors.amarillo.withValues(alpha: 0.8)
+                        : AppColors.azulUCA,
               ),
             ),
           ],

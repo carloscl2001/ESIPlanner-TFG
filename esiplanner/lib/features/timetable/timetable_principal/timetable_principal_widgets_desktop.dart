@@ -309,55 +309,94 @@ class BuildEmptyCardDesktop extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Icono con libro tachado (representando "no asignaturas")
             Stack(
-              alignment: Alignment.center,
               children: [
-                Icon(
-                  Icons.book_rounded,
-                  size: 100,
-                  color: textColorIcon,
-                ),
-                Transform.translate(
-                  offset: const Offset(20, 40),
-                  child: Icon(
-                    Icons.touch_app_rounded,
-                    size: 50,
-                    color: backgroundColor,
+                Icon(Icons.auto_stories_rounded, size: 120, color: textColor),
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.red[400],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.question_mark_rounded,
+                        size: 35,
+                        color: textColor,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 50),
+            // Título y mensaje
+            const SizedBox(height: 30),
+            Text(
+              'No has seleccionado niguna asignatura',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                'Selecciona tus asignaturas en la sección de perfil para comenzar a visualizar tu horario semanal',
+              child: RichText(
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: textColor,
-                  height: 1.5,
+                text: TextSpan(
+                  style: TextStyle(fontSize: 16, color: textColor, height: 1.5),
+                  children: [
+                    const TextSpan(text: 'Puedes seleccionar tus asignaturas '),
+                    const TextSpan(text: 'en la sección de '),
+                    TextSpan(
+                      text: 'Perfil',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color:
+                            isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                      ),
+                    ),
+                    const TextSpan(text: ' o '),
+                    TextSpan(
+                      text: 'desde aquí',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color:
+                            isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+                      ),
+                    ),
+                    const TextSpan(text: '.'),
+                  ],
                 ),
               ),
             ),
             const SizedBox(height: 32),
+            // Botón principal
             FilledButton.icon(
               onPressed: () async {
                 await Navigator.pushNamed(context, '/selectionSubjects');
                 Navigator.pushNamed(context, '/home');
               },
               icon: const Icon(Icons.touch_app_rounded),
-              label: Text(
-                'Seleccionar asignaturas',
+              label: const Text(
+                'Seleccionar asignaturas ahora',
                 style: TextStyle(
-                  color: textColorButton,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 18, // Ajusta este valor según necesites
                 ),
               ),
               style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 25),
-                backgroundColor: backgroundColor,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 50,
+                  vertical: 25,
+                ),
+                backgroundColor:
+                    isDarkMode
+                        ? AppColors.amarillo.withValues(alpha: 0.8)
+                        : AppColors.azulUCA,
               ),
             ),
           ],
