@@ -298,9 +298,6 @@ class BuildEmptyCardDesktop extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDarkMode ? AppColors.blanco70 : AppColors.negro54;
-    final textColorIcon = isDarkMode ? AppColors.blanco70 : AppColors.negro54;
-    final textColorButton = isDarkMode ? AppColors.negro : AppColors.blanco;
-    final backgroundColor = isDarkMode ? AppColors.amarillo : AppColors.azulUCA;
     
     return Center(
       child: Container(
