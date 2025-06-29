@@ -190,13 +190,17 @@ class BuildEmptyCard extends StatelessWidget {
               color: textColor,
             ),
             const SizedBox(height: 24), // Mantenemos igual
-            Text(
+            Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40), // Añade el mismo padding que el texto inferior
+            child: Text(
               'No has seleccionado asignaturas',
+              textAlign: TextAlign.center, // Asegúrate de que el texto esté centrado
               style: TextStyle(
-                fontSize: isMobile ? 24.0 : 28.0, // Original desktop: 28
+                fontSize: isMobile ? 24.0 : 28.0,
                 fontWeight: FontWeight.w600,
                 color: textColor,
               ),
+            ),
             ),
             const SizedBox(height: 16), // Mantenemos igual
             Padding(
