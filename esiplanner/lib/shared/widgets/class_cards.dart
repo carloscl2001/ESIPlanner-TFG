@@ -62,7 +62,7 @@ class ClassCards extends StatelessWidget {
                     const Color.fromARGB(173, 44, 43, 43),
                   ]
                 : [
-                    AppColors.azulClaro2,
+                    AppColors.blanco,
                     AppColors.blanco,
                   ],
             begin: Alignment.topLeft,

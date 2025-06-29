@@ -318,8 +318,9 @@ class BuildEmptyCardMobile extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             FilledButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/selectionSubjects');
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/selectionSubjects');
+                Navigator.pushNamed(context, '/home');
               },
               icon: const Icon(Icons.touch_app_rounded),
               label: Text(

@@ -1,5 +1,5 @@
 import 'package:esiplanner/shared/app_colors.dart';
-import 'package:esiplanner/shared/widgets/event_card.dart';
+import 'package:esiplanner/features/timetable/timetable_week/event_card_timetable_week_desktop.dart';
 import 'package:esiplanner/shared/subject_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -418,7 +418,7 @@ class WeeklyViewDesktopGoogle extends StatelessWidget {
           left: leftPosition + 2,
           width: eventWidth - 4,
           height: height - 4,
-          child: EventCard(
+          child: EventCardTimetableWeekDesktop(
             eventData: eventData,
             getGroupLabel: logic.getGroupLabel,
             subjectColor: subjectColor,

@@ -1,6 +1,7 @@
 import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'login_logic.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginForm extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -18,25 +19,108 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = MediaQuery.of(context).size.width >= 1024;
+    
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          const SizedBox(height: 40),
-          LoginCard(
-            formKey: formKey,
-            logic: logic,
-            isDarkMode: isDarkMode,
-            onLoginPressed: onLoginPressed,
-          ),
-          const SizedBox(height: 20),
-          RegisterButton(isDarkMode: isDarkMode),
-        ],
-      ),
+      child: isDesktop 
+          ? _buildDesktopLayout(context)
+          : _buildMobileLayout(context),
     );
   }
+
+  Widget _buildMobileLayout(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        const SizedBox(height: 20),
+        LoginCard(
+          formKey: formKey,
+          logic: logic,
+          isDarkMode: isDarkMode,
+          onLoginPressed: onLoginPressed,
+        ),
+        const SizedBox(height: 20),
+        RegisterButton(isDarkMode: isDarkMode),
+      ],
+    );
+  }
+
+  Widget _buildDesktopLayout(BuildContext context) {
+  final screenHeight = MediaQuery.of(context).size.height;
+  final screenWidth = MediaQuery.of(context).size.width;
+
+  return Center(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 1200),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: 10, // 5% del ancho de pantalla
+          vertical: 10,   // 3% del alto de pantalla
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IntrinsicWidth(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SvgPicture.asset(
+                    'assets/logo.svg',
+                    height: screenHeight * 0.45, // 40% del alto de pantalla
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Bienvenido de nuevo!',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    width: 550,
+                    child: Text(
+                      'Visualiza tu calendario académico de forma sencilla y rápida.',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: screenWidth * 0.05), // 5% del ancho de pantalla
+            IntrinsicWidth(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LoginCard(
+                    formKey: formKey,
+                    logic: logic,
+                    isDarkMode: isDarkMode,
+                    onLoginPressed: onLoginPressed,
+                  ),
+                  const SizedBox(height: 20),
+                  RegisterButton(isDarkMode: isDarkMode),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
 }
 
 class LoginCard extends StatelessWidget {
@@ -55,38 +139,44 @@ class LoginCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = MediaQuery.of(context).size.width >= 1024;
+    
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       child: Container(
+        width: isDesktop ? 500 : null,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors:
-                isDarkMode
-                    ? [
-                      const Color.fromARGB(255, 24, 24, 24),
-                      const Color.fromARGB(255, 24, 24, 24),
-                    ]
-                    : [AppColors.azulClaro2, AppColors.blanco],
+            colors: isDarkMode
+                ? [
+                    const Color.fromARGB(255, 24, 24, 24),
+                    const Color.fromARGB(255, 24, 24, 24),
+                  ]
+                : [AppColors.azulClaro2, AppColors.azulClaro2],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20.0),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all( 24.0),
           child: Form(
             key: formKey,
             child: Column(
               children: <Widget>[
-                const SizedBox(height: 20),
-                Text(
+                SizedBox(height: isDesktop ? 10 : 2),
+                isDesktop ? Text(
                   'Iniciar Sesión',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
                   ),
+                ) : SvgPicture.asset(
+                  'assets/logo.svg',
+                  height: 200,
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 24),
                 UsernameField(
@@ -99,7 +189,13 @@ class LoginCard extends StatelessWidget {
                   isDarkMode: isDarkMode,
                 ),
                 const SizedBox(height: 24),
-                LoginButton(onPressed: onLoginPressed, isDarkMode: isDarkMode),
+                SizedBox(
+                  width: isDesktop ? double.infinity : null,
+                  child: LoginButton(
+                    onPressed: onLoginPressed, 
+                    isDarkMode: isDarkMode
+                  ),
+                ),
                 if (logic.errorMessage.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   ErrorMessage(message: logic.errorMessage),
@@ -125,6 +221,8 @@ class UsernameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = MediaQuery.of(context).size.width >= 1024;
+    
     return TextFormField(
       key: const Key('usernameField'),
       controller: controller,
@@ -134,6 +232,9 @@ class UsernameField extends StatelessWidget {
           Icons.person,
           color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
         ),
+        contentPadding: isDesktop 
+            ? const EdgeInsets.symmetric(vertical: 16, horizontal: 20)
+            : null,
       ),
       validator: (value) => LoginLogic(context).validateUsername(value),
     );
@@ -152,6 +253,8 @@ class PasswordField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = MediaQuery.of(context).size.width >= 1024;
+    
     return TextFormField(
       key: const Key('passwordField'),
       controller: controller,
@@ -162,13 +265,16 @@ class PasswordField extends StatelessWidget {
           Icons.lock,
           color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
         ),
+        contentPadding: isDesktop 
+            ? const EdgeInsets.symmetric(vertical: 16, horizontal: 20)
+            : null,
       ),
       validator: (value) => LoginLogic(context).validatePassword(value),
     );
   }
 }
 
-class LoginButton extends StatelessWidget {
+class LoginButton extends StatefulWidget {
   final VoidCallback onPressed;
   final bool isDarkMode;
 
@@ -179,16 +285,39 @@ class LoginButton extends StatelessWidget {
   });
 
   @override
+  _LoginButtonState createState() => _LoginButtonState();
+}
+
+class _LoginButtonState extends State<LoginButton> {
+  double _scale = 1.0;
+
+  @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      key: const Key('loginButton'),
-      onPressed: onPressed,
-      child: Text(
-        'Iniciar sesión',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: isDarkMode ? AppColors.negro : AppColors.blanco,
+    final isDesktop = MediaQuery.of(context).size.width >= 1024;
+    
+    return MouseRegion(
+      onEnter: (_) => setState(() => _scale = 1.05),
+      onExit: (_) => setState(() => _scale = 1.0),
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 200),
+        child: ElevatedButton(
+          key: const Key('loginButton'),
+          onPressed: widget.onPressed,
+          style: ElevatedButton.styleFrom(
+            padding: isDesktop 
+                ? const EdgeInsets.symmetric(vertical: 20, horizontal: 20)
+                : null,
+            backgroundColor: widget.isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+          ),
+          child: Text(
+            'Iniciar sesión',
+            style: TextStyle(
+              fontSize: isDesktop ? 20 : 16,
+              fontWeight: FontWeight.bold,
+              color: widget.isDarkMode ? AppColors.negro : AppColors.blanco,
+            ),
+          ),
         ),
       ),
     );

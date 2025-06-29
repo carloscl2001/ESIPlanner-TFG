@@ -264,7 +264,7 @@ class SubjectGroupCard extends StatelessWidget {
           gradient: LinearGradient(
             colors: isDarkMode
                 ? [AppColors.negro, Colors.grey.shade900]
-                : [AppColors.azulClaro2, AppColors.blanco],
+                : [AppColors.azulClaroUCA2, AppColors.blanco],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

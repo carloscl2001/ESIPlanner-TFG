@@ -1,3 +1,4 @@
+import 'package:esiplanner/features/notifications/notifications_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -69,9 +70,9 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 onTap: () {
-                    Navigator.pop(context); // Cierra el menú de configuración
-                    Navigator.pushNamed(context, '/editPassWord');
-                  },              
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/editPassWord');
+                },              
               ),
               const Divider(),
               ListTile(
@@ -92,8 +93,170 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
     );
   }
 
+  Widget _buildNavigationDestination({
+    required IconData icon,
+    required IconData selectedIcon,
+    required String label,
+    required int index,
+    required bool isDarkMode,
+    int? notificationCount,
+  }) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        NavigationDestination(
+          selectedIcon: Icon(
+            selectedIcon,
+            color: isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+          ),
+          icon: Icon(icon, color: Colors.grey),
+          label: label,
+        ),
+        if (notificationCount != null && notificationCount > 0)
+          Positioned(
+            right: 20,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: AppColors.amarilloUCA,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isDarkMode ? AppColors.negro : AppColors.blanco,
+                  width: 2,
+                ),
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 20,
+                minHeight: 20,
+              ),
+              child: Text(
+                notificationCount > 9 ? '9+' : notificationCount.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopNavItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required int index,
+    required bool isExpanded,
+    required Color accentColor,
+    required bool isSelected,
+    required Color hoverColor,
+    int? notificationCount,
+  }) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hoveredItemIndex = index),
+      onExit: (_) => setState(() => _hoveredItemIndex = null),
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 200),
+        scale: _hoveredItemIndex == index ? 1.05 : 1.0,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? accentColor.withValues(alpha: 0.2)
+                    : _hoveredItemIndex == index
+                        ? hoverColor
+                        : Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10),
+                onTap: () => setState(() => currentPageIndex = index),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                  child: Row(
+                    mainAxisAlignment: isExpanded 
+                        ? MainAxisAlignment.start 
+                        : MainAxisAlignment.center,
+                    children: [
+                      AnimatedScale(
+                        duration: const Duration(milliseconds: 100),
+                        scale: _hoveredItemIndex == index ? 1.05 : 1.0,
+                        child: Icon(
+                          icon,
+                          color: isSelected || _hoveredItemIndex == index
+                              ? accentColor
+                              : accentColor.withValues(alpha: 0.8),
+                          size: _hoveredItemIndex == index ? 26 : 24,
+                        ),
+                      ),
+                      if (isExpanded) ...[
+                        const SizedBox(width: 15),
+                        AnimatedOpacity(
+                          opacity: isExpanded ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 200),
+                          child: AnimatedDefaultTextStyle(
+                            duration: const Duration(milliseconds: 100),
+                            style: TextStyle(
+                              color: isSelected || _hoveredItemIndex == index
+                                  ? accentColor
+                                  : accentColor.withValues(alpha: 0.9),
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontSize: _hoveredItemIndex == index ? 18 : 16,
+                            ),
+                            child: Text(label),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            if (notificationCount != null && notificationCount > 0)
+              Positioned(
+                right: isExpanded ? 8 : 5,
+                top: -4,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: AppColors.amarilloUCA,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.negro54,
+                      width: 2,
+                    ),
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 20,
+                    minHeight: 20,
+                  ),
+                  child: Text(
+                    notificationCount > 9 ? '9+' : notificationCount.toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildMobileLayout(BuildContext context, ThemeProvider themeProvider) {
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+    final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -101,7 +264,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
           child: SvgPicture.asset(
             'assets/logo_blanco_sin_letras.svg',
             height: 40,
-            colorFilter:  ColorFilter.mode(
+            colorFilter: ColorFilter.mode(
               AppColors.blanco,
               BlendMode.srcIn,
             ),
@@ -110,7 +273,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
         ),
         actions: [
           Transform.translate(
-            offset: Offset(-6, 0), // Ajusta este valor según necesites
+            offset: const Offset(-6, 0),
             child: IconButton(
               icon: const Icon(Icons.settings_rounded, size: 26),
               onPressed: () => showSettingsMenu(context),
@@ -143,29 +306,34 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
           selectedIndex: currentPageIndex,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: <Widget>[
-            NavigationDestination(
-              selectedIcon: Icon(
-                Icons.view_week,
-                color: isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
-              ),
-              icon: Icon(Icons.view_week_outlined, color: Colors.grey),
+            _buildNavigationDestination(
+              icon: Icons.view_week_outlined,
+              selectedIcon: Icons.view_week,
               label: 'Mi semana',
+              index: 0,
+              isDarkMode: isDarkMode,
             ),
-            NavigationDestination(
-              selectedIcon: Icon(
-                Icons.calendar_month_rounded,
-                color: isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
-              ),
-              icon: Icon(Icons.calendar_month_outlined, color: Colors.grey),
+            _buildNavigationDestination(
+              icon: Icons.calendar_month_outlined,
+              selectedIcon: Icons.calendar_month_rounded,
               label: 'Calendario',
+              index: 1,
+              isDarkMode: isDarkMode,
             ),
-            NavigationDestination(
-              selectedIcon: Icon(
-                Icons.person,
-                color: isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
-              ),
-              icon: Icon(Icons.person_outline, color: Colors.grey),
+            _buildNavigationDestination(
+              icon: Icons.notifications_outlined,
+              selectedIcon: Icons.notifications,
+              label: 'Avisos',
+              index: 2,
+              isDarkMode: isDarkMode,
+              notificationCount: authProvider.getUnreadNotificationsCount,
+            ),
+            _buildNavigationDestination(
+              icon: Icons.person_outline,
+              selectedIcon: Icons.person,
               label: 'Perfil',
+              index: 3,
+              isDarkMode: isDarkMode,
             ),
           ],
         ),
@@ -178,6 +346,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
         child: <Widget>[
           const MyWeekScreen(),
           const TimetablePrincipalScreen(),
+          const NotificationsScreen(),
           const ProfileMenuScreen(),
         ][currentPageIndex],
       ),
@@ -191,6 +360,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
     final hoverColor = isDarkMode 
         ? Colors.amber.withValues(alpha: 0.15) 
         : AppColors.blanco.withValues(alpha: 0.25);
+    final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
       body: Row(
@@ -205,7 +375,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutQuint,
-              width: _isHoveringSidebar ? 215 : 100, // Increased expanded width
+              width: _isHoveringSidebar ? 215 : 100,
               decoration: BoxDecoration(
                 color: drawerColor,
                 boxShadow: [
@@ -218,7 +388,6 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
               ),
               child: Column(
                 children: [
-                  // Logo/Icono - with scale animation
                   Padding(
                     padding: const EdgeInsets.only(top: 30, bottom: 30),
                     child: MouseRegion(
@@ -233,7 +402,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
                               ? ClipRRect(
                                   child: SvgPicture.asset(
                                     'assets/logo_blanco_con_letras.svg',
-                                    colorFilter:  ColorFilter.mode(
+                                    colorFilter: ColorFilter.mode(
                                       AppColors.blanco,
                                       BlendMode.srcIn,
                                     ),
@@ -244,7 +413,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
                               : ClipRRect(
                                   child: SvgPicture.asset(
                                     'assets/logo_blanco_con_letras.svg',
-                                    colorFilter:  ColorFilter.mode(
+                                    colorFilter: ColorFilter.mode(
                                       AppColors.blanco,
                                       BlendMode.srcIn,
                                     ),
@@ -257,7 +426,6 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
                     ),
                   ),
       
-                  // Items de navegación
                   Expanded(
                     child: ListView(
                       padding: _isHoveringSidebar ? EdgeInsets.zero : const EdgeInsets.only(top: 75),
@@ -284,19 +452,29 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
                         ),
                         _buildDesktopNavItem(
                           context,
-                          icon: Icons.person_rounded,
-                          label: 'Perfil',
+                          icon: Icons.notifications_rounded,
+                          label: 'Avisos',
                           index: 2,
                           isExpanded: _isHoveringSidebar,
                           accentColor: accentColor,
                           isSelected: currentPageIndex == 2,
+                          hoverColor: hoverColor,
+                          notificationCount: authProvider.getUnreadNotificationsCount,
+                        ),
+                        _buildDesktopNavItem(
+                          context,
+                          icon: Icons.person_rounded,
+                          label: 'Perfil',
+                          index: 3,
+                          isExpanded: _isHoveringSidebar,
+                          accentColor: accentColor,
+                          isSelected: currentPageIndex == 3,
                           hoverColor: hoverColor,
                         ),
                       ],
                     ),
                   ),
       
-                  // Configuración - with scale animation
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: MouseRegion(
@@ -328,7 +506,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
                                     color: _hoveredItemIndex == -1
                                         ? accentColor
                                         : accentColor.withValues(alpha: 0.8),
-                                    size: _hoveredItemIndex == -1 ? 26 : 24, // Icon size change
+                                    size: _hoveredItemIndex == -1 ? 26 : 24,
                                   ),
                                   if (_isHoveringSidebar) ...[
                                     const SizedBox(width: 15),
@@ -341,7 +519,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
                                           color: _hoveredItemIndex == -1
                                               ? accentColor
                                               : accentColor.withValues(alpha: 0.9),
-                                          fontSize: _hoveredItemIndex == -1 ? 16 : 14, // Text size change
+                                          fontSize: _hoveredItemIndex == -1 ? 16 : 14,
                                         ),
                                       ),
                                     ),
@@ -359,7 +537,6 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             ),
           ),
       
-          // Área de contenido principal
           Expanded(
             child: ClipRRect(
               child: Container(
@@ -381,6 +558,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
                   child: <Widget>[
                     const MyWeekScreen(),
                     const TimetablePrincipalScreen(),
+                    const NotificationsScreen(),
                     const ProfileMenuScreen(),
                   ][currentPageIndex],
                 ),
@@ -392,85 +570,12 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
     );
   }
 
-  Widget _buildDesktopNavItem(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required int index,
-    required bool isExpanded,
-    required Color accentColor,
-    required bool isSelected,
-    required Color hoverColor,
-  }) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hoveredItemIndex = index),
-      onExit: (_) => setState(() => _hoveredItemIndex = null),
-      child: AnimatedScale(
-        duration: const Duration(milliseconds: 200),
-        scale: _hoveredItemIndex == index ? 1.05 : 1.0,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Increased vertical margin
-          decoration: BoxDecoration(
-            color: isSelected
-                ? accentColor.withValues(alpha: 0.2)
-                : _hoveredItemIndex == index
-                    ? hoverColor
-                    : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(10),
-            onTap: () => setState(() => currentPageIndex = index),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12), // Increased padding
-              child: Row(
-                mainAxisAlignment: isExpanded 
-                    ? MainAxisAlignment.start 
-                    : MainAxisAlignment.center,
-                children: [
-                  AnimatedScale(
-                    duration: const Duration(milliseconds: 100),
-                    scale: _hoveredItemIndex == index ? 1.05 : 1.0,
-                    child: Icon(
-                      icon,
-                      color: isSelected || _hoveredItemIndex == index
-                          ? accentColor
-                          : accentColor.withValues(alpha: 0.8),
-                      size: _hoveredItemIndex == index ? 26 : 24, // Icon size change
-                    ),
-                  ),
-                  if (isExpanded) ...[
-                    const SizedBox(width: 15),
-                    AnimatedOpacity(
-                      opacity: isExpanded ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 200),
-                      child: AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 100),
-                        style: TextStyle(
-                          color: isSelected || _hoveredItemIndex == index
-                              ? accentColor
-                              : accentColor.withValues(alpha: 0.9),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          fontSize: _hoveredItemIndex == index ? 18 : 16, // Text size change
-                        ),
-                        child: Text(label),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDesktop = MediaQuery.of(context).size.width >= 1024;
+
+    
 
     return isDesktop 
         ? _buildDesktopLayout(context, themeProvider)

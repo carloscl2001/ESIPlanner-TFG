@@ -20,14 +20,23 @@ class SubjectCard extends StatelessWidget {
     final titleSize = isMobile ? 18.0 : 20.0; // Original: 20 (desktop)
     final bodySize = isMobile ? 14.0 : 16.0;  // Original: 16 (desktop)
     final iconSize = isMobile ? 24.0 : 30.0;  // Original: 30 (desktop)
-
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16), // Mantenemos igual
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    
+    return Container(
+      margin: EdgeInsets.symmetric(
+        vertical: 8,
+        horizontal: isMobile ? 16 : 24,
       ),
-      color: isDarkMode ? AppColors.gris1 : AppColors.blanco,
+      decoration: BoxDecoration(
+        color: isDarkMode ? AppColors.gris1 : AppColors.blanco,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha:0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16), // Mantenemos igual
         child: Column(
@@ -204,8 +213,9 @@ class BuildEmptyCard extends StatelessWidget {
             ),
             const SizedBox(height: 32), // Mantenemos igual
             FilledButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/selectionSubjects');
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/selectionSubjects');
+                Navigator.pushNamed(context, '/home');
               },
               icon: Icon(
                 Icons.edit_note_rounded,

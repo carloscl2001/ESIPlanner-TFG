@@ -201,7 +201,7 @@ class _WeekRowDesktopState extends State<WeekRowDesktop> {
             ? AppColors.gris1 // Color más claro al hacer hover en modo oscuro
             : AppColors.gris1_2 // Color normal en modo oscuro
         : _isHovered 
-            ? AppColors.azulClaro2 // Color más claro al hacer hover en modo oscuro
+            ? AppColors.azulClaroUCA2 // Color más claro al hacer hover en modo oscuro
             : AppColors.blanco, // Color normal en modo oscuro
     borderRadius: BorderRadius.circular(10),
     border: widget.isCurrentWeek
@@ -342,8 +342,9 @@ class BuildEmptyCardDesktop extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             FilledButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/selectionSubjects');
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/selectionSubjects');
+                Navigator.pushNamed(context, '/home');
               },
               icon: const Icon(Icons.touch_app_rounded),
               label: Text(

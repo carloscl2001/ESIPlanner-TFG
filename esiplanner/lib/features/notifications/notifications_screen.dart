@@ -1,26 +1,28 @@
+import 'package:esiplanner/features/notifications/notifications_logic.dart';
+import 'package:esiplanner/features/notifications/notifications_widgets.dart';
+import 'package:esiplanner/providers/auth_provider.dart';
 import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'view_subjects_logic.dart';
-import 'view_subjects_widgets.dart';
 
-class ViewSubjectsScreen extends StatefulWidget {
-  const ViewSubjectsScreen({super.key});
+class NotificationsScreen extends StatefulWidget {
+  const NotificationsScreen({super.key});
 
   @override
-  State<ViewSubjectsScreen> createState() => _ViewSubjectsScreenState();
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _ViewSubjectsScreenState extends State<ViewSubjectsScreen> {
-  late ViewSubjectsProfileLogic logic;
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  late NotificationsLogic logic;
   bool _isMounted = false;
 
   @override
   void initState() {
     super.initState();
     _isMounted = true;
-    logic = ViewSubjectsProfileLogic(
+    logic = NotificationsLogic(
+      context: context,
       refreshUI: () {
         if (_isMounted) {
           setState(() {});
@@ -37,9 +39,14 @@ class _ViewSubjectsScreenState extends State<ViewSubjectsScreen> {
         }
       },
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (_isMounted) {
-        logic.loadUserSubjects(context);
+        await logic.loadUserData();
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        // Registrar la visita actual
+        await authProvider.updateLastNotificationsVisit();
+        // Forzar recálculo de no leídas
+        await logic.loadUserNotifications();
       }
     });
   }
@@ -55,27 +62,7 @@ class _ViewSubjectsScreenState extends State<ViewSubjectsScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mis asignaturas'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: isDarkMode ? AppColors.gris1 : AppColors.azulUCA,
-        iconTheme: IconThemeData(
-          color: isDarkMode ? AppColors.amarillo : AppColors.blanco,
-        ),
-        titleTextStyle: TextStyle(
-          color: isDarkMode ? AppColors.amarillo : AppColors.blanco,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      body: _buildBody(isDarkMode),
-    );
-  }
-
-  Widget _buildBody(bool isDarkMode) {
-    if (logic.isLoading) {
+    if (logic.isLoading || logic.isLoadingNotifications) {
       return Center(
         child: CircularProgressIndicator(
           color: isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
@@ -90,7 +77,7 @@ class _ViewSubjectsScreenState extends State<ViewSubjectsScreen> {
           child: Text(
             logic.errorMessage,
             style: TextStyle(
-              color: isDarkMode ? AppColors.amarillo : AppColors.azul,
+              color: isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
               fontSize: 16,
             ),
             textAlign: TextAlign.center,
@@ -99,21 +86,21 @@ class _ViewSubjectsScreenState extends State<ViewSubjectsScreen> {
       );
     }
 
-    if (logic.userSubjects.isEmpty) {
-      return const BuildEmptyCard();
+    if (logic.userNotifications.isEmpty) {
+      return BuildEmptyNotifications(isDarkMode: isDarkMode);
     }
 
     return RefreshIndicator(
-      color: isDarkMode ? AppColors.amarillo : AppColors.azul,
-      onRefresh: () => logic.loadUserSubjects(context),
+      color: isDarkMode ? AppColors.amarillo : AppColors.azulUCA,
+      onRefresh: () => logic.refreshAllData(),
       child: ListView.builder(
         padding: const EdgeInsets.only(top: 16, bottom: 24),
-        itemCount: logic.userSubjects.length,
+        itemCount: logic.userNotifications.length,
         itemBuilder: (context, index) {
-          return SubjectCard(
-            subject: logic.userSubjects[index],
+          final notification = logic.userNotifications[index];
+          return NotificationCard(
+            notification: notification,
             isDarkMode: isDarkMode,
-            logic: logic,
           );
         },
       ),

@@ -34,7 +34,7 @@ class ViewProfileWidgets extends StatelessWidget {
               gradient: LinearGradient(
                 colors: isDarkMode
                     ? [AppColors.negro, AppColors.negro]
-                    : [AppColors.azulClaro2, AppColors.azulClaro2],
+                    : [AppColors.azulClaro1, AppColors.azulClaro2],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

@@ -1,7 +1,9 @@
 import 'package:esiplanner/shared/app_colors.dart';
+import 'package:esiplanner/services/background_nofication_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:async'; // Añadido para el Timer
 
 // Providers
 import 'package:provider/provider.dart';
@@ -16,13 +18,13 @@ import 'shared/navigation_menu_bar.dart';
 // Screens
 import 'non_features/profile_menu_screen.dart';
 
-
 // Screens of features
 import 'features/timetable/timetable_principal/timetable_principal_logic.dart';
 import 'features/edit_password/edit_password_screen.dart';
 import 'features/view_profile/view_profile_screen.dart';
 import 'features/selection_subjects/select_subjects_principal/select_subjects_principal_screen.dart';
 import 'features/view_subjects/view_subjects_screen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,16 +52,46 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final BackgroundNotificationService _notificationService = 
+      BackgroundNotificationService();
+  Timer? _notificationTimer;
+
   @override
   void initState() {
     super.initState();
+    _initializeApp();
+    _startNotificationChecker();
+  }
+
+  Future<void> _initializeApp() async {
     // Cargar el tema guardado al iniciar la aplicación
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    themeProvider.loadTheme();
+    await themeProvider.loadTheme();
 
     // Cargar el estado de autenticación al iniciar la aplicación
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    authProvider.loadAuthState();
+    await authProvider.loadAuthState();
+
+    // Comprobar notificaciones solo si está autenticado
+    if (authProvider.isAuthenticated) {
+      await _notificationService.checkForNewNotifications(authProvider);
+    }
+  }
+
+  void _startNotificationChecker() {
+    // Comprobar cada 30 minutos (1800 segundos)
+    _notificationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      if (authProvider.isAuthenticated) {
+        await _notificationService.checkForNewNotifications(authProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _notificationTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -71,6 +103,7 @@ class _MyAppState extends State<MyApp> {
       // TEMA CLARO
       theme: ThemeData.light().copyWith(
         // Usar la fuente Inter para el tema claro
+        scaffoldBackgroundColor: AppColors.azulClaro2,
         textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.azulUCA,

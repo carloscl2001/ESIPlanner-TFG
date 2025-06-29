@@ -1,7 +1,7 @@
+import 'package:esiplanner/features/my_week/event_card_my_week_desktop.dart';
 import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:esiplanner/shared/app_colors.dart';
 import 'package:esiplanner/shared/subject_colors.dart';
-import 'package:esiplanner/shared/widgets/event_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -181,8 +181,8 @@ class _DayButtonRowDesktopState extends State<DayButtonRowDesktop> {
                                     AppColors.negro,
                                   ]
                                 : [
-                                    _isHovered[index] ? AppColors.azulClaro2: AppColors.blanco,
-                                    AppColors.blanco,
+                                    _isHovered[index] ? AppColors.azulClaroUCA1: AppColors.blanco,
+                                    AppColors.blanco
                                   ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -553,7 +553,7 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                               left: leftPosition + 2,
                               width: eventWidth - 4,
                               height: (duration / 30) * sizeTramo - 6,
-                              child: EventCard(
+                              child: EventCardMyWeekDesktop(
                                 eventData: event['data'],
                                 getGroupLabel: getGroupLabel,
                                 subjectColor: subjectColors.getSubjectColor(event['subject']),
@@ -629,8 +629,9 @@ class BuildEmptyCardDesktop extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             FilledButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/selectionSubjects');
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/selectionSubjects');
+                Navigator.pushNamed(context, '/home');
               },
               icon: const Icon(Icons.touch_app_rounded),
               label: Text(

@@ -59,22 +59,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
         body: SingleChildScrollView(
           child: Consumer<RegisterLogic>(
             builder: (context, logic, child) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 40),
-                    RegisterForm(
-                      formKey: _formKey,
-                      logic: logic,
-                      isDarkMode: isDarkMode,
-                      onRegisterPressed: _register,
-                      isLoading: logic.isLoading,
-                    ),
-                    const SizedBox(height: 20),
-                    LoginButton(isDarkMode: isDarkMode),
-                  ],
-                ),
+              return Column(
+                children: [
+                  RegisterForm(
+                    formKey: _formKey,
+                    logic: logic,
+                    isDarkMode: isDarkMode,
+                    onRegisterPressed: _register,
+                    isLoading: logic.isLoading,
+                  ),
+                  LoginButton(isDarkMode: isDarkMode),
+                ],
               );
             },
           ),

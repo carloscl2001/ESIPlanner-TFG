@@ -240,40 +240,51 @@ class DepartmentDropdown extends StatelessWidget {
 }
 
 // Botones
-class RegisterButton extends StatelessWidget {
+class RegisterButton extends StatefulWidget {
   final VoidCallback onPressed;
-  final bool isLoading;
   final bool isDarkMode;
 
   const RegisterButton({
     super.key,
     required this.onPressed,
-    required this.isLoading,
     required this.isDarkMode,
   });
 
   @override
+  State<RegisterButton> createState() => _RegisterButtonState();
+}
+
+class _RegisterButtonState extends State<RegisterButton> {
+  double _scale = 1.0;
+
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    final isDesktop = MediaQuery.of(context).size.width >= 1024;
+    
+    return MouseRegion(
+      onEnter: (_) => setState(() => _scale = 1.025),
+      onExit: (_) => setState(() => _scale = 1.0),
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 200),
+        child: ElevatedButton(
+          key: const Key('loginButton'),
+          onPressed: widget.onPressed,
+          style: ElevatedButton.styleFrom(
+            padding: isDesktop 
+                ? const EdgeInsets.symmetric(vertical: 20, horizontal: 20)
+                : null,
+            backgroundColor: widget.isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+          ),
+          child: Text(
+            'Registrarse',
+            style: TextStyle(
+              fontSize: isDesktop ? 20 : 16,
+              fontWeight: FontWeight.bold,
+              color: widget.isDarkMode ? AppColors.negro : AppColors.blanco,
+            ),
           ),
         ),
-        onPressed: isLoading ? null : onPressed,
-        child: isLoading
-            ? const CircularProgressIndicator(color: AppColors.blanco)
-            : Text(
-                'Registrarse',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: isDarkMode ? AppColors.negro : AppColors.blanco 
-                ),
-              ),
       ),
     );
   }
@@ -343,87 +354,102 @@ class RegisterForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: isDarkMode
-                ? [const Color.fromARGB(255, 24, 24, 24), const Color.fromARGB(255, 24, 24, 24)]
-                : [AppColors.azulClaro2, AppColors.blanco],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+    final isDesktop = MediaQuery.of(context).size.width >= 1024;
+    return Padding(
+      padding: EdgeInsets.only(
+        left: isDesktop 
+            ? MediaQuery.of(context).size.width * 0.25  // 5% del ancho en desktop
+            : 16.0,    
+        right: isDesktop 
+            ? MediaQuery.of(context).size.width * 0.25  // 5% del ancho en desktop
+            : 16.0,                                  // 16px en mobile
+        top: isDesktop 
+            ? MediaQuery.of(context).size.height * 0.10  // 3% del alto en desktop
+            : 10.0,     
+        bottom: isDesktop 
+            ? MediaQuery.of(context).size.height * 0.01  // 3% del alto en desktop
+            : 10.0,                                  // 24px en mobile
+      ),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDarkMode
+                  ? [const Color.fromARGB(255, 24, 24, 24), const Color.fromARGB(255, 24, 24, 24)]
+                  : [AppColors.azulClaro2, AppColors.azulClaro2],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20.0),
           ),
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                Text(
-                  'Registrarse',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+          child: Padding(
+            padding: EdgeInsets.all(isDesktop ? 24.0 : 16),
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  Text(
+                    'Registrarse',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                EmailField(controller: logic.emailController, isDarkMode: isDarkMode),
-                const SizedBox(height: 20),
-                UsernameField(controller: logic.usernameController, isDarkMode: isDarkMode),
-                const SizedBox(height: 20),
-                PasswordField(controller: logic.passwordController, isDarkMode: isDarkMode),
-                const SizedBox(height: 20),
-                NameField(
-                  controller: logic.nameController,
-                  isDarkMode: isDarkMode,
-                  label: 'Nombre',
-                ),
-                const SizedBox(height: 20),
-                NameField(
-                  controller: logic.surnameController,
-                  isDarkMode: isDarkMode,
-                  label: 'Apellido',
-                ),
-                const SizedBox(height: 20),
-                UserTypeSelector(
-                  isDarkMode: isDarkMode,
-                  selectedType: logic.userType,
-                  onChanged: (type) {
-                    logic.setUserType(type);
-                  },
-                ),
-                const SizedBox(height: 18),
-                if (logic.userType == 'student')
-                  DegreeDropdown(
-                    degrees: logic.degrees,
-                    selectedDegree: logic.selectedDegree,
+                  const SizedBox(height: 20),
+                  EmailField(controller: logic.emailController, isDarkMode: isDarkMode),
+                  const SizedBox(height: 20),
+                  UsernameField(controller: logic.usernameController, isDarkMode: isDarkMode),
+                  const SizedBox(height: 20),
+                  PasswordField(controller: logic.passwordController, isDarkMode: isDarkMode),
+                  const SizedBox(height: 20),
+                  NameField(
+                    controller: logic.nameController,
                     isDarkMode: isDarkMode,
-                    onChanged: (value) => logic.selectedDegree = value,
+                    label: 'Nombre',
                   ),
-                if (logic.userType == 'teacher')
-                  DepartmentDropdown(
-                    departments: logic.departments,
-                    selectedDepartment: logic.selectedDepartment,
+                  const SizedBox(height: 20),
+                  NameField(
+                    controller: logic.surnameController,
                     isDarkMode: isDarkMode,
-                    onChanged: (value) => logic.selectedDepartment = value,
+                    label: 'Apellido',
                   ),
-                const SizedBox(height: 24),
-                RegisterButton(
-                  onPressed: onRegisterPressed,
-                  isLoading: isLoading,
-                  isDarkMode: isDarkMode,
-                ),
-                if (logic.errorMessage.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  ErrorMessage(message: logic.errorMessage),
+                  const SizedBox(height: 20),
+                  UserTypeSelector(
+                    isDarkMode: isDarkMode,
+                    selectedType: logic.userType,
+                    onChanged: (type) {
+                      logic.setUserType(type);
+                    },
+                  ),
+                  const SizedBox(height: 18),
+                  if (logic.userType == 'student')
+                    DegreeDropdown(
+                      degrees: logic.degrees,
+                      selectedDegree: logic.selectedDegree,
+                      isDarkMode: isDarkMode,
+                      onChanged: (value) => logic.selectedDegree = value,
+                    ),
+                  if (logic.userType == 'teacher')
+                    DepartmentDropdown(
+                      departments: logic.departments,
+                      selectedDepartment: logic.selectedDepartment,
+                      isDarkMode: isDarkMode,
+                      onChanged: (value) => logic.selectedDepartment = value,
+                    ),
+                  const SizedBox(height: 24),
+                  RegisterButton(
+                    onPressed: onRegisterPressed,
+                    isDarkMode: isDarkMode,
+                  ),
+                  if (logic.errorMessage.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    ErrorMessage(message: logic.errorMessage),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

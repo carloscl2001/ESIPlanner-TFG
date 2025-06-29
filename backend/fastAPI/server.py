@@ -12,6 +12,7 @@ from routers import degrees
 from routers import subjects
 from routers import mapping
 from routers import departments
+from routers import logs
 from fastapi.middleware.cors import CORSMiddleware
 
 # Instanciamos la aplicación
@@ -24,6 +25,7 @@ app.include_router(degrees.router)
 app.include_router(subjects.router)
 app.include_router(mapping.router)
 app.include_router(departments.router)
+app.include_router(logs.router)
 
 # Configuramos CORS (Cross-Origin Resource Sharing)
 # origins = [

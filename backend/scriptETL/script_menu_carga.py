@@ -89,11 +89,11 @@ def show_menu():
     """Muestra el menú principal y maneja la selección"""
     menu_options = {
         '1': {
-            'label': 'Carga completa de todos los archivos (borrar e insertar)',
+            'label': 'Subida completa de todos los archivos (borrar e insertar)',
             'action': full_clean_load
         },
         '2': {
-            'label': 'Carga adicional de archivos específicos (sobreescribir o insertar)',
+            'label': 'Subida dicional de archivos específicos (sobreescribir o insertar) y generación de notificaciones en asignaturas(existan o no cambios)',
             'action': additional_load_menu
         },
         '3': {
@@ -222,7 +222,7 @@ def additional_load_menu():
     while True:
         submenu_options = {
             '1': {
-                'label': 'Añadir/actualizar asignaturas',
+                'label': 'Añadir/actualizar asignaturas y generar notificaciones(aunque no haya cambios)',
                 'action': lambda: process_custom_files('archivos_asignaturas', 'subjects')
             },
             '2': {

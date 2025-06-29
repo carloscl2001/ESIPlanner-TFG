@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:esiplanner/shared/app_colors.dart';
 import 'package:esiplanner/shared/subject_colors.dart';
-import 'package:esiplanner/shared/widgets/event_card_my_week_mobile.dart';
+import 'package:esiplanner/features/my_week/event_card_my_week_mobile.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -700,8 +700,9 @@ class BuildEmptyCardMobile extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             FilledButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/selectionSubjects');
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/selectionSubjects');
+                Navigator.pushNamed(context, '/home');
               },
               icon: const Icon(Icons.touch_app_rounded),
               label: Text(

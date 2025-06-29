@@ -15,39 +15,28 @@ class ProfileMenuScreen extends StatelessWidget {
     final isMobile = !isDesktop;
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDarkMode
-                ? [Colors.grey[900]!, AppColors.negro]
-                : [Colors.indigo.shade50, AppColors.blanco],
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Mi Perfil',
-                    style: TextStyle(
-                      fontSize: isDesktop ? 36 : 28,
-                      fontWeight: FontWeight.bold,
-                      color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
-                    ),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Mi Perfil',
+                  style: TextStyle(
+                    fontSize: isDesktop ? 36 : 28,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? AppColors.blanco : AppColors.azulUCA,
                   ),
-                  const SizedBox(height: 40),
-                  
-                  if (isMobile) _buildMobileLayout(context),
-                  if (isDesktop) _buildDesktopLayout(context),
-                  
-                  const SizedBox(height: 40),
-                  if (!isDesktop) const SizedBox(height: 40),
-                ],
-              ),
+                ),
+                const SizedBox(height: 40),
+                
+                if (isMobile) _buildMobileLayout(context),
+                if (isDesktop) _buildDesktopLayout(context),
+                
+                const SizedBox(height: 40),
+                if (!isDesktop) const SizedBox(height: 40),
+              ],
             ),
           ),
         ),
@@ -84,7 +73,7 @@ class ProfileMenuScreen extends StatelessWidget {
   final screenSize = MediaQuery.of(context).size;
   final cardWidth = (screenSize.width * 0.5) - 30; // Ancho de cada card superior
   final spacing = 10.0; // Espacio entre las cards superiores
-  final totalWidth = (cardWidth * 2) + spacing; // Ancho total de ambas cards + espacio
+  final totalWidth = (cardWidth * 2) + spacing + 8; // Ancho total de ambas cards + espacio
 
   return Column(
     children: [
@@ -111,15 +100,12 @@ class ProfileMenuScreen extends StatelessWidget {
       ),
       const SizedBox(height: 20),
       // Segunda fila con una card ancha
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: ProfileCard(
-          text: 'Seleccionar asignaturas',
-          icon: Icons.touch_app_rounded,
-          route: '/selectionSubjects',
-          isMobile: true,
-          customWidth: totalWidth, // Mismo ancho que las dos superiores juntas
-        ),
+      ProfileCard(
+        text: 'Seleccionar asignaturas',
+        icon: Icons.touch_app_rounded,
+        route: '/selectionSubjects',
+        isMobile: true,
+        customWidth: totalWidth, // Mismo ancho que las dos superiores juntas
       ),
     ],
   );
@@ -197,11 +183,11 @@ class _ProfileCardState extends State<ProfileCard> {
                   end: Alignment.bottomRight,
                   colors: isDarkMode
                       ? _isHovered
-                          ? [Colors.grey[800]!, Colors.grey[900]!]
+                          ? [Colors.grey[900]!, AppColors.negro]
                           : [Colors.grey[900]!, AppColors.negro]
                       : _isHovered
-                          ? [Colors.indigo.shade50, AppColors.blanco]
-                          : [AppColors.blanco, Colors.indigo.shade50],
+                          ? [AppColors.blanco, AppColors.blanco]
+                          : [AppColors.blanco, AppColors.blanco],
                 ),
               ),
               child: Padding(
