@@ -84,7 +84,7 @@ class LoginForm extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Container(
+                  SizedBox(
                     width: 550,
                     child: Text(
                       'Visualiza tu calendario académico de forma sencilla y rápida.',
