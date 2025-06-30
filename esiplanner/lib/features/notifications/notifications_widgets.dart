@@ -1,5 +1,6 @@
 import 'package:esiplanner/shared/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class NotificationCard extends StatelessWidget {
@@ -98,7 +99,7 @@ class NotificationCard extends StatelessWidget {
                           color: textColor,
                         ),
                       ),
-                     SizedBox(width: isMobile ? 6 : 10),
+                      SizedBox(height: isMobile ? 4 : 10),
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8), // Mantenemos igual
                         decoration: BoxDecoration(
@@ -118,7 +119,7 @@ class NotificationCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: isMobile ? 4 : 10),
                       Text(
                         'Ha sufrido una modificación. ¡Revise su calendario!',
                         style: TextStyle(

@@ -25,7 +25,7 @@ class WeekHeaderMobile extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey,
+              color: AppColors.azulClaro3,
               borderRadius: BorderRadius.circular(10.0),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -42,7 +42,7 @@ class WeekHeaderMobile extends StatelessWidget {
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey,
+              color: AppColors.azulClaro3,
               borderRadius: BorderRadius.circular(10.0),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
