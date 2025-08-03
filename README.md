@@ -2,49 +2,35 @@
 
 ## Descripción
 
-**ESIPlanner** es una aplicación multiplataforma diseñada para la gestión y visualización del horario académico de estudiantes y profesores de la Escuela Superior de Ingeniería (ESI) de la Universidad de Cádiz. Este proyecto fue desarrollado como Trabajo Fin de Grado (TFG) y obtuvo la calificación máxima (10/10).
+**ESIPlanner** es una aplicación multiplataforma pensada para facilitar la gestión y visualización del horario académico de estudiantes y profesores de la Escuela Superior de Ingeniería (ESI) de la Universidad de Cádiz.
 
-La aplicación permite a los usuarios registrarse, seleccionar sus asignaturas y grupos, y consultar su horario personalizado, integrando funcionalidades avanzadas para facilitar la organización y planificación académica.
+Este proyecto, desarrollado como Trabajo Fin de Grado (TFG), obtuvo la máxima calificación (10/10). La app permite registrar usuarios, seleccionar asignaturas y grupos, y consultar horarios personalizados con una experiencia fluida y adaptada a distintas plataformas (web, móvil y escritorio).
 
 ---
 
-## Características principales
+## Características destacadas
 
-- Registro y autenticación de usuarios.  
-- Gestión de asignaturas y grupos según el grado académico.  
-- Visualización clara y organizada del horario semanal.  
-- Sincronización y actualización en tiempo real con la base de datos.  
-- Interfaz adaptable multiplataforma: funciona en web, escritorio y dispositivos móviles.  
-- Modo claro y modo oscuro para una mejor experiencia de usuario.  
-- Backend desarrollado con FastAPI para un rendimiento eficiente.  
-- Base de datos en MongoDB Atlas para almacenamiento escalable y flexible.
+- 🔐 **Autenticación segura:** Registro y login con gestión de usuarios.  
+- 📚 **Gestión académica:** Selección de asignaturas y grupos acorde al grado.  
+- 📅 **Horario personalizado:** Visualización clara y ordenada del horario semanal.  
+- 🌐 **Multiplataforma:** Compatible con web, Android, iOS y escritorio.  
+- 🌙 **Modos claro y oscuro:** Para una mejor experiencia visual.  
+- 🚀 **Backend eficiente:** Servidor en FastAPI con base de datos MongoDB Atlas.  
+- ⚙️ **Escalable y flexible:** Uso de tecnologías modernas para garantizar rendimiento y facilidad de mantenimiento.
 
 ---
 
 ## Tecnologías utilizadas
 
-- **Frontend:** Flutter (compatible con Web, Android, iOS y escritorio)  
-- **Backend:** FastAPI (Python)  
-- **Base de datos:** MongoDB Atlas (NoSQL)  
-- **Autenticación:** JWT (JSON Web Tokens)  
-- **Control de versiones:** Git  
-- **Despliegue:** Entornos Linux y Docker (opcional)  
+| Área         | Tecnología            |
+|--------------|----------------------|
+| Frontend     | ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=flat&logo=flutter&logoColor=white) Flutter (Dart)       |
+| Backend      | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white) FastAPI (Python)     |
+| Base de datos| ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat&logo=mongodb&logoColor=white) MongoDB Atlas        |
+| Autenticación| ![JWT](https://img.shields.io/badge/JWT-black?style=flat&logo=JSONwebtokens&logoColor=white) JWT                  |
+| Control de versiones | ![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white) Git            |
 
 ---
 
-## Instalación y uso
+## Estructura del proyecto
 
-### Requisitos previos
-
-- Flutter SDK  
-- Python 3.8+  
-- MongoDB Atlas (cuenta y base de datos configurada)  
-- Git
-
-### Pasos para ejecutar el backend
-
-1. Clona el repositorio:
-
-   ```bash
-   git clone https://github.com/carloscl2001/ESIPlanner-TFG.git
-   cd ESIPlanner-TFG/backend
