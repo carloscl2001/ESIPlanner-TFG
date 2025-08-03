@@ -59,7 +59,7 @@ Si tienes alguna pregunta, sugerencia o quieres colaborar:
 
 ## Agradecimientos
 
-Quiero expresar mi más sincero agradecimiento a mi tutor, Kevin Jesús Valle Gómez, por su valiosa orientación, apoyo y dedicación durante todo el desarrollo de este proyecto. También agradezco a la dirección académica y profesorado de la Escuela Superior de Ingeniería de la Universidad de Cádiz por su apoyo, que contribuyó a alcanzar la máxima calificación en este Trabajo Fin de Grado.
+Quiero expresar mi más sincero agradecimiento a mi tutor, Kevin Jesús Valle Gómez, por su apoyo durante todo el proceso. También agradezco a la dirección académica y profesorado de la Escuela Superior de Ingeniería de la Universidad de Cádiz por darme la oportunidad para que este proyecto vea la luz, contribuyendo así a alcanzar la máxima calificación en este Trabajo Fin de Grado.
 
 
 ---
