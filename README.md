@@ -26,7 +26,7 @@ Este proyecto, desarrollado como Trabajo Fin de Grado (TFG), obtuvo la máxima c
 |--------------|----------------------|
 | Frontend     | ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=flat&logo=flutter&logoColor=white) (Dart)       |
 | Backend      | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white) (Python)     |
-| Base de datos| ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat&logo=mongodb&logoColor=white) Atlas        |
+| Base de datos| ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat&logo=mongodb&logoColor=white) Atlas Version        |
 | Autenticación| ![JWT](https://img.shields.io/badge/JWT-black?style=flat&logo=JSONwebtokens&logoColor=white)                |
 | Control de versiones | ![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)            |
 
