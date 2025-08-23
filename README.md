@@ -1,7 +1,7 @@
 # 📅 ESIPlanner
 
 <p align="center">
-  <img src="esiplanner/assets/logo.svg" alt="ESIPlanner Logo" width="150">
+  <img src="esiplanner/assets/logo.svg" alt="ESIPlanner Logo" width="500">
 </p>
 
 ## Descripción
