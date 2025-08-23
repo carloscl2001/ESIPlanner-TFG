@@ -1,5 +1,7 @@
 # 📅 ESIPlanner
 
+![ESIPlanner Logo](esiplanner/assets/LOGO.svg)
+
 ## Descripción
 
 **ESIPlanner** es una aplicación multiplataforma pensada para facilitar la gestión y visualización del horario académico de estudiantes y profesores de la Escuela Superior de Ingeniería (ESI) de la Universidad de Cádiz.
